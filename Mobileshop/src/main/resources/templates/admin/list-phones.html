@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thyme leaf-extras-springsecurity5"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Hand Mobile Shop</title>
+    <link rel="stylesheet" th:href="@{/css/HomeMBPhoneStyle.css}">
+    <!--<link rel="stylesheet" href="/css/HomeMBPhoneStyle.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="scroll-container" >
+<div th:replace="admin/headerAdmin :: header-admin"></div>
+<h1 style="margin-top: 50px; text-align: center;">Danh sách điện thoại </h1><br>
+<br>
+<div id="ConDiv" class="container table-container">
+
+    <br>
+    <table class="table table-bordered ">
+        <thead>
+        <tr>
+            <th>Hình ảnh</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Phone Name</th>
+            <th>Model</th>
+            <th>Release Year</th>
+            <th>Screen Size</th>
+            <th>Storage Capacity</th>
+            <th>RAM</th>
+            <th>Operating System</th>
+            <th>Price</th>
+            <th>Color</th>
+            <th>Số lượng</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="phone, iter : ${phoneDTOS}">
+            <td> <img class="img-phones" th:src="'/Images/' + ${phone.ImageName}" th:alt="phones" style="width: 70px; height: 70px;"> </td>
+            <td th:text="${phone.brand.getBrandName}"></td>
+            <td th:text="${phone.category.getCategoryName}"></td>
+            <td th:text="${phone.phoneName}"></td>
+            <td th:text="${phone.model}"></td>
+            <td th:text="${phone.releaseYear}"></td>
+            <td th:text="${phone.screenSize}+ 'inch'"></td>
+            <td th:text="${phone.storageCapacity}+'GB'"></td>
+            <td th:text="${phone.ram}+'GB'"></td>
+            <td th:text="${phone.operatingSystem}"></td>
+            <td th:text="'$' + ${phone.getPrice}"></td>
+            <td th:text="${phone.color}"></td>
+            <!--Đếm số lượng máy theo model-->
+            <td th:text="${phone.getQuantity}"></td>
+            <td>
+                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;" >
+                    <form th:action="@{'/Handshop/admin/showFormForUpdate/' + ${phone.phoneId}}" method="get">
+                        <button type="submit" class="btn btn-info btn-sm mr-1">Update</button>
+                    </form>
+                    <form th:action="@{'/Handshop/admin/delete/' + ${phone.phoneId}}" method="POST" id="deletePhoneForm">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(this)" th:data="${phone.phoneId}" >Delete</button>
+                    </form>
+                </div>
+            </td>
+            <script>
+                function confirmDelete(button) {
+                    var phoneID = button.getAttribute("data") + "";
+                    window.location.href = '/Handshop/admin/delete/' + phoneID;
+                }
+            </script>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:src="@{/js/script.js}"></script>
+<div style="margin: 20px">
+    <!-- Add a Logout button -->
+    <form action="#" th:action="@{/logout}" method="POST">
+        <input type="submit" value="Logout" class="btn btn-outline-primary mt-2" />
+    </form>
+    <!--<div sec:authorize="isAuthenticated" style="color: red"> Authenticated as <span sec:authentication=""></span></div>-->
+</div>
+</body>
+</html>

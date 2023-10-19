@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AccCustomerDTOs View</title>
+    <style>
+        td{padding: 10px}
+    </style>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+<div th:replace="admin/headerAdmin :: header-admin"></div>
+<h2>Danh sách tài khoản của khách hàng</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Email/Username</th>
+        <th>Phone</th>
+        <th>Pass</th>
+        <th>Address</th>
+        <th>Registration Date</th>
+        <th>Authority</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="accCustomerDTO : ${accCustomerDTOS}">
+        <td th:text="${accCustomerDTO.getFirstName} +' ' + ${accCustomerDTO.getLastName}"></td>
+        <td th:text="${accCustomerDTO.getEmail}"></td>
+        <td th:text="${accCustomerDTO.getPhone}"></td>
+        <td th:text="${accCustomerDTO.getPass}"></td>
+        <td th:text="${accCustomerDTO.getAddress}"></td>
+        <td th:text="${accCustomerDTO.getRegistrationDate}"></td>
+        <td th:text="${accCustomerDTO.getAuthority.getAuthority}"></td>
+        <td>
+            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                <!--<form th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn">
+                    <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                    <input type="hidden" name="dateProcessed"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
+                    <button type="submit" class="btn btn-success btn-sm"
+                            onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
+                    </button>
+                </form>-->
+                <form th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn">
+                    <!--<input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                    <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">-->
+                    <button type="submit" class="btn btn-primary btn-sm"
+                            onclick="return confirm('Xác nhận đã bổ sung đủ số lượng sản phẩm thiếu cho đơn hàng?')">
+                        Update
+                    </button>
+                </form>
+                <a th:href="@{'/Handshop/admin/rejectOrder?OrderID='}" class="actionbtn">
+                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                </a>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

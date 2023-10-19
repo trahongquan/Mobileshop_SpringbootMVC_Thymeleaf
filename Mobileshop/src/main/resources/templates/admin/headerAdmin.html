@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thyme leaf-extras-springsecurity5"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header-admin>
+    <div style="margin: 20px">
+        <a th:href="@{/Handshop}"> Về trang chủ </a> <br>
+        User: <span sec:authentication="name"></span>
+        <br>
+        Role(s): <span sec:authentication="principal.authorities"></span> <br><br>
+        <div style="border: 2px solid #3498db; padding: 20px;">
+            <a th:href="@{/Handshop/admin/soldphones}" class="addphone" style=" margin: 15px"> Đã bán </a>
+            <a th:href="@{/Handshop/admin}" class="addphone" style=" margin: 15px"> Tồn kho </a>
+            <a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style=" margin: 15px">Đơn đặt hàng</a>
+            <a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style=" margin: 15px">Báo cáo lợi nhuận</a>
+            <a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style=" margin: 15px">Quản lý tài khoản Khách hàng</a>
+            <a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px"
+               sec:authorize="hasRole('ROLE_ADMIN')">Quản lý tài khoản Nhân viên</a>
+        </div>
+        <br>
+        <div style="border: 2px solid #0056b3; padding: 20px;">
+            <a href="#" class="addphone" style=" margin: 15px">Import lô điện thoại</a>
+            <a th:href="@{/Handshop/admin/add}" class="addphone" style=" margin: 15px">Thêm điện thoại mới</a>
+        </div>
+    </div>
+</header-admin>
+</body>
+</html>

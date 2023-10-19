@@ -1,0 +1,42 @@
+package com.springbootmvcwithentity.demo.WebSecurityConfig;
+
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.sql.DataSource;
+
+
+@Configuration
+//@EnableJpaRepositories(basePackages = "com.springbootmvcwithentity.demo.dao")
+@EnableJpaRepositories(basePackages = {"${spring.data.jpa.repository.packages}"})
+/**dùng để kết nối tới CSDL, được config trong application.properties*/
+
+public class DatasourceConfig {
+
+    @Primary
+    @Bean
+    @ConfigurationProperties(prefix="app.datasource")
+    public DataSource appDataSource() {return DataSourceBuilder.create().build(); }
+
+    @Bean
+    @ConfigurationProperties (prefix="spring.data.jpa.entity")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory (EntityManagerFactoryBuilder builder, DataSource appDataSource) {
+        return builder
+                .dataSource(appDataSource)
+                .build();
+    }
+    @Bean
+    @ConfigurationProperties (prefix="security.datasource")
+    public DataSource securityDataSource(){ return DataSourceBuilder.create().build(); }
+
+    
+}

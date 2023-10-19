@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/Header.css}">
+</head>
+<body>
+<div th:replace="header :: header"></div>
+<div class="container" style="margin-top: 150px">
+    <h1>Thanh toán</h1>
+    <form th:action="@{/RequestOrder}" method="post">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th> STT</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody id="productTableBody">
+            </tbody>
+        </table>
+        <label>Total Amount: <span id="totalAmount">0</span></label>
+        <input type="hidden" class="totalAmount" name="totalAmount">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Phương thức thanh toán</h2>
+                <select id="paymentMethod" style="margin: 10px" name="paymentMethod">
+                    <option th:each="paymentMethod : ${paymentMethods}" th:value="${paymentMethod.getMethodName}"
+                            th:text="${paymentMethod.getMethodName}"></option>
+                </select>
+                <div style="display: none" id="paymentinfo">
+                    <label for="numberOrAdresspayment" class="lable numberOrAdresspayment"></label> <input type="text"
+                                                                                                           class="form-control"
+                                                                                                           id="numberOrAdresspayment"
+                                                                                                           name="numberOrAdresspayment">
+                    <label style="display: none" for="expirationdate" class="lable expirationdate"> </label> <input
+                        type="text" class="form-control" id="expirationdate" name="expirationdate"
+                        placeholder="Nhập ngày hết hạn ">
+                    <label style="display: none" for="cvv" class="lable cvv"></label> <input type="text"
+                                                                                             class="form-control"
+                                                                                             id="cvv" name="cvv"
+                                                                                             placeholder="Nhập số CVV ">
+                    <p style="display: none" id="textQR"></p>
+                    <img id="imgQR" src="/Images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
+                </div>
+            </div>
+            <div class="col-md-6" th:if="${#authorization.expression('hasRole(''ROLE_CUSTOMER'')')}">
+                <!--Nếu khách hàng có đăng nhập -->
+                <h2>Thông tin khách hàng</h2>
+                <input type="hidden" name="customerId" th:value="${customer.customerId}">
+                <div class="form-group">
+                    <label for="name">Tên</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                           th:value="${customer.getFirstName}+' '+${customer.getLastName}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" th:value="${customer.getEmail}">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" class="form-control" id="phone" name="phone" th:value="${customer.getPhone}">
+                </div>
+                <div class="form-group">
+                    <label for="address"> Địa chỉ nhận hàng </label>
+                    <input type="text" class="form-control" id="address" name="address"
+                           th:value="${customer.getAddress}">
+                </div>
+            </div>
+            <div class="col-md-6" th:unless="${#authorization.expression('isAuthenticated()')}">
+                <!--Nếu khách hàng ko đăng nhập -->
+                <h2 style="margin: 50px 10px">Thông tin khách hàng</h2>
+                <div class="form-group">
+                    <label for="nameunknow"> Địa chỉ nhận hàng </label>
+                    <input type="text" class="form-control" id="nameunknow">
+                </div>
+                <div class="form-group">
+                    <label for="phoneunknow"> Địa chỉ nhận hàng </label>
+                    <input type="text" class="form-control" id="phoneunknow">
+                </div>
+                <div class="form-group">
+                    <label for="addressunknow"> Địa chỉ nhận hàng </label>
+                    <input type="text" class="form-control" id="addressunknow">
+                </div>
+            </div>
+        </div>
+        <div>
+            <input type="hidden" name="Orderdate"
+                   th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
+            <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="display: flex; justify-content: center">
+                <button style="margin: 10px; " type="submit" class="btn btn-primary" id="btnSendRequestBuy">Gửi yêu cầu
+                    mua hàng
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<!--<div th:if="!${paymentsuccess}" th:text="'Thanh toán thành công'" style="background-color: mediumseagreen; color: forestgreen"></div>-->
+<!--<div th:unless="${paymentsuccess}" th:text="'Thanh toán không thành công'" style="background-color: palevioletred; color: red"></div>-->
+<div th:replace="footer :: footer"></div>
+</body>
+<script src="/js/order-item-payment.js"></script>
+<script src="/js/header.js"></script>
+
+</html>
