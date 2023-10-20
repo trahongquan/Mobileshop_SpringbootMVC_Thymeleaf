@@ -6,6 +6,7 @@ import com.springbootmvcwithentity.demo.dao.*;
 //import com.springbootmvcwithentity.demo.dto.OrderitemDTO;
 import com.springbootmvcwithentity.demo.dto.OrderDTO;
 import com.springbootmvcwithentity.demo.dto.OrderitemDTO;
+import com.springbootmvcwithentity.demo.dto.PhoneDTO;
 import com.springbootmvcwithentity.demo.entity.*;
 //import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
 import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
@@ -197,8 +198,26 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/Handshop/invoiceCustomer")
+    public String invoiceCustomer(@RequestParam("OrderID") int orderID, Model model){
+        Order order = orderservice.findById(orderID);
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrderID(orderID);
+        List<OrderitemDTO> orderitemDTOs = new LinkedList<>();
+        Customer customer = customerService.findById(order.getCustomerId());
 
-//    @PostMapping("/Handshop/editpassCustomer")
+        orderItems.forEach(orderItem -> {
+            Phones phone = phoneService.findById(orderItem.getPhoneID());
+            Brands brand = brandService.findById(phone.getBrandId());
+            Categories category = categoryService.findById(phone.getCategoryId());
+            OrderitemDTO orderitemDTO = new OrderitemDTO(orderItem, new PhoneDTO(phone,brand,category));
+            orderitemDTOs.add(orderitemDTO);
+        });
+
+        OrderDTO orderDTO = new OrderDTO(order, orderitemDTOs, customer);
+        model.addAttribute("orderDTO", orderDTO);
+        return "customer/invoice";
+    }
+    //    @PostMapping("/Handshop/editpassCustomer")
 //    public String editpassCustomer( Model model,
 //                                    @RequestParam("passCustomer") String passCustomer,
 //                                    @RequestParam("emailCustomer") String emailCustomer) {

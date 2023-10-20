@@ -178,6 +178,7 @@
                 <th>Số lượng đặt hàng</th>
                 <th>Số lượng đáp ứng</th>
                 <th>Số lượng bổ sung</th>
+                <th>Giá/SP</th>
                 <th>Tổng giá</th>
                 <th>Ngày đặt hàng</th>
                 <th>Xử lý lần cuối</th>
@@ -221,25 +222,11 @@
                 <td class="wrap" th:text="${order.getDateProcessed}"></td>
                 <td>
                     <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                        <!--<form th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn">
-                            <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                            <input type="hidden" name="User" th:value="${#authentication.name}" >
-                            <input type="hidden" name="dateProcessed"
-                                   th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
-                            <button type="submit" class="btn btn-success btn-sm"
-                                    onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
-                            </button>
-                        </form>
-                        <form th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn">
-                            <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                            <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
-                            <button type="submit" class="btn btn-primary btn-sm"
-                                    onclick="return confirm('Xác nhận đã bổ sung đủ số lượng sản phẩm thiếu cho đơn hàng?')">
-                                Cập nhật
-                            </button>
-                        </form>-->
+                        <!--<a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn">-->
+                            <!--<button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>-->
+                        <!--</a>-->
                         <a th:href="@{'/Handshop/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
-                            <button type="button" class="btn btn-danger btn-sm">Reject</button>
+                            <button type="button" class="btn btn-danger btn-sm">Hủy</button>
                         </a>
                     </div>
                 </td>
@@ -300,6 +287,9 @@
                 <td class="wrap" th:text="${order.getDateProcessed}"></td>
                 <td>
                     <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                        <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn">
+                            <button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>
+                        </a>
                         <!--<form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
                             <input type="hidden" name="OrderID" th:value="${order.OrderID}">
                             <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">

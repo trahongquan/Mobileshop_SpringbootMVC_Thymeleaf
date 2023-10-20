@@ -181,12 +181,9 @@
                                 onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
                         </button>
                     </form>
-                    <!--<a th:href="@{'/Handshop/admin/updateOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
-                        <button type="button" class="btn btn-primary btn-sm"  >Update</button>
+                    <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn">
+                        <button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>
                     </a>
-                    <a th:href="@{'/Handshop/admin/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
-                        <button type="button" class="btn btn-danger btn-sm"  >Reject</button>
-                    </a>-->
                 </div>
             </td>
         </tr>

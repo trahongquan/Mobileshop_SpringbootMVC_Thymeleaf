@@ -29,6 +29,8 @@ public class OrderDTO {
 
     private List<Phones> phones;
 
+    private Phones phone;
+
     private List<String> seris;
 
     private Customer customer;
@@ -66,6 +68,21 @@ public class OrderDTO {
         this.orderitemDTOS = orderitemDTOS;
         this.seris = seris;
         this.phones = phones;
+        this.customer = customer;
+    }
+
+    public OrderDTO(Order order, List<OrderitemDTO> orderitemDTOS, Customer customer) {
+        this.orderID = order.getOrderID();
+        this.customerId = order.getCustomerId();
+        this.orderDate = order.getOrderDate() ;
+        this.dateProcessed = order.getDateProcessed();
+        this.paymentMethodId = order.getPaymentMethodId();
+        this.amount = order.getAmount();
+        this.numberOrAddressPayment = order.getNumberOrAddressPayment();
+        this.cvv = order.getCvv();
+        this.expirationDate = order.getExpirationDate();
+        this.employeeID = order.getEmployeeID();
+        this.orderitemDTOS = orderitemDTOS;
         this.customer = customer;
     }
 
@@ -187,5 +204,13 @@ public class OrderDTO {
 
     public void setPhones(List<Phones> phones) {
         this.phones = phones;
+    }
+
+    public Phones getPhone() {
+        return phone;
+    }
+
+    public void setPhone(Phones phone) {
+        this.phone = phone;
     }
 }
