@@ -67,7 +67,7 @@ public class PhoneController {
 
 
     /******************************************************************************************************/
-    /** Khu vực Chung*/
+                                            /** Khu vực Chung*/
     /******************************************************************************************************/
 
     @GetMapping({"/", ""})
@@ -137,8 +137,25 @@ public class PhoneController {
 
     @GetMapping({"/Android"})
     public String getListAndroids(Model model) {
-
         List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getOperatingSystem().equals("Android")).collect(Collectors.toList());
+        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
+        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        return "index";
+    }
+
+    /********************************************************/
+    /************************* SEARCH ***********************/
+    /********************************************************/
+
+    @PostMapping("/list/search")
+    public String Search(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
+        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
+        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        return "index";
+    }
+
+    public List<PhoneDTO> InputListPhoneOutputListPhoneDTO(List<Phones> phones){
         List<PhoneDTO> phoneDTOS = new ArrayList<>();
 
         for (Phones phone : phones) {
@@ -152,32 +169,18 @@ public class PhoneController {
 //                String formattedResult = df.format(result);
 
         }
-        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
-        return "index";
+        return phoneDTOS;
     }
 
-
     /******************************************************************************************************/
-    /** Khu vực của admin*/
+                                                    /** Khu vực của admin*/
     /******************************************************************************************************/
 
 
     @GetMapping({"/admin", "/admin/"})
     public String redirectToAdminHandshopListAdmin(Model model) {
         List<Phones> phones = phoneService.findAll();
-        List<PhoneDTO> phoneDTOS = new ArrayList<>();
-
-        for (Phones phone : phones) {
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
-            phoneDTOS.add(phoneDTO);
-            // Khai báo đối tượng DecimalFormat với mẫu định dạng mong muốn
-//                DecimalFormat df = new DecimalFormat("#.##");
-//                double result = Double.parseDouble(phoneDTO.getPriceDTO().getSellPrice()) / (1 - Double.parseDouble(phoneDTO.getPriceDTO().getDiscount()))/* + random*/;
-//                String formattedResult = df.format(result);
-
-        }
+        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "admin/list-phones";
     }
@@ -192,7 +195,6 @@ public class PhoneController {
             Categories category = categoryService.findById(phone.getCategoryId());
             orderitemDTOS.add(new OrderitemDTO(item,new PhoneDTO(phone,brand,category)));
         });
-
         model.addAttribute("orderitemDTOS", orderitemDTOS); /** cách xử lý ở backEnd*/
         return "admin/list-sold-phones";
     }
@@ -631,25 +633,5 @@ public class PhoneController {
         return "/admin/ProfitReportAccees";
     }
 
-    /******************************************************************************************************/
-    /** Invoice - Hóa đơn */
-    /******************************************************************************************************/
 
-
-//    @GetMapping("/admin/export/invoice/pdf")
-//    public void exportInvoiceToPDF(HttpServletResponse response, Model model) throws IOException {
-//        response.setContentType("application/pdf");
-//        response.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
-//
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(new PdfWriter(baos));
-//        Document document = new Document(pdf);
-//        PdfWriter.getInstance(document, baos);
-//        document.open();
-//
-//        XMLWorkerHelper.getInstance().parseXHtml(PdfWriter.getInstance(document, baos), new FileInputStream("admin/order-Request.html"));
-//
-//        document.close();
-//        baos.writeTo(response.getOutputStream());
-//    }
 }

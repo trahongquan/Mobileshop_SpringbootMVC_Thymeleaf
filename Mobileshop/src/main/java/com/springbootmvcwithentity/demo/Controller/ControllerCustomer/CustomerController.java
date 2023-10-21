@@ -37,15 +37,10 @@ import java.util.stream.Collectors;
 public class CustomerController {
 
 
-    @Autowired //tự động cấp , nap bean vào container để nạp các composnent vào container
     private CustomerRepository customerRepository;
-    @Autowired
     private UserService userService;
-    @Autowired
     private AuthorityService authorityService;
-    @Autowired
     private PasswordEncoder passwordEncoder; // Mã hóa mật khẩu customer theo luật BCryt
-
     private PhoneRepository phoneRepository;
     private PhoneService phoneService;
     private CustomerService customerService;
@@ -57,24 +52,23 @@ public class CustomerController {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
-    public CustomerController(PhoneService phoneService, BrandService brandService
-            , CategoryService categoryService
-            , CustomerService customerService
-            , PhoneRepository phoneRepository
-            , orderService orderservice
-            , orderitemsService orderitemsservice
-            ,OrderRepository orderRepository
-            ,OrderItemRepository orderItemRepository) {
+    public CustomerController(CustomerRepository customerRepository, UserService userService, AuthorityService authorityService, PasswordEncoder passwordEncoder, PhoneRepository phoneRepository, PhoneService phoneService, CustomerService customerService, BrandService brandService, CategoryService categoryService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+        this.customerRepository = customerRepository;
+        this.userService = userService;
+        this.authorityService = authorityService;
+        this.passwordEncoder = passwordEncoder;
+        this.phoneRepository = phoneRepository;
         this.phoneService = phoneService;
         this.customerService = customerService;
         this.brandService = brandService;
         this.categoryService = categoryService;
-        this.phoneRepository = phoneRepository;
-        this.orderservice = orderservice;
         this.orderitemsservice = orderitemsservice;
+        this.orderservice = orderservice;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
     }
+
+
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -112,40 +106,7 @@ public class CustomerController {
         Customer customerpath = customerRepository.findByEmail(username);
         model.addAttribute("customer",customerpath);
 
-
-        /** /////////////////////////// */
-
-        int customerid = customerpath.getCustomerId();
-        List<Order> orders = orderRepository.findAllByCustomerId(customerid);
-        List<OrderItem> orderItems = orderitemsservice.findAll();
-        List<OrderitemDTO> orderitemDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
-        List<OrderDTO> orderDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
-
-        /** Tạo một List orderItemDTOs: danh sách các sản phẩm được mua*/
-        orderItems.forEach(orderItem -> {
-            List<String> serisOrder = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();/** Chuyển chuỗi phoneID thành List PhoneID*/
-            OrderitemDTO orderitemDTO = new OrderitemDTO(orderItem, serisOrder);
-            orderitemDTOs.add(orderitemDTO);
-        });
-
-        /** Tạo một List orderDTOs: danh sách các hóa đơn*/
-        orders.forEach(order -> {
-            List<String> serisOrder = new LinkedList<>(); /** List phone nằm trong orderItem*/
-            orderitemDTOs.forEach(item->item.getSeris().forEach(seriItem->serisOrder.add(seriItem)));
-//            String employeeID = !order.getEmployeeID().equals("") ? order.getEmployeeID() : "";
-            Customer customer = customerService.findById(order.getCustomerId());
-
-            List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
-            List<Phones> phonesOrder = new LinkedList<>();
-            orderitemDTOs.forEach(item -> {
-                if(item.getOrderID() == order.getOrderID()){
-                    phonesOrder.add(phoneService.findById(item.getPhoneID()));
-                    orderitemDTOs2.add(item);
-                }
-            });
-            OrderDTO orderDTO = new OrderDTO(order,orderitemDTOs2,serisOrder ,phonesOrder,customer);
-            orderDTOs.add(orderDTO);
-        });
+        List<OrderDTO> orderDTOs = InputCustomerOutputListOrderDTO(customerpath);
 
         LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
         List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
@@ -198,6 +159,10 @@ public class CustomerController {
         }
     }
 
+    /******************************************************************************************************/
+                                /** Invoice - Hóa đơn */
+    /******************************************************************************************************/
+
     @GetMapping("/Handshop/invoiceCustomer")
     public String invoiceCustomer(@RequestParam("OrderID") int orderID, Model model){
         Order order = orderservice.findById(orderID);
@@ -217,18 +182,68 @@ public class CustomerController {
         model.addAttribute("orderDTO", orderDTO);
         return "customer/invoice";
     }
-    //    @PostMapping("/Handshop/editpassCustomer")
-//    public String editpassCustomer( Model model,
-//                                    @RequestParam("passCustomer") String passCustomer,
-//                                    @RequestParam("emailCustomer") String emailCustomer) {
-//        Customer customer = customerRepository.findByEmail(emailCustomer);
-//        customer.setPass(passCustomer);
-//        customerService.save(customer);
-//        showMyAccount(model,emailCustomer);
-//        return "redirect:/Handshop/myAccount/emailCustomer";
-//    }
-//
-//
+
+    @PostMapping("/Handshop/editpassCustomer")
+    public String editpassCustomer( Model model,
+                                    @RequestParam("passCustomer") String passCustomer,
+                                    @RequestParam("emailCustomer") String emailCustomer) {
+        Customer customer = customerRepository.findByEmail(emailCustomer);
+        customer.setPass(passCustomer);
+        customerService.save(customer);
+
+        Users user = userService.findByUsername(customer.getEmail());
+        user.setPassword(passwordEncoder.encode(customer.getPass()));
+        userService.save(user);
+
+        List<OrderDTO> orderDTOs = InputCustomerOutputListOrderDTO(customer);
+
+        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
+        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
+        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+
+        model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
+        model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
+        model.addAttribute("orderDTOs", orderDTOs);
+        model.addAttribute("customer",customer);
+
+        return "customer/customerinfo";
+    }
+
+    public List<OrderDTO> InputCustomerOutputListOrderDTO(Customer customer){
+        int customerid = customer.getCustomerId();
+        List<Order> orders = orderRepository.findAllByCustomerId(customerid);
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
+        List<OrderDTO> orderDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
+
+        /** Tạo một List orderItemDTOs: danh sách các sản phẩm được mua*/
+        orderItems.forEach(orderItem -> {
+            List<String> serisOrder = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();/** Chuyển chuỗi phoneID thành List PhoneID*/
+            OrderitemDTO orderitemDTO = new OrderitemDTO(orderItem, serisOrder);
+            orderitemDTOs.add(orderitemDTO);
+        });
+
+        /** Tạo một List orderDTOs: danh sách các hóa đơn*/
+        orders.forEach(order -> {
+            List<String> serisOrder = new LinkedList<>(); /** List phone nằm trong orderItem*/
+            orderitemDTOs.forEach(item->item.getSeris().forEach(seriItem->serisOrder.add(seriItem)));
+//            String employeeID = !order.getEmployeeID().equals("") ? order.getEmployeeID() : "";
+            Customer customerOrderDTO = customerService.findById(order.getCustomerId());
+
+            List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
+            List<Phones> phonesOrder = new LinkedList<>();
+            orderitemDTOs.forEach(item -> {
+                if(item.getOrderID() == order.getOrderID()){
+                    phonesOrder.add(phoneService.findById(item.getPhoneID()));
+                    orderitemDTOs2.add(item);
+                }
+            });
+            OrderDTO orderDTO = new OrderDTO(order,orderitemDTOs2,serisOrder ,phonesOrder,customerOrderDTO);
+            orderDTOs.add(orderDTO);
+        });
+        return orderDTOs;
+    }
 
 }
 

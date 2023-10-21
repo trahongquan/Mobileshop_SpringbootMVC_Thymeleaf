@@ -112,4 +112,66 @@ public class PaymentController {
         return "/phones/RequestOrder-success";
     }
 
+
+    /*@PostMapping(value = "/anonymousUser/RequestOrder", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public String anonymousUserPayment(
+            @RequestParam("inputmodel") List<String> inputmodel
+            , @RequestParam("inputquantity") List<String> inputquantity
+            , @RequestParam("customerId") int customerId
+            , @RequestParam("email") String email
+            , @RequestParam("Orderdate") String Orderdate
+            , @RequestParam("paymentMethod") String paymentMethodname
+            , @RequestParam("totalAmount") String totalAmount
+            , @RequestParam("numberOrAdresspayment") String numberOrAdresspayment
+            , @RequestParam(value = "cvv", required = false, defaultValue = "") String cvv
+            , @RequestParam(value = "dateProcessed") String dateProcessed
+            , @RequestParam(value = "expirationdate", required = false, defaultValue = "") String expirationdate){
+
+        Customer customer = customerRepository.findByEmail(email);
+        PaymentMethod paymentMethod = paymentMethodRepository.findByMethodName(paymentMethodname);
+        double total = Double.parseDouble(totalAmount);
+        Order order = new Order(customer ,Orderdate,dateProcessed, paymentMethod ,total,numberOrAdresspayment,cvv,expirationdate);
+        ordeservice.save(order);
+        for (int i = 0; i < inputmodel.size(); i++) {
+            *//** Lọc lấy các phone còn trong kho*//*
+            Phones phone = phoneRepository.findByModel(inputmodel.get(i));
+
+            int qtyInventory = phone.getQuantity();
+            int qtyOrder = Integer.parseInt(inputquantity.get(i));
+
+            if(qtyInventory <= qtyOrder){
+                int missing = (qtyOrder - qtyInventory);
+                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
+                List<String> serisOrderItem = new LinkedList<>();
+                for (int j = 0; j < qtyInventory; j++) {
+                    serisOrderItem.add(seris.get(j));
+                }
+                OrderItem orderItem = new OrderItem(order.getOrderID(),phone.getPhoneId(),phone.getPrice(),qtyOrder,serisOrderItem.toString(),missing);
+                orderitemsservice.save(orderItem);
+                seris.clear();
+                phone.setSeri(seris.toString());
+                phone.setQuantity(0);
+                phoneRepository.save(phone);
+            }
+            if(qtyInventory > qtyOrder){
+                int missing = 0;
+                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
+                List<String> serisOrderItem = new LinkedList<>();
+                for (int j = 0; j < qtyOrder; j++) {
+                    serisOrderItem.add(seris.get(j));
+                }
+                OrderItem orderItem = new OrderItem(order.getOrderID(),phone.getPhoneId(),phone.getPrice(),qtyOrder,serisOrderItem.toString(),missing);
+                orderitemsservice.save(orderItem);
+                if (qtyOrder <= seris.size()) {
+                    seris.subList(0, qtyOrder).clear();
+                }
+                phone.setSeri(seris.toString());
+                phone.setQuantity(qtyInventory - qtyOrder);
+                phoneRepository.save(phone);
+            }
+        }
+        return "/phones/RequestOrder-success";
+    }*/
+
+
 }

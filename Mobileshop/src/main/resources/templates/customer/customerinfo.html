@@ -141,7 +141,7 @@
                     <th>Mật khẩu</th>
                     <td>
                         <div class="d-flex" style="flex-direction: row; justify-content: space-around">
-                            <form action="Handshop/editpassCustomer" method="post">
+                            <form th:action="@{/Handshop/editpassCustomer}" method="post">
                                 <input type="text" th:value="${customer.pass}" name="passCustomer">
                                 <input type="hidden" th:value="${customer.email}" name="emailCustomer">
                                 <button type="submit" class="btn btn-primary"> Đổi MK </button>

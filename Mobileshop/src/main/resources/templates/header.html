@@ -47,6 +47,14 @@
                     </ul>
                 </div>
             </div>
+            <form th:action="@{/Handshop/list/search}" method="post">
+                <div class="search-container" style="display: flex; flex-direction: row; justify-items: center; align-items: center">
+                    <input style="min-width: 0px" type="text" class="form-control  bg-transparent text-dark" name="inputdatasearch" placeholder="Nhập từ khóa tìm kiếm">
+                    <button class="search-button  bg-transparent text-dark" type="submit" style="max-width: max-content">
+                        <img src="/images/search-icon-1.png" style="max-width: 15px" alt="">
+                    </button>
+                </div>
+            </form>
             <div class="menu-toggle">
                 <ul class="top-menu mobile">
                     <div class="header-links">
