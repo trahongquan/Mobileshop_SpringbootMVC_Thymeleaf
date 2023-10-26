@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>Import Danh sách điện thoại</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="admin/headerAdmin :: header-admin"></div>
+<div style="display: flex; justify-content: center; align-content: center">
+
+<form th:action="@{'/Handshop/admin/importExel'}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".xlsx, .xls">
+    <button type="submit">Import</button>
+</form>
+</div>
+</body>
+</html>

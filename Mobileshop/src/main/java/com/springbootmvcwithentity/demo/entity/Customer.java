@@ -45,6 +45,15 @@ public class Customer {
     public Customer() {
     }
 
+    public Customer(String firstName, String email, String phone, String pass, String address, Timestamp registrationDate) {
+        this.firstName = firstName;
+        this.email = email;
+        this.phone = phone;
+        this.pass = pass;
+        this.address = address;
+        this.registrationDate = registrationDate;
+    }
+
     public Customer(String firstName, String lastName, String email, String phone, String pass, String address, Timestamp registrationDate) {
         this.firstName = firstName;
         this.lastName = lastName;

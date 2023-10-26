@@ -16,6 +16,10 @@ import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
 import com.springbootmvcwithentity.demo.service.order.orderService;
 import com.springbootmvcwithentity.demo.service.orderitem.orderitemsService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
@@ -70,16 +74,7 @@ public class PhoneController {
                                             /** Khu vực Chung*/
     /******************************************************************************************************/
 
-    @GetMapping({"/", ""})
-    public String redirectToHandshopList() {
-        return "redirect:/Handshop/list";
-    }
-
-
-    @GetMapping({"/list"})
-    public String getPhones(Model model) {
-
-        List<Phones> phones = phoneService.findAll();
+    public List<PhoneDTO> Phone2PhoneDTOS(List<Phones> phones){
         List<PhoneDTO> phoneDTOS = new ArrayList<>();
 
         for (Phones phone : phones) {
@@ -93,6 +88,20 @@ public class PhoneController {
 //                String formattedResult = df.format(result);
 
         }
+        return phoneDTOS;
+    }
+
+    @GetMapping({"/", ""})
+    public String redirectToHandshopList() {
+        return "redirect:/Handshop/list";
+    }
+
+
+    @GetMapping({"/list"})
+    public String getPhones(Model model) {
+
+        List<Phones> phones = phoneService.findAll();
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
@@ -112,33 +121,19 @@ public class PhoneController {
         }
     }
 
-
     @GetMapping({"/iphone"})
     public String getListiPhones(Model model) {
 
         List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getOperatingSystem().equals("IOS")).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = new ArrayList<>();
-
-        for (Phones phone : phones) {
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
-            phoneDTOS.add(phoneDTO);
-            // Khai báo đối tượng DecimalFormat với mẫu định dạng mong muốn
-//                DecimalFormat df = new DecimalFormat("#.##");
-//                double result = Double.parseDouble(phoneDTO.getPriceDTO().getSellPrice()) / (1 - Double.parseDouble(phoneDTO.getPriceDTO().getDiscount()))/* + random*/;
-//                String formattedResult = df.format(result);
-
-        }
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
 
-
     @GetMapping({"/Android"})
     public String getListAndroids(Model model) {
         List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getOperatingSystem().equals("Android")).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
@@ -150,26 +145,9 @@ public class PhoneController {
     @PostMapping("/list/search")
     public String Search(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
         List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
-        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
-    }
-
-    public List<PhoneDTO> InputListPhoneOutputListPhoneDTO(List<Phones> phones){
-        List<PhoneDTO> phoneDTOS = new ArrayList<>();
-
-        for (Phones phone : phones) {
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
-            phoneDTOS.add(phoneDTO);
-            // Khai báo đối tượng DecimalFormat với mẫu định dạng mong muốn
-//                DecimalFormat df = new DecimalFormat("#.##");
-//                double result = Double.parseDouble(phoneDTO.getPriceDTO().getSellPrice()) / (1 - Double.parseDouble(phoneDTO.getPriceDTO().getDiscount()))/* + random*/;
-//                String formattedResult = df.format(result);
-
-        }
-        return phoneDTOS;
     }
 
     /******************************************************************************************************/
@@ -180,7 +158,7 @@ public class PhoneController {
     @GetMapping({"/admin", "/admin/"})
     public String redirectToAdminHandshopListAdmin(Model model) {
         List<Phones> phones = phoneService.findAll();
-        List<PhoneDTO> phoneDTOS = InputListPhoneOutputListPhoneDTO(phones);
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "admin/list-phones";
     }
@@ -218,6 +196,8 @@ public class PhoneController {
                               @RequestParam("file") MultipartFile file) {
         phone.setBrandId(brandID);
         phone.setCategoryId(categoryID);
+        List<String> listseri = new StringToList().StringToList(phone.getSeri());
+        phone.setQuantity(listseri.size());
 
         if (!file.isEmpty()) {
             try {
@@ -275,8 +255,8 @@ public class PhoneController {
         existingPhone.setRam(updatedPhone.getRam());
         existingPhone.setOperatingSystem(updatedPhone.getOperatingSystem());
         existingPhone.setColor(updatedPhone.getColor());
-        existingPhone.setQuantity(updatedPhone.getQuantity());
         existingPhone.setSeri(updatedPhone.getSeri());
+        existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());
 
         if (!file.isEmpty()) {
             try {
@@ -632,6 +612,57 @@ public class PhoneController {
         model.addAttribute("endDate", endDateFormat);
         return "/admin/ProfitReportAccees";
     }
+    /******************************************************************************************************/
+    /** Import file exel */
+    /******************************************************************************************************/
 
+    @GetMapping("/admin/importExel")
+    public String importPhonesGet() {
+    return "admin/importExel";
+    }
 
+    @PostMapping("/admin/importExel")
+    public String importPhones(@RequestParam("file") MultipartFile file) {
+        try {
+            // Đọc tệp Excel
+            Workbook workbook = WorkbookFactory.create(file.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Lặp qua từng dòng trong bảng Excel
+            for (Row row : sheet) {
+                // Bỏ qua dòng tiêu đề
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+
+                // Tạo một đối tượng Phones từ dữ liệu trong dòng
+                Phones phone = new Phones();
+                phone.setBrandId((int) row.getCell(0).getNumericCellValue());
+                phone.setCategoryId((int) row.getCell(1).getNumericCellValue());
+                phone.setPhoneName(row.getCell(2).getStringCellValue());
+                phone.setModel(row.getCell(3).getStringCellValue());
+                phone.setReleaseYear((int) row.getCell(4).getNumericCellValue());
+                phone.setScreenSize(row.getCell(5).getNumericCellValue());
+                phone.setStorageCapacity((int) row.getCell(6).getNumericCellValue());
+                phone.setRam((int) row.getCell(7).getNumericCellValue());
+                phone.setOperatingSystem(row.getCell(8).getStringCellValue());
+                phone.setPrice(row.getCell(9).getStringCellValue());
+                phone.setColor(row.getCell(10).getStringCellValue());
+                phone.setImageName(row.getCell(11).getStringCellValue());
+                phone.setQuantity((int) row.getCell(12).getNumericCellValue());
+                phone.setSeri(row.getCell(13).getStringCellValue());
+
+                // Lưu đối tượng Phones vào cơ sở dữ liệu
+                phoneService.save(phone);
+            }
+
+            // Đóng workbook
+            workbook.close();
+
+            return "redirect:Handshop/admin";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:Handshop/admin/eror";
+        }
+    }
 }

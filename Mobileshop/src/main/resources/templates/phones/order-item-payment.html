@@ -52,47 +52,24 @@
                     <img id="imgQR" src="/Images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
                 </div>
             </div>
-            <div class="col-md-6" th:if="${#authorization.expression('hasRole(''ROLE_CUSTOMER'')')}">
-                <!--Nếu khách hàng có đăng nhập -->
-                <h2>Thông tin khách hàng</h2>
-                <input type="hidden" name="customerId" th:value="${customer.customerId}">
-                <div class="form-group">
-                    <label for="name">Tên</label>
-                    <input type="text" class="form-control" id="name" name="name"
-                           th:value="${customer.getFirstName}+' '+${customer.getLastName}">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" th:value="${customer.getEmail}">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Số điện thoại</label>
-                    <input type="text" class="form-control" id="phone" name="phone" th:value="${customer.getPhone}">
-                </div>
-                <div class="form-group">
-                    <label for="address"> Địa chỉ nhận hàng </label>
-                    <input type="text" class="form-control" id="address" name="address"
-                           th:value="${customer.getAddress}">
-                </div>
-            </div>
             <div class="col-md-6" th:unless="${#authorization.expression('isAuthenticated()')}">
                 <!--Nếu khách hàng ko đăng nhập -->
                 <h2 style="margin: 50px 10px">Thông tin khách hàng</h2>
                 <div class="form-group">
                     <label for="nameunknow"> Tên Khách hàng </label>
-                    <input type="text" class="form-control" id="nameunknow">
+                    <input type="text" class="form-control" id="nameunknow" name="nameunknow">
                 </div>
                 <div class="form-group">
                     <label for="emailunknow"> Email </label>
-                    <input type="text" class="form-control" id="emailunknow">
+                    <input type="text" class="form-control" id="emailunknow" name="emailunknow">
                 </div>
                 <div class="form-group">
                     <label for="phoneunknow"> Số điện thoại liên lạc </label>
-                    <input type="text" class="form-control" id="phoneunknow">
+                    <input type="text" class="form-control" id="phoneunknow" name="phoneunknow">
                 </div>
                 <div class="form-group">
                     <label for="addressunknow"> Địa chỉ nhận hàng </label>
-                    <input type="text" class="form-control" id="addressunknow">
+                    <input type="text" class="form-control" id="addressunknow" name="addressunknow">
                 </div>
             </div>
         </div>
@@ -103,8 +80,8 @@
         </div>
         <div class="row">
             <div class="col-md-12" style="display: flex; justify-content: center">
-                <button style="margin: 10px; " type="submit" class="btn btn-primary" id="btnSendRequestBuy">Gửi yêu cầu
-                    mua hàng
+                <button style="margin: 10px; " type="button" class="btn btn-primary" id="btnSendRequestBuy" onclick="confirm('Xác nhận tạo đơn hàng! \n(Nếu bạn chưa đăng ký tài khoản trên hệ thống, hệ thống sẽ tự động tạo tài khoản dựa trên thông tin đăt hàng của bạn)')">
+                    Gửi yêu cầu mua hàng
                 </button>
             </div>
         </div>
@@ -172,26 +149,6 @@
                            th:value="${customer.getAddress}">
                 </div>
             </div>
-            <div class="col-md-6" th:unless="${#authorization.expression('isAuthenticated()')}">
-                <!--Nếu khách hàng ko đăng nhập -->
-                <h2 style="margin: 50px 10px">Thông tin khách hàng</h2>
-                <div class="form-group">
-                    <label for="nameunknow"> Tên Khách hàng </label>
-                    <input type="text" class="form-control" id="nameunknow">
-                </div>
-                <div class="form-group">
-                    <label for="emailunknow"> Email </label>
-                    <input type="text" class="form-control" id="emailunknow">
-                </div>
-                <div class="form-group">
-                    <label for="phoneunknow"> Số điện thoại liên lạc </label>
-                    <input type="text" class="form-control" id="phoneunknow">
-                </div>
-                <div class="form-group">
-                    <label for="addressunknow"> Địa chỉ nhận hàng </label>
-                    <input type="text" class="form-control" id="addressunknow">
-                </div>
-            </div>
         </div>
         <div>
             <input type="hidden" name="Orderdate"
@@ -200,8 +157,8 @@
         </div>
         <div class="row">
             <div class="col-md-12" style="display: flex; justify-content: center">
-                <button style="margin: 10px; " type="submit" class="btn btn-primary" id="btnSendRequestBuy">Gửi yêu cầu
-                    mua hàng
+                <button style="margin: 10px; " type="button" class="btn btn-primary" id="btnSendRequestBuy" onclick="confirm('Xác nhận tạo đơn hàng! \n(Nếu bạn chưa đăng ký tài khoản trên hệ thống, hệ thống sẽ tự động tạo tài khoản dựa trên thông tin đăt hàng của bạn)')">
+                    Gửi yêu cầu mua hàng
                 </button>
             </div>
         </div>

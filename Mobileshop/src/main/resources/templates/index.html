@@ -16,10 +16,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/Header.css}">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!--<link rel="stylesheet" th:href="@{/css/headerfix2.css}">-->
+    <!--<script src="/js/headerfix2.js"></script> &lt;!&ndash;Dùng cho slide banner&ndash;&gt;-->
     <link rel="stylesheet" href="/css/stylesSupport.css">
-    <style>
-
-    </style>
 </head>
 <body>
 <div th:replace="header :: header"></div>
@@ -34,7 +33,7 @@
                      style="width: 150px; height: 150px;">
                 <h2 th:text="${phone.phoneName}"></h2>
                 <!--<p> <strong> <del th:text="${pricePreSale[iter.index]} + ' $'" th:data="${pricePreSale[iter.index]}"></del> </strong> </p>-->
-                <strong><p class="price" th:text="@{'Giá: ' + ${phone.getPrice}+'$'}"></p></strong>
+                <strong><p class="price" th:text="@{'Giá: ' + '$'+ ${phone.getPrice}}"></p></strong>
                 <p th:text="'Mô tả: Chiếc điện thoại thông minh từ ' + ${phone.getBrand.getBrandName}"></p>
                 <!--cách dùng cú pháp thymeleaf, với biến iter trả về {index, count ... }-->
             </a>

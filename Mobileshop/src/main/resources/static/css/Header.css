@@ -151,21 +151,22 @@
 .top-menu .topic-items div.child-menu-content {
     margin-top: 10px;
     z-index: 99;
-    background-color: #515154;
+    /*background-color: #515154;*/
+    background: linear-gradient(0.4turn,#3f87a6,  #f69d3c);
     text-align: left;
 }
 
 .top-menu .topic-items div.child-menu-content:after {
     content: "";
     position: absolute;
-    top: 0px;
-    left: 5px;
     border-right: 10px solid transparent;
     border-left: 10px solid transparent;
     border-bottom: 10px solid #515154;
 }
 
 .top-menu .topic-items:hover div.child-menu {
+    top:50px;
+    left: 0px;
     display: block !important;
 }
 
@@ -173,8 +174,9 @@
     display: block;
     padding: 12px 16px;
     line-height: 20px;
-    font-size: 15px;
-    color: #d2d2d7;
+    font-family: "Times New Roman";
+    font-size: 20px;
+    color: white;
     cursor: pointer;
     border-bottom: 1px solid #5c5c5c;
 }
@@ -274,4 +276,32 @@
 }
 
 
+#toggle {
+    display: none;
+    background: #353b48;
+    color: #fff;
+    text-align: right;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    width: max-content;
+}
 
+@media screen and (max-width: 768px) {
+    .top-menu{
+        display: flex;
+    }
+    .header, .top-menu {
+        flex-direction: column;
+        text-align: center;
+    }
+    #toggle {
+        display: block;
+    }
+    /*.nav>.header>.headerLeft>.header-menu>.top-menu>li {
+        display: none;
+    }*/
+    .category-menu-items, .listbox, .popup-header-links>li{
+        display: none;
+    }
+}

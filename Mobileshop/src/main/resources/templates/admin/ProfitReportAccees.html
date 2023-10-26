@@ -43,7 +43,7 @@
         <button type="submit" class="btn btn-success">Báo cáo lợi nhuận</button>
     </div>
     <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
-        <h1 class="align-items-center justify-content-center">Báo cáo lợi nhuận</h1>
+        <h1 class="align-items-center justify-content-center">Báo cáo Doanh thu</h1>
         <h3 th:text="@{'Từ ngày ' + ${startDate} + ' đến ngày ' + ${endDate} }"></h3>
     </div>
 </form>
@@ -117,7 +117,7 @@
     </table>
 </div>
 <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
-    <h2 th:text="@{'Tổng lợi nhuận: ' + '$' + ${profit} }" ></h2>
+    <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }" ></h2>
 </div>
 </body>
 </html>

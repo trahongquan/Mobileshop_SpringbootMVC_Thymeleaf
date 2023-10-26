@@ -22,4 +22,15 @@ $(document).ready( function () {
         var cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
         return cookieValue ? cookieValue.pop() : null;
     }
+});
+
+/**
+ * *******************************************
+ * Chuyển về dạng slice cho màn hình bé
+ * *******************************************
+ */
+$(document).ready(function() {
+    $('#toggle').click(function() {
+        $('nav').slideToggle();
+    });
 })

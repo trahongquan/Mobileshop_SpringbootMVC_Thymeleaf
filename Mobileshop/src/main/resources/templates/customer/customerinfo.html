@@ -144,7 +144,7 @@
                             <form th:action="@{/Handshop/editpassCustomer}" method="post">
                                 <input type="text" th:value="${customer.pass}" name="passCustomer">
                                 <input type="hidden" th:value="${customer.email}" name="emailCustomer">
-                                <button type="submit" class="btn btn-primary"> Đổi MK </button>
+                                <button type="submit" class="btn btn-primary" onclick="confirm('Bạn có chắc chắn đổi mật khẩu?')"> Đổi MK </button>
                             </form>
                         </div>
                     </td>
@@ -226,7 +226,9 @@
                             <!--<button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>-->
                         <!--</a>-->
                         <a th:href="@{'/Handshop/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
-                            <button type="button" class="btn btn-danger btn-sm">Hủy</button>
+                            <button type="button" class="btn btn-danger btn-sm" >
+                                Hủy
+                            </button>
                         </a>
                     </div>
                 </td>
