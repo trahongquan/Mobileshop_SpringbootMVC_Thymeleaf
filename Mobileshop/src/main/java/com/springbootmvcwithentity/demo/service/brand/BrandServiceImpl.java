@@ -29,9 +29,9 @@ public class BrandServiceImpl implements BrandService{
         }
     };
     @Override
-    public void save(Brands theBrands){}; // được sử dụng cả add new và update
+    public void save(Brands theBrands){brandRepository.save(theBrands);}; // được sử dụng cả add new và update
     @Override
-    public void deleteById(int theId){};
+    public void deleteById(int theId){brandRepository.deleteById(theId);};
 
 
 }

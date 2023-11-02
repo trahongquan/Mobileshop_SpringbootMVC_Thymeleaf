@@ -100,7 +100,7 @@ public class PhoneController {
     @GetMapping({"/list"})
     public String getPhones(Model model) {
 
-        List<Phones> phones = phoneService.findAll();
+        List<Phones> phones = phoneService.findAll().stream().filter(item->item.getQuantity()!=0).collect(Collectors.toList());
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
@@ -124,7 +124,7 @@ public class PhoneController {
     @GetMapping({"/iphone"})
     public String getListiPhones(Model model) {
 
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getOperatingSystem().equals("IOS")).collect(Collectors.toList());
+        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystem().equals("IOS")).collect(Collectors.toList());
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
@@ -132,7 +132,7 @@ public class PhoneController {
 
     @GetMapping({"/Android"})
     public String getListAndroids(Model model) {
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getOperatingSystem().equals("Android")).collect(Collectors.toList());
+        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystem().equals("Android")).collect(Collectors.toList());
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
@@ -298,6 +298,35 @@ public class PhoneController {
     public String deletePhone(@PathVariable int id) {
         phoneService.deleteById(id);
         return "redirect:/Handshop/admin";
+    }
+
+    /******************************************************************************************************/
+    /** Brand & Category - Admin */
+    /******************************************************************************************************/
+
+    @GetMapping("/admin/brandandcategory")
+    public String showbrandandcategoryForm(Model model) {
+        List<Brands> brands = brandService.findAll();
+        List<Categories> categories = categoryService.findAll();
+        Phones phone = new Phones();
+        model.addAttribute("phone", phone);
+        model.addAttribute("brands", brands);
+        model.addAttribute("categories", categories);
+        return "admin/add-Brand-Category";
+    }
+
+
+    @PostMapping("/admin/brand/add")
+    public String addBrand(@RequestParam("addBrand") String brandName){
+        Brands brand = new Brands(brandName);
+        brandService.save(brand);
+        return "redirect:/Handshop/admin/brandandcategory";
+    }
+    @PostMapping("/admin/category/add")
+    public String addCategory(@RequestParam("addCategory") String categoryName){
+        Categories category = new Categories(categoryName);
+        categoryService.save(category);
+        return "redirect:/Handshop/admin/brandandcategory";
     }
 
     /******************************************************************************************************/

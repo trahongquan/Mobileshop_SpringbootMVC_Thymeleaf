@@ -8,7 +8,6 @@
     <title>Phone Details</title>
     <!-- Thêm các tệp CSS và JS của Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <link rel="stylesheet" href="/css/Header.css">
     <link rel="stylesheet" href="/css/stylesSupport.css">
     <script src="/js/ScriptSupport.js"></script>
@@ -17,16 +16,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body style="color: black">
 <div th:replace="header :: header"></div>
 
 <div class="bodyDetailAndReview">
     <div class="container-fluid">
         <div class="row">
             <!-- Phần bên trái (1/3 màn hình) -->
-            <div class="col-md-4">
+            <div class="col-md-4" >
                 <h3 th:text="@{'Thông tin điện thoại ' + ${phoneDTO.phoneName}}"></h3>
-                <ul>
+                <p th:if="${phoneDTO.getQuantity==0}" th:text="'Đang hết hàng'" style="color: red"></p>
+                <ul >
                     <li><strong>Tên:</strong> <span th:text="${phoneDTO.phoneName}"></span></li>
                     <li><strong>Thương hiệu:</strong> <span th:text="${phoneDTO.brand.getBrandName}"></span></li>
                     <li><strong>Phân loại:</strong> <span th:text="${phoneDTO.category.getCategoryName}"></span></li>

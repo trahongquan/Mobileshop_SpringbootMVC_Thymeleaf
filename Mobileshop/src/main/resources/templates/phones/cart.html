@@ -35,7 +35,7 @@
             <th><input type="checkbox" id="SelectAll"> Select all || Remove</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody style="background-color: white">
         <tr th:each="phoneCartDTO, iter : ${cartList}" th:data-phoneId="${phoneCartDTO.phoneId}" th:data-product-model="${phoneCartDTO.model}">
         <!--<tr th:each="phoneCartDTO, iter : ${cart}">-->
             <td th:text="${iter.index + 1}"></td>

@@ -1,3 +1,18 @@
+/*Body*/
+
+body {
+    background: url("../images/b2-1.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    color: #FFF;
+    font-family: 'Quicksand', sans-serif;
+    /*text-align: center;*/
+}
 
 /* //////////////////////////////// */
 /* Menu nav-bar */
@@ -304,4 +319,100 @@
     .category-menu-items, .listbox, .popup-header-links>li{
         display: none;
     }
+}
+/*///////////////////////////*/
+/*       Slide banner        */
+/*///////////////////////////*/
+/* ------------ VARIABLES ------------ */
+:root{
+    /* FONT */
+    --font: 'Poppins', sans-serif;
+
+    /* COLORS */
+    --color: #9176FF;
+    --bg-color: #f4f4f4;
+}
+
+/* ------------ BASE ------------ */
+div>section>.mySwiper{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+section>.mySwiper{
+    font-family: var(--font);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+}
+
+/* ----------- SLIDER ------------ */
+.swiper {
+    width: 100%;
+    justify-content: flex-start; /* Thay đổi từ center thành flex-start */
+}
+
+.swiper-wrapper {
+    width: 100%;
+    height: 30em; /* Thay đổi thuộc tính này */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.card {
+    width: 100em;
+    height: 90%;
+    /*background-color: #fff;*/
+    border-radius: 2em;
+    box-shadow: 0 0 2em rgba(0, 0, 0, .2);
+    padding: 2em 1em;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    min-width: 20em; /* Thêm thuộc tính này */
+}
+
+.card__image{
+    width: 100%;
+    height: 100%;
+    border-radius: 2em;
+    border: 5px solid var(--color);
+    padding: 3px;
+    /*margin-bottom: 2em;*/
+}
+
+.card__image img{
+    width: 100%;
+    height: 100%;
+    border-radius: 2em;
+    object-fit: cover;
+}
+
+.big-banner {
+    background-image: url("/images/banner5.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 70vh;
+}
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.big-banner:hover {
+    animation: blink 1s infinite;
 }

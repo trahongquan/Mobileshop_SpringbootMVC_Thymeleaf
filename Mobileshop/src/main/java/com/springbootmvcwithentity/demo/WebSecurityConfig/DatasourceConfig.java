@@ -31,7 +31,7 @@ public class DatasourceConfig {
     @ConfigurationProperties (prefix="spring.data.jpa.entity")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory (EntityManagerFactoryBuilder builder, DataSource appDataSource) {
         return builder
-                .dataSource(appDataSource)
+            .dataSource(appDataSource)
                 .build();
     }
     @Bean

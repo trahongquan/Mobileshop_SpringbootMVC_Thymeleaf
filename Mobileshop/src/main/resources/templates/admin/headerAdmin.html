@@ -4,29 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <header-admin>
-    <div style="margin: 20px">
-        <a th:href="@{/Handshop}"> Về trang chủ </a> <br>
-        User: <span sec:authentication="name"></span>
-        <br>
-        Role(s): <span sec:authentication="principal.authorities"></span> <br><br>
-        <div style="border: 2px solid #3498db; padding: 20px;">
-            <a th:href="@{/Handshop/admin/soldphones}" class="addphone" style=" margin: 15px"> Đã bán </a>
-            <a th:href="@{/Handshop/admin}" class="addphone" style=" margin: 15px"> Tồn kho </a>
-            <a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style=" margin: 15px">Đơn đặt hàng</a>
-            <a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style=" margin: 15px">Báo cáo lợi nhuận</a>
-            <a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style=" margin: 15px">Quản lý tài khoản Khách hàng</a>
-            <a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px"
-               sec:authorize="hasRole('ROLE_ADMIN')">Quản lý tài khoản Nhân viên</a>
+    <nav class="container" style="margin: 20px; ">
+        <div class="user-role" style="justify-content: flex-start;">
+            <a th:href="@{/Handshop}"> Về trang chủ </a> <br>
+            User: <span sec:authentication="name"></span>
+            <br>
+            Role(s): <span sec:authentication="principal.authorities"></span> <br><br>
+        </div>
+        <div class="control-pannel" style="">
+            <a th:href="@{/Handshop/admin/soldphones}" class="addphone" style="margin: 15px"> Đã bán </a>
+            <a th:href="@{/Handshop/admin}" class="addphone" style="margin: 15px"> Tồn kho </a>
+            <a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style="margin: 15px">Đơn đặt hàng</a>
+            <a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style="margin: 15px">BC lợi nhuận</a>
+            <a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style="margin: 15px">QLTK Khách hàng</a>
+            <a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px" sec:authorize="hasRole('ROLE_ADMIN')">QLTK Nhân viên</a>
         </div>
         <br>
-        <div style="border: 2px solid #0056b3; padding: 20px;">
-            <a th:href="@{/Handshop/admin/importExel}" class="addphone" style=" margin: 15px">Import lô điện thoại</a>
-            <a th:href="@{/Handshop/admin/add}" class="addphone" style=" margin: 15px">Thêm điện thoại mới</a>
+        <div class="control-pannel">
+            <a th:href="@{/Handshop/admin/importExel}" class="addphone" style="margin: 15px">Import lô điện thoại</a>
+            <a th:href="@{/Handshop/admin/add}" class="addphone" style="margin: 15px">Thêm điện thoại mới</a>
+            <a th:href="@{/Handshop/admin/brandandcategory}" class="addphone" style="margin: 15px">Thêm Brand hoặc Category</a>
         </div>
-    </div>
+    </nav>
 </header-admin>
+<!--<header-admin>-->
+    <!--<div class="container" style="margin: 20px ; display: flex ; flex-direction: column; width: 100%; ">-->
+        <!--<div class="user-role">-->
+            <!--<a th:href="@{/Handshop}"> Về trang chủ </a> <br>-->
+            <!--User: <span sec:authentication="name"></span>-->
+            <!--<br>-->
+            <!--Role(s): <span sec:authentication="principal.authorities"></span> <br><br>-->
+        <!--</div>-->
+        <!--<div class="control-pannel" style=" border: 2px solid #3498db; padding: 20px; display: flex; justify-content: space-around">-->
+            <!--<a th:href="@{/Handshop/admin/soldphones}" class="addphone" style=" margin: 15px"> Đã bán </a>-->
+            <!--<a th:href="@{/Handshop/admin}" class="addphone" style=" margin: 15px"> Tồn kho </a>-->
+            <!--<a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style=" margin: 15px">Đơn đặt hàng</a>-->
+            <!--<a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style=" margin: 15px">Báo cáo lợi nhuận</a>-->
+            <!--<a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style=" margin: 15px">Quản lý tài khoản Khách hàng</a>-->
+            <!--<a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px"-->
+               <!--sec:authorize="hasRole('ROLE_ADMIN')">Quản lý tài khoản Nhân viên</a>-->
+        <!--</div>-->
+        <!--<br>-->
+        <!--<div class="control-phone" style="border: 2px solid #0056b3; padding: 20px;">-->
+            <!--<a th:href="@{/Handshop/admin/importExel}" class="addphone" style=" margin: 15px">Import lô điện thoại</a>-->
+            <!--<a th:href="@{/Handshop/admin/add}" class="addphone" style=" margin: 15px">Thêm điện thoại mới</a>-->
+            <!--<a th:href="@{/Handshop/admin/brandandcategory}" class="addphone" style=" margin: 15px">Thêm Brand hoặc Category</a>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</header-admin>-->
 </body>
 </html>

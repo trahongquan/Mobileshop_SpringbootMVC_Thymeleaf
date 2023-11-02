@@ -1,7 +1,6 @@
 package com.springbootmvcwithentity.demo.WebSecurityConfig;
 
 
-//import com.springbootmvcwithentity.demo.service.Acc.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

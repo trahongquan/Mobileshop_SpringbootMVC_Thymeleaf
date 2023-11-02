@@ -8,6 +8,22 @@
     <link rel="stylesheet" href="/css/stylesSupport.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcrypt.js/2.4.0/bcrypt.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body{
+            text-align: center;
+        }
+        .form-control{
+            width: 50%;
+        }
+        input, textarea{
+            margin-left: 25%;
+            background: rgba(255,255,255,0.6) !important;
+        }
+        .form-group{
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="header :: header"></div>
@@ -39,8 +55,8 @@
             <textarea class="form-control" id="address" name="address" required></textarea>
         </div>
         <div class="form-group">
-            <label type="hidden" for="registrationDate">Ngày đăng ký:</label>
-            <input type="hidden" id="registrationDate" name="registrationDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}" />
+            <label type="hidden" for="registrationDate"></label>
+            <input type="hidden" id="registrationDate" name="registrationDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
         </div>
         <button type="submit" class="btn btn-primary">Đăng ký</button>
         <!--<script>

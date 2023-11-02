@@ -270,6 +270,7 @@ $(document).ready(function () {
     if (selectedProducts) {
         var parsedData = JSON.parse(selectedProducts); // Deserialize the JSON
         var tableBody = document.getElementById('productTableBody');
+        tableBody.style.backgroundColor = "white";
         var total = 0;
         // Lặp qua dữ liệu và cập nhật nội dung HTML
         parsedData.forEach(function(product, index) {

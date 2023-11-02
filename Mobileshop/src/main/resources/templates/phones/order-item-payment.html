@@ -15,7 +15,7 @@
     <form th:action="@{/anonymousUser/RequestOrder}" method="post" th:unless="${#authorization.expression('isAuthenticated()')}">
         <table class="table table-bordered">
             <thead>
-            <tr>
+            <tr id="trh">
                 <th> STT</th>
                 <th>Image</th>
                 <th>Name</th>
@@ -24,7 +24,7 @@
                 <th>Total</th>
             </tr>
             </thead>
-            <tbody id="productTableBody">
+            <tbody id="productTableBody" >
             </tbody>
         </table>
         <label>Total Amount: <span id="totalAmount">0</span></label>
@@ -170,5 +170,13 @@
 </body>
 <script src="/js/order-item-payment.js"></script>
 <script src="/js/header.js"></script>
+<script>
+    $(document).ready(function () {
+        // var tr = document.getElementById('tr');
+        $('#tr').css({
+        background: "white"
+    })
+    })
+</script>
 
 </html>

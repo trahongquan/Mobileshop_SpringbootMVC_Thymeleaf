@@ -32,8 +32,14 @@ public class CategorieServiceImpl implements CategorieService {
                 throw new RuntimeException("Không tìm thấy điện thoại với ID=" + theCategoryID);
             }
         };
-    public void save(Categories theCategories){}; // được sử dụng cả add new và update
-    public void deleteById(int theId){};
+    @Override
+    public void save(Categories theCategories){
+        categorieRepository.save(theCategories);
+    }; // được sử dụng cả add new và update
+    @Override
+    public void deleteById(int theId){
+        categorieRepository.deleteById(theId);
+    };
 
 
 }

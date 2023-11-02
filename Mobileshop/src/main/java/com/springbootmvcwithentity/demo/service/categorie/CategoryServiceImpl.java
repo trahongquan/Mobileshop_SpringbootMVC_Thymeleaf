@@ -28,9 +28,13 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
     @Override
-    public void save(Categories theCategories){}; // được sử dụng cả add new và update
+    public void save(Categories theCategories){
+        categoryRepository.save(theCategories);
+    }; // được sử dụng cả add new và update
     @Override
-    public void deleteById(int theId){};
+    public void deleteById(int theId){
+        categoryRepository.deleteById(theId);
+    };
 
 
 }

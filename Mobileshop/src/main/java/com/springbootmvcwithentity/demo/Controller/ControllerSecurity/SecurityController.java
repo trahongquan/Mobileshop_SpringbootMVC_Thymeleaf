@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SecurityController {
     @GetMapping("/login")
     public String Login() {
-        return "security/login";
+        return "security/login2";
     }
     @GetMapping("/access-denied")
     public String Accessdenied() {

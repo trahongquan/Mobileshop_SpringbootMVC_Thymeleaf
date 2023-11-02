@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="UTF-8">
+    <title>Add new Brand or Category</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Phone</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+</head>
+<body>
+<div th:replace="admin/headerAdmin :: header-admin"></div>
+<div class="container">
+<!-- Input for Brand -->
+<div class="form-group" style="display: flex ; justify-content: space-around">
+    <div>
+        <label th:for="@{'brand'}" >Brand:</label>
+        <select th:class="@{'form-control'}" th:id="@{'brand'}" th:name="@{'brandID'}"  required>
+            <option th:each="brand : ${brands}" th:value="${brand.BrandID}" th:text="${brand.BrandName}"></option>
+        </select>
+    </div>
+    <div style="display: flex; justify-content: space-around">
+        <form th:action="'/Handshop/admin/brand/add'" method="post">
+            <div style="margin-right: 10px">
+                <label for="addBrand" >Add more Brand:</label>
+                <input type="text" class="form-control" id="addBrand" name="addBrand" required>
+            </div>
+            <button type="submit" class="btn btn-primary" > Add Brand</button>
+        </form>
+    </div>
+</div>
+<!-- Input for Category (Dropdown) -->
+<div class="form-group" style="display: flex ; justify-content: space-around">
+    <div>
+        <label for="category">Category:</label>
+        <select class="form-control" id="category" name="categoryID" required>
+            <!-- Populate options dynamically from your database -->
+            <option th:each="category : ${categories}"  th:value="${category.CategoryID}" th:text="${category.CategoryName}"></option>
+            <!-- Add more options as needed -->
+        </select>
+    </div>
+    <div style="display: flex; ">
+        <form th:action="@{'/Handshop/admin/category/add'}" method="post">
+            <div style="margin-right: 10px">
+                <label th:for="@{'addCategory'}" >Add more Category:</label>
+                <input type="text" th:class="@{'form-control'}" th:id="@{'addCategory'}" th:name="@{'addCategory'}"  required>
+            </div>
+            <button type="submit" class="btn btn-primary" > Add Category</button>
+        </form>
+    </div>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
