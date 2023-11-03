@@ -24,11 +24,9 @@ import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,44 +118,53 @@ public class CustomerController {
         return "customer/customerinfo";
     }
 
-    @PostMapping("/Handshop/rejectOrder")
-    public String rejectOrder(@RequestParam("OrderID") int orderID){
-        Order order = orderservice.findById(orderID);
-        Customer customer = customerService.findById(order.getCustomerId());
-        String email = customer.getEmail();
-        List<OrderItem> orderItems = orderItemRepository.findAllByOrderID(orderID);
-        orderItems.forEach(orderItem -> {
-            List<String> serisOrderItem = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();
-            Phones phone = phoneService.findById(orderItem.getPhoneID());
-            List<String> serisPhone = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-
-            Set<String> set = new HashSet<>(serisOrderItem);
-            set.addAll(serisPhone);
-            List<String> mergedList = new ArrayList<>(set);
-
-            phone.setSeri(mergedList.toString());
-            phone.setQuantity(mergedList.size());
-            phoneRepository.save(phone);
-        });
-        for (int i = 0; i < orderItems.size(); i++) {
-            orderitemsservice.deleteById(orderItems.get(i).getOrderItemID());
-        }
-        orderservice.deleteById(orderID);
-
-        return "redirect:/Handshop/myAccount/"+email;
-    }
-
-    @GetMapping("/Handshop/rejectOrder")
-    public String showRejectOrderForm(@RequestParam("OrderID") int orderID, Model model) {
-//        int orderID = Integer.parseInt(OrderID);
-        Order order = orderservice.findById(orderID);
-        if (order != null) {
-            model.addAttribute("order", order);
-            return "admin/rejectOrderForm";
+    @GetMapping("/Handshop/UpdateCustomerInfo/{id}")
+    public String CustomerUpdateCustomerInfo(@PathVariable int id, Model model) {
+        Customer customer = customerService.findById(id);
+        if (customer != null) {
+            model.addAttribute("customer", customer);
+            return "customer/form-edit-customer";
         } else {
-            throw new RuntimeException("Không tìm thấy order với ID=" + orderID);
+            throw new RuntimeException("Không tìm thấy nhân viên với ID=" + id);
         }
     }
+
+    /** Thêm annotation @Transactional trước phương thức editEmployee sẽ giúp Spring quản lý giao dịch cho bạn.
+     *  Điều này sẽ đảm bảo rằng một giao dịch được kích hoạt
+     *  trước khi có bất kỳ hoạt động truy cập cơ sở dữ liệu nào được thực hiện
+     *  và sẽ được commit sau khi phương thức kết thúc.
+     *  Điều này sẽ giúp tránh lỗi không có EntityManager trong luồng hiện tại.*/
+    @Transactional
+    @PostMapping("/Handshop/UpdateCustomerInfo/{id}")
+    public String CustomerUpdateCustomerInfo(@PathVariable int id, @ModelAttribute("customer") Customer updatedCustomer) {
+        // Tìm đối tượng Employee hiện có trong cơ sở dữ liệu
+        Customer existingCustomer = customerService.findById(id);
+        if(updatedCustomer.getEmail().equals(existingCustomer.getEmail())){
+            Users user = userService.findByUsername(existingCustomer.getEmail());
+            user.setPassword(passwordEncoder.encode(existingCustomer.getPass()));
+            userService.save(user);
+        }else {
+            authorityService.deleteAuthority(existingCustomer.getEmail()); /** xóa authority trước vì có email là khóa ngoại từ bảng user*/
+            userService.deleteUser(existingCustomer.getEmail());
+            Users user = new Users(updatedCustomer.getEmail(),passwordEncoder.encode(updatedCustomer.getPass()),(long) existingCustomer.getCustomerId(),1);
+            userService.save(user);
+            Authority authority = new Authority("ROLE_CUSTOMER",user);
+            authorityService.createAuthority(authority);
+        }
+        // Cập nhật thông tin từ updatedCustomer vào existingCustomer
+        existingCustomer.setFirstName(updatedCustomer.getFirstName());
+        existingCustomer.setLastName(updatedCustomer.getLastName());
+        existingCustomer.setEmail(updatedCustomer.getEmail());
+        existingCustomer.setPhone(updatedCustomer.getPhone());
+        existingCustomer.setPass(updatedCustomer.getPass());
+        existingCustomer.setAddress(updatedCustomer.getAddress());
+
+        // Lưu lại thông tin cập nhật vào cơ sở dữ liệu
+        customerService.save(existingCustomer);
+
+        return "redirect:/Handshop/myAccount/"+existingCustomer.getEmail();
+    }
+
 
     /******************************************************************************************************/
                                 /** Invoice - Hóa đơn */
@@ -245,5 +252,122 @@ public class CustomerController {
         return orderDTOs;
     }
 
+    /******************************************************************************************************/
+                                /** Hủy Order */
+    /******************************************************************************************************/
+
+
+    @PostMapping("/Handshop/rejectOrder")
+    public String rejectOrder(@RequestParam("OrderID") int orderID){
+        Order order = orderservice.findById(orderID);
+        Customer customer = customerService.findById(order.getCustomerId());
+        String email = customer.getEmail();
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrderID(orderID);
+        orderItems.forEach(orderItem -> {
+            List<String> serisOrderItem = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();
+            Phones phone = phoneService.findById(orderItem.getPhoneID());
+            List<String> serisPhone = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
+
+            Set<String> set = new HashSet<>(serisOrderItem);
+            set.addAll(serisPhone);
+            List<String> mergedList = new ArrayList<>(set);
+
+            phone.setSeri(mergedList.toString());
+            phone.setQuantity(mergedList.size());
+            phoneRepository.save(phone);
+        });
+        for (int i = 0; i < orderItems.size(); i++) {
+            orderitemsservice.deleteById(orderItems.get(i).getOrderItemID());
+        }
+        orderservice.deleteById(orderID);
+
+        return "redirect:/Handshop/myAccount/"+email;
+    }
+
+    @GetMapping("/Handshop/rejectOrder")
+    public String showRejectOrderForm(@RequestParam("OrderID") int orderID, Model model) {
+//        int orderID = Integer.parseInt(OrderID);
+        Order order = orderservice.findById(orderID);
+        if (order != null) {
+            model.addAttribute("order", order);
+            return "admin/rejectOrderForm";
+        } else {
+            throw new RuntimeException("Không tìm thấy order với ID=" + orderID);
+        }
+    }
+
+    /******************************************************************************************************/
+                                    /** Q.lí tài khoản Customer - Admin */
+    /******************************************************************************************************/
+
+
+    @GetMapping("/Handshop/admin/UpdateCustomerInfo/{id}")
+    public String UpdateCustomerInfo(@PathVariable int id, Model model) {
+        Customer customer = customerService.findById(id);
+        if (customer != null) {
+            model.addAttribute("customer", customer);
+            return "customer/form-edit-customer";
+        } else {
+            throw new RuntimeException("Không tìm thấy nhân viên với ID=" + id);
+        }
+    }
+
+    /** Thêm annotation @Transactional trước phương thức editEmployee sẽ giúp Spring quản lý giao dịch cho bạn.
+     *  Điều này sẽ đảm bảo rằng một giao dịch được kích hoạt
+     *  trước khi có bất kỳ hoạt động truy cập cơ sở dữ liệu nào được thực hiện
+     *  và sẽ được commit sau khi phương thức kết thúc.
+     *  Điều này sẽ giúp tránh lỗi không có EntityManager trong luồng hiện tại.*/
+    @Transactional
+    @PostMapping("/Handshop/admin/UpdateCustomerInfo/{id}")
+    public String editEmployee(@PathVariable int id, @ModelAttribute("customer") Customer updatedCustomer) {
+        // Tìm đối tượng Employee hiện có trong cơ sở dữ liệu
+        Customer existingCustomer = customerService.findById(id);
+        if(updatedCustomer.getEmail().equals(existingCustomer.getEmail())){
+            Users user = userService.findByUsername(existingCustomer.getEmail());
+            user.setPassword(passwordEncoder.encode(existingCustomer.getPass()));
+            userService.save(user);
+        }else {
+            authorityService.deleteAuthority(existingCustomer.getEmail()); /** xóa authority trước vì có email là khóa ngoại từ bảng user*/
+            userService.deleteUser(existingCustomer.getEmail());
+            Users user = new Users(updatedCustomer.getEmail(),passwordEncoder.encode(updatedCustomer.getPass()),(long) existingCustomer.getCustomerId(),1);
+            userService.save(user);
+            Authority authority = new Authority("ROLE_CUSTOMER",user);
+            authorityService.createAuthority(authority);
+        }
+
+        // Cập nhật thông tin từ updatedCustomer vào existingCustomer
+        existingCustomer.setFirstName(updatedCustomer.getFirstName());
+        existingCustomer.setLastName(updatedCustomer.getLastName());
+        existingCustomer.setEmail(updatedCustomer.getEmail());
+        existingCustomer.setPhone(updatedCustomer.getPhone());
+        existingCustomer.setPass(updatedCustomer.getPass());
+        existingCustomer.setAddress(updatedCustomer.getAddress());
+
+        // Lưu lại thông tin cập nhật vào cơ sở dữ liệu
+        customerService.save(existingCustomer);
+
+        return "redirect:/Handshop/admin/AccCustomerManager";
+    }
+
+    @GetMapping("/Handshop/admin/DeleteCustomer/{id}")
+    public String DeleteCustomer(@PathVariable String id, Model model) {
+        int idt = Integer.parseInt(id);
+        Customer customer = customerService.findById(idt);
+        if (customer != null) {
+            model.addAttribute("customer", customer);
+            return "customer/delete";
+        } else {
+            throw new RuntimeException("Không tìm thấy nhân viên với ID=" + idt);
+        }
+    }
+    @Transactional
+    @PostMapping("/Handshop/admin/DeleteCustomer/{id}")
+    public String deleteEmployee(@PathVariable int id) {
+        Customer customer = customerService.findById(id);
+        authorityService.deleteAuthority(customer.getEmail());
+        userService.deleteUser(customer.getEmail());
+        customerService.deleteById(id);
+        return "redirect:/Handshop/admin/AccCustomerManager";
+    }
 }
 

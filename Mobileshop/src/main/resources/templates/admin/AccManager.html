@@ -42,15 +42,10 @@
                             onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
                     </button>
                 </form>-->
-                <form th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn">
-                    <!--<input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                    <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">-->
-                    <button type="submit" class="btn btn-primary btn-sm"
-                            onclick="return confirm('Xác nhận đã bổ sung đủ số lượng sản phẩm thiếu cho đơn hàng?')">
-                        Update
-                    </button>
-                </form>
-                <a th:href="@{'/Handshop/admin/rejectOrder?OrderID='}" class="actionbtn">
+                <a th:href="@{'/Handshop/admin/UpdateCustomerInfo/' + ${accCustomerDTO.getCustomerId}}" class="actionbtn">
+                    <button type="button" class="btn btn-primary btn-sm"> Update </button>
+                </a>
+                <a th:href="@{'/Handshop/admin/DeleteCustomer/'+ ${accCustomerDTO.getCustomerId}}" class="actionbtn">
                     <button type="button" class="btn btn-danger btn-sm">Delete</button>
                 </a>
             </div>
