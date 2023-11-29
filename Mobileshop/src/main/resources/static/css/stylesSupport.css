@@ -6,10 +6,11 @@ body {
 
 .bodyDetailAndReview{
     margin-top: 100px;
+    margin-bottom: 50px;
 }
 /* Phần thông tin điện thoại bên trái */
 .col-md-4 {
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.8);
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -17,7 +18,7 @@ body {
 
 /* Phần hình ảnh và đánh giá bên phải */
 .col-md-8 {
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.8);
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -73,4 +74,34 @@ button {
 }
 button:hover {
     background-color: #0056b3;
+}
+
+/* Comment */
+.box-info__avatar>span{
+    background-color: #5d1a7f;
+    color: #fff;
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    font-size: 16px;
+    font-weight: 700;
+    height: 25px;
+    justify-content: center;
+    margin: 0 5px 0 0;
+    text-transform: capitalize;
+    width: 25px;
+}
+.content-user{
+    background-color: #fff;
+    border-radius: 2em;
+    box-shadow: 0 0 2em rgba(0, 0, 0, .2);
+    padding: 0.5em;
+}
+.content{
+    width: 95%;
+    background-color: #fff;
+    border-radius: 2em;
+    box-shadow: 0 0 2em rgba(0, 0, 0, .2);
+    padding: 2em 1em;
+    margin-bottom: 5px;
 }
