@@ -161,13 +161,17 @@
                                     </div>
                                 </div>
                                 <div style="margin-bottom: 1em">
-                                    <div class="box-time-cmt d-flex" style="justify-content: flex-end">
+                                    <div class="box-time-cmt d-flex" style="justify-content: flex-end; align-content: center">
                                         <!--<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path id="clock" d="M7.72,8.78,5.25,6.31V3h1.5v2.69L8.78,7.72ZM6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0ZM6,10.5A4.5,4.5,0,1,1,10.5,6,4.5,4.5,0,0,1,6,10.5Z" fill="#707070"></path></svg>&nbsp;4 tháng trước-->
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path id="clock" d="M7.72,8.78,5.25,6.31V3h1.5v2.69L8.78,7.72ZM6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0ZM6,10.5A4.5,4.5,0,1,1,10.5,6,4.5,4.5,0,0,1,6,10.5Z" fill="#707070"></path></svg>&nbsp;
-                                        <span th:text="${prdRevDTO.getReviewDate}"></span>
-                                        <span>
-                                            <img src="/images/icon-del.png" alt="" style="width: 5%">
-                                        </span>
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path id="clock" d="M7.72,8.78,5.25,6.31V3h1.5v2.69L8.78,7.72ZM6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0ZM6,10.5A4.5,4.5,0,1,1,10.5,6,4.5,4.5,0,0,1,6,10.5Z" fill="#707070"></path></svg>&nbsp;
+                                        </div>
+                                        <div>
+                                            <span th:text="${prdRevDTO.getReviewDate}" style="text-align: center"></span>&nbsp;
+                                        </div>
+                                        <a sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')" th:href="'/Handshop/admin/comment/delete/'+${prdRevDTO.getPhoneID}+'/'+${prdRevDTO.getReviewID}">
+                                            <img src="/images/icon-del.png" alt="" style="width: 25px">
+                                        </a>
                                     </div>
                                 </div>
                             </div>

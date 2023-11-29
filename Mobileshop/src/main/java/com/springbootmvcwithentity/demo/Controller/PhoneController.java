@@ -735,4 +735,14 @@ public class PhoneController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
+    /******************************************************************************************************/
+                                    /** Xóa comment */
+    /******************************************************************************************************/
+    @GetMapping("/admin/comment/delete/{phoneId}/{idcom}")
+    public String deletecommentbyId(@PathVariable("idcom") int idcom,
+                                    @PathVariable("phoneId") int phoneId) {
+            prdRevService.deleteById(idcom);
+        return "redirect:/Handshop/ViewDetailPhone/" + phoneId;
+    }
 }

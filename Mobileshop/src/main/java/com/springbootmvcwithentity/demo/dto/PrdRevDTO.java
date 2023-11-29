@@ -31,6 +31,7 @@ public class PrdRevDTO {
         this.reviewDate = reviewDate;
     }
     public PrdRevDTO(productreview productreview, Customer customer) {
+        this.reviewID = productreview.getReviewID();
         this.phoneID = productreview.getPhoneID();
         this.customerID = productreview.getCustomerID();
         this.customer = customer;
