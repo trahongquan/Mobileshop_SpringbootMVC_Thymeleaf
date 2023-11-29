@@ -6,12 +6,18 @@
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .footer>.container, .sub-footer>.container{
+            background: transparent;
+        }
+
+    </style>
 </head>
 <body>
 <footer th:fragment="footer">
     <div class="footerfull">
         <div class="footer">
-            <div class="container">
+            <div class="container" style="max-width: 100%;">
                 <div class="row d-flex justify-content-between">
                     <div class="col-xl-4">
                         <h3>About Us</h3>
@@ -40,10 +46,10 @@
             </div>
         </div>
         <div class="sub-footer">
-            <div class="container">
+            <div class="container" style=" background:black;color: white;max-width: 100%;">
                 <div class="row">
                     <div class="col-md-12">
-                        <p>© 2023 Handshop - MobileShop professional. All Rights Reserved.</p>
+                        <p style="text-align: center">© 2023 Handshop - MobileShop professional. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>

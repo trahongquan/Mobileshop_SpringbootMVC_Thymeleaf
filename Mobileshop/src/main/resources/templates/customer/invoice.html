@@ -11,25 +11,15 @@
 </head>
 <body>
 <div th:replace="header :: header"></div>
+<br>
+<br>
+<br>
 <div>
     <div class="container" style="margin-top: 20px">
         <h1>HÓA ĐƠN BÁN HÀNG</h1>
-
-        <!-- Thông tin cửa hàng -->
-        <div class="card">
-            <div class="card-header">
-                Thông tin cửa hàng
-            </div>
-            <div class="card-body">
-                <p>Tên cửa hàng: Handshop</p>
-                <p>Địa chỉ: KHL 125, P. Liên Bảo, TP. Vĩnh Yên, Vĩnh Phúc</p>
-                <p>Số điện thoại: 0356911600</p>
-            </div>
-        </div>
-
         <!-- Thông tin khách hàng -->
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card">
                 Thông tin khách hàng
             </div>
             <div class="card-body">
@@ -41,7 +31,7 @@
 
         <!-- Chi tiết hóa đơn ... -->
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card">
                 Chi tiết hóa đơn
             </div>
             <div class="card-body">
@@ -75,18 +65,18 @@
                 </table>
             </div>
         </div>
-
-        <!--&lt;!&ndash; Thông tin đặt hàng &ndash;&gt;-->
-        <!--<div class="card mt-4">-->
-        <!--<div class="card-header">-->
-        <!--Thông tin đặt hàng-->
-        <!--</div>-->
-        <!--<div class="card-body">-->
-        <!--<p>Ngày đặt hàng: 20/10/2023</p>-->
-        <!--</div>-->
-        <!--</div>-->
-
-        <!-- Các nút chức ... năng -->
+        <br>
+        <!-- Thông tin cửa hàng -->
+        <div class="card">
+            <div class="card">
+                Thông tin cửa hàng
+            </div>
+            <div class="card-body">
+                <p>Tên cửa hàng: Handshop</p>
+                <p>Địa chỉ: KHL 125, P. Liên Bảo, TP. Vĩnh Yên, Vĩnh Phúc</p>
+                <p>Số điện thoại: 0356911600</p>
+            </div>
+        </div>
         <div class="mt-4">
             <button class="btn btn-primary" onclick="exportInvoice()">Xuất hóa đơn</button>
             <button class="btn btn-primary" onclick="printInvoice()">In hóa đơn</button>
@@ -106,6 +96,8 @@
         }
     </script>
 </div>
+<br>
+<br>
 <div th:replace="footer :: footer"></div>
 
 </body>

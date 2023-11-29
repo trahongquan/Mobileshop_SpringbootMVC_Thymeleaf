@@ -8,9 +8,10 @@
     <title>Phone Details</title>
     <!-- Thêm các tệp CSS và JS của Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/stylesDetail.css">
     <link rel="stylesheet" href="/css/Header.css">
     <link rel="stylesheet" href="/css/stylesSupport.css">
-    <script src="/js/ScriptSupport.js"></script>
+    <!--<script src="/js/ScriptSupport.js"></script>-->
     <script src="/js/header.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -76,15 +77,16 @@
                             <span class="star">&#9733;</span>
                             <span class="star">&#9733;</span>
                             <span class="star">&#9733;</span>
-                            <span class="star">&#9734;</span>
+                            <span class="star">&#9733;</span>
                             <span class="star">&#9734;</span>
                         </div>
                     </div>
                     <!-- Bình luận và phần khác có thể thêm ở đây -->
-                    <div th:if="${#authorization.expression('isAuthenticated()')}" >
+                    <!--<div th:if="${#authorization.expression('isAuthenticated()')}" >-->
+                    <div sec:authorize="hasRole('ROLE_CUSTOMER')" >
                         <!-- Biểu mẫu đánh giá -->
-                        <form method="post" action="#">
-                            <div class="form-group">
+                        <form th:action="@{/Handshop/ViewDetailPhone/comment}" method="POST">
+                            <div class="form-group" >
                                 <label for="rating">Đánh giá của bạn:</label>
                                 <select class="form-control" id="rating" name="rating">
                                     <option value="5">5 sao</option>
@@ -98,7 +100,9 @@
                                 <label for="comment">Nhận xét của bạn:</label>
                                 <textarea class="form-control" id="comment" name="comment" rows="4"></textarea>
                             </div>
-
+                            <input type="hidden" name="phoneID" th:value="${phoneDTO.getPhoneId}">
+                            <input type="hidden" name="email" th:value="${#authentication.name}">
+                            <input type="hidden" name="reviewDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
                             <button type="submit" class="btn btn-primary">Gửi Đánh giá</button>
 
                         </form>
@@ -106,23 +110,91 @@
                 </div>
             </div>
         </div>
+        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="d-flex justify-content-center bg-white" style="font-size: 20px">
+            <a href="/login">
+                <strong>
+                    <h3> Mời bạn đăng nhập để có thể comment </h3>
+                </strong>
+            </a>
+        </div>
+        <div class="row d-flex justify-content-end" >
+            <div class="col-md-4">
+                <h2 style="text-align: center ; color: red">Sản phẩm khác tương tự</h2>
+                <section class="phone-list">
+                    <div class="phone-item" th:each="phone,iter:${phoneDTOS}"> <!--Dùng DTO để xử lsy tại backend-->
+                        <div th:data-phoneid="${phone.phoneId}">
+                            <a th:href="@{'/Handshop/ViewDetailPhone/' + ${phone.phoneId}}" th:data-phoneID="${phone.phoneId}" >
+                                <img class="img-phones" th:src="'/Images/' + ${phone.ImageName}" th:alt="iPhone"
+                                     style="width: 100px; height: 100px;">
+                                <h2 th:text="${phone.phoneName}"></h2>
+                                <!--<p> <strong> <del th:text="${pricePreSale[iter.index]} + ' $'" th:data="${pricePreSale[iter.index]}"></del> </strong> </p>-->
+                                <strong><p class="price" th:text="@{'Giá: ' + '$'+ ${phone.getPrice}}"></p></strong>
+                                <!--<p th:text="'Mô tả: Chiếc điện thoại thông minh từ ' + ${phone.getBrand.getBrandName}"></p>-->
+                                <p th:text="'Phiên bản: ' + ${phone.getStorageCapacity} + 'GB | ' + ${phone.getRam} + 'GB' " style="color: red; font-weight: bold"></p>
+                                <p th:if="${phone.getQuantity==0}" th:text="'Đang hết hàng'"></p>
+                            </a>
+                            <a th:href="@{'/Handshop/cart?Id='+ ${phone.phoneId}}">
+                                <button>Mua Ngay
+                                    <!--<button onclick="window.location.href = '/addToCart/'+ ${phone.phoneId}">Mua Ngay-->
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-md-8">
+                <h2> Bình luận về sản phẩm </h2>
+                <div class="list-commet">
+                    <div class="item-comment" th:each="prdRevDTO:${prdRevDTOS}" style="margin-top: 15px; border-bottom: #2a4887 solid thin">
+                        <div class="item-comment__box-cmt">
+                            <div class="box-cmt__box-info" style="display: flex; justify-content: space-between">
+                                <div style="margin-bottom: 1em">
+                                    <div class="content-user box-info d-flex justify-content-between">
+                                        <div class="box-info__avatar d-flex align-items-center justify-content-center"><span>U</span></div>
+                                        <strong >
+                                            <p class="box-info__name" style="margin: unset" th:text="${prdRevDTO.getCustomer.getFirstName}+' '+${prdRevDTO.getCustomer.getLastName}"></p>
+                                        </strong>
+                                        <div>
+                                            <span style="margin-left: 15px" th:text="${prdRevDTO.getRating}"></span>
+                                            <span class="star">&#9733;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 1em">
+                                    <div class="box-time-cmt d-flex" style="justify-content: flex-end">
+                                        <!--<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path id="clock" d="M7.72,8.78,5.25,6.31V3h1.5v2.69L8.78,7.72ZM6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0ZM6,10.5A4.5,4.5,0,1,1,10.5,6,4.5,4.5,0,0,1,6,10.5Z" fill="#707070"></path></svg>&nbsp;4 tháng trước-->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path id="clock" d="M7.72,8.78,5.25,6.31V3h1.5v2.69L8.78,7.72ZM6,0a6,6,0,1,0,6,6A6,6,0,0,0,6,0ZM6,10.5A4.5,4.5,0,1,1,10.5,6,4.5,4.5,0,0,1,6,10.5Z" fill="#707070"></path></svg>&nbsp;
+                                        <span th:text="${prdRevDTO.getReviewDate}"></span>
+                                        <span>
+                                            <img src="/images/icon-del.png" alt="" style="width: 5%">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-cmt__box-question d-flex justify-content-end">
+                                <div class="content">
+                                    <p style="margin: unset" th:text="${prdRevDTO.getComment}">Nhà mình router chính lại được nối dây cáp từ cột điện vô chứ không phải là cắm dây Lan vậy thì khi mình mua con này về cắm cổng lan thì có dùng được ko</p>
+                                </div>
+                                <!--<button class="btn-rep-cmt respondent button__cmt-rep">
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 12 10.8">
+                                            <path id="chat" d="M3.48,8.32V4.6H1.2A1.2,1.2,0,0,0,0,5.8V9.4a1.2,1.2,0,0,0,1.2,1.2h.6v1.8l1.8-1.8h3A1.2,1.2,0,0,0,7.8,9.4V8.308a.574.574,0,0,1-.12.013H3.48ZM10.8,1.6H5.4A1.2,1.2,0,0,0,4.2,2.8V7.6H8.4l1.8,1.8V7.6h.6A1.2,1.2,0,0,0,12,6.4V2.8a1.2,1.2,0,0,0-1.2-1.2Z" transform="translate(0 -1.6)" fill="#707070"></path>
+                                        </svg>
+                                    </div>&nbsp;Trả lời
+                                </button>-->
+                            </div>
+                            <div class="item-comment__box-rep-comment">
+                                <div class="list-rep-comment">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<script>
-/*    $(document).ready(function () {
-        var id = $('#buy-now').attr("data-id");
-        console.log(id);
-        console.log(window.location.href);
-        $('#buy-now').on('click', function () {
-            var id = $('#buy-now').attr('data-id');
-            console.log(id);
-            window.location.href = '/Handshop/cart?Id=' + id;
-            console.log(window.location.href)
-        })
-    });*/
-
-</script>
 <div th:replace="footer :: footer"></div>
 </body>
 </html>

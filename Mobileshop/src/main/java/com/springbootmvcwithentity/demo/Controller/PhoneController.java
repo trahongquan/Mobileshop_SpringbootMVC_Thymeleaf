@@ -1,16 +1,15 @@
 package com.springbootmvcwithentity.demo.Controller;
 
 import com.springbootmvcwithentity.demo.ClassSuport.SeriMissing;
-import com.springbootmvcwithentity.demo.dao.EmployeeRepository;
-import com.springbootmvcwithentity.demo.dao.OrderItemRepository;
-import com.springbootmvcwithentity.demo.dao.OrderRepository;
-import com.springbootmvcwithentity.demo.dao.PhoneRepository;
+import com.springbootmvcwithentity.demo.dao.*;
 import com.springbootmvcwithentity.demo.dto.OrderDTO;
 import com.springbootmvcwithentity.demo.dto.OrderitemDTO;
 import com.springbootmvcwithentity.demo.dto.PhoneDTO;
+import com.springbootmvcwithentity.demo.dto.PrdRevDTO;
 import com.springbootmvcwithentity.demo.entity.*;
 import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
+import com.springbootmvcwithentity.demo.service.PrdRevService.brand.PrdRevService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
 import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
@@ -20,9 +19,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +47,7 @@ public class PhoneController {
     private PhoneRepository phoneRepository;
     private PhoneService phoneService;
     private CustomerService customerService;
+    private CustomerRepository customerRepository;
     private BrandService brandService;
     private CategoryService categoryService;
     private orderitemsService orderitemsservice;
@@ -51,24 +55,25 @@ public class PhoneController {
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
     private EmployeeRepository employeeRepository;
+    private PrdRevService prdRevService;
+    private PrdRevRepository prdRevRepository;
 
     @Autowired
-    public PhoneController(PhoneService phoneService, BrandService brandService
-            , CategoryService categoryService, CustomerService customerService
-            , PhoneRepository phoneRepository, orderService orderservice
-            , orderitemsService orderitemsservice, OrderRepository orderRepository
-            , OrderItemRepository orderItemRepository) {
+    public PhoneController(PhoneRepository phoneRepository, PhoneService phoneService, CustomerService customerService, CustomerRepository customerRepository, BrandService brandService, CategoryService categoryService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository, EmployeeRepository employeeRepository, PrdRevService prdRevService, PrdRevRepository prdRevRepository) {
+        this.phoneRepository = phoneRepository;
         this.phoneService = phoneService;
         this.customerService = customerService;
+        this.customerRepository = customerRepository;
         this.brandService = brandService;
         this.categoryService = categoryService;
-        this.phoneRepository = phoneRepository;
-        this.orderservice = orderservice;
         this.orderitemsservice = orderitemsservice;
+        this.orderservice = orderservice;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.employeeRepository = employeeRepository;
+        this.prdRevService = prdRevService;
+        this.prdRevRepository = prdRevRepository;
     }
-
 
     /******************************************************************************************************/
                                             /** Khu vực Chung*/
@@ -113,13 +118,40 @@ public class PhoneController {
         Categories category = categoryService.findById(phone.getCategoryId());
         PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
 
+        List<productreview> productreviews = prdRevRepository.findAllByPhoneID(id);
+
+        List<PrdRevDTO> prdRevDTOS = new LinkedList<>();
+        productreviews.forEach(productreview -> {
+            Customer customer = customerService.findById(productreview.getCustomerID());
+            PrdRevDTO prdRevDTO = new PrdRevDTO(productreview, customer);
+            prdRevDTOS.add(prdRevDTO);
+        });
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(phone.getPhoneName().split(" ")[0]);
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        System.out.println(phone.getPhoneName().split(" ")[0]);
         if (phoneDTO != null) {
+            model.addAttribute("prdRevDTOS", prdRevDTOS);
             model.addAttribute("phoneDTO", phoneDTO);
+            model.addAttribute("phoneDTOS", phoneDTOS);
             return "phones/DetailPhone";
         } else {
             throw new RuntimeException("Không tìm thấy điện thoại với ID=" + id);
         }
+
     }
+
+    @PostMapping("/ViewDetailPhone/comment")
+    public String Comment(@RequestParam("phoneID") int phoneid,
+                          @RequestParam("email") String email,
+                          @RequestParam("rating") int rating,
+                          @RequestParam("comment") String comment,
+                          @RequestParam("reviewDate") String reviewDate){
+        Customer customer = customerRepository.findByEmail(email);
+        productreview productreview = new productreview(phoneid, customer.getCustomerId(),rating,comment,reviewDate);
+        prdRevService.save(productreview);
+    return "redirect:/Handshop/ViewDetailPhone/" + phoneid;
+    }
+
 
     @GetMapping({"/iphone"})
     public String getListiPhones(Model model) {
@@ -693,5 +725,14 @@ public class PhoneController {
             e.printStackTrace();
             return "redirect:Handshop/admin/eror";
         }
+    }
+    @GetMapping("/admin/download")
+    public ResponseEntity<Resource> downloadExcelTemplate() {
+        Resource resource = new ClassPathResource("templates/template.xlsx");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=template.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

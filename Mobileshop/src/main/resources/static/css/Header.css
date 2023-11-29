@@ -416,3 +416,25 @@ section>.mySwiper{
 .big-banner:hover {
     animation: blink 1s infinite;
 }
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+    scrollbar-width: auto;
+    scrollbar-color: #b5a1ce #b1c8ec;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 14px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #b1c8ec;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #b5a1ce;
+    border-radius: 15px;
+    border: 2px groove #cc8ad0;
+}
