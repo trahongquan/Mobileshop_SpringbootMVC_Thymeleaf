@@ -9,51 +9,54 @@
 <header-admin>
     <nav class="container" style="margin: 20px; ">
         <div class="user-role" style="justify-content: flex-start;">
-            <a th:href="@{/Handshop}"> Về trang chủ </a> <br>
+            <a th:href="@{/Handshop}"> Về trang chủ </a>||
+            <a th:href="@{/logout}"> Logout </a> <br>
             User: <span sec:authentication="name"></span>
             <br>
             Role(s): <span sec:authentication="principal.authorities"></span> <br><br>
         </div>
         <div class="control-pannel" style="">
-            <a th:href="@{/Handshop/admin/soldphones}" class="addphone" style="margin: 15px"> Đã bán </a>
-            <a th:href="@{/Handshop/admin}" class="addphone" style="margin: 15px"> Tồn kho </a>
-            <a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style="margin: 15px">Đơn đặt hàng</a>
-            <a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style="margin: 15px">BC lợi nhuận</a>
-            <a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style="margin: 15px">QLTK Khách hàng</a>
-            <a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px" sec:authorize="hasRole('ROLE_ADMIN')">QLTK Nhân viên</a>
-        </div>
-        <br>
-        <div class="control-pannel">
-            <a th:href="@{/Handshop/admin/importExel}" class="addphone" style="margin: 15px">Import lô điện thoại</a>
-            <a th:href="@{/Handshop/admin/add}" class="addphone" style="margin: 15px">Thêm điện thoại mới</a>
-            <a th:href="@{/Handshop/admin/brandandcategory}" class="addphone" style="margin: 15px">Thêm Brand hoặc Category</a>
+            <ul class="nav nav-pills">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Thêm mới
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/add}" >Thêm điện thoại mới</a>
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/importExel}" >Import lô điện thoại</a>
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/brandandcategory}">Thêm Brand hoặc Category</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        QL Kho hàng
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/soldphones}">Đã bán</a>
+                        <a class="dropdown-item" th:href="@{/Handshop/admin}">Tồn kho</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/Handshop/admin/OrderRequest}">Đơn đặt hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/Handshop/admin/ProfitReport}">BC lợi nhuận</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        QL tài khoản
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/AccCustomerManager}">QLTK Khách hàng</a>
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/AccEmployeesManager}" sec:authorize="hasRole('ROLE_ADMIN')">QLTK Nhân viên</a>
+                    </div>
+                </li>
+            </ul>
         </div>
     </nav>
 </header-admin>
-<!--<header-admin>-->
-    <!--<div class="container" style="margin: 20px ; display: flex ; flex-direction: column; width: 100%; ">-->
-        <!--<div class="user-role">-->
-            <!--<a th:href="@{/Handshop}"> Về trang chủ </a> <br>-->
-            <!--User: <span sec:authentication="name"></span>-->
-            <!--<br>-->
-            <!--Role(s): <span sec:authentication="principal.authorities"></span> <br><br>-->
-        <!--</div>-->
-        <!--<div class="control-pannel" style=" border: 2px solid #3498db; padding: 20px; display: flex; justify-content: space-around">-->
-            <!--<a th:href="@{/Handshop/admin/soldphones}" class="addphone" style=" margin: 15px"> Đã bán </a>-->
-            <!--<a th:href="@{/Handshop/admin}" class="addphone" style=" margin: 15px"> Tồn kho </a>-->
-            <!--<a th:href="@{/Handshop/admin/OrderRequest}" class="addphone" style=" margin: 15px">Đơn đặt hàng</a>-->
-            <!--<a th:href="@{/Handshop/admin/ProfitReport}" class="addphone" style=" margin: 15px">Báo cáo lợi nhuận</a>-->
-            <!--<a th:href="@{/Handshop/admin/AccCustomerManager}" class="addphone" style=" margin: 15px">Quản lý tài khoản Khách hàng</a>-->
-            <!--<a th:href="@{/Handshop/admin/AccEmployeesManager}" class="addphone" style="margin: 15px"-->
-               <!--sec:authorize="hasRole('ROLE_ADMIN')">Quản lý tài khoản Nhân viên</a>-->
-        <!--</div>-->
-        <!--<br>-->
-        <!--<div class="control-phone" style="border: 2px solid #0056b3; padding: 20px;">-->
-            <!--<a th:href="@{/Handshop/admin/importExel}" class="addphone" style=" margin: 15px">Import lô điện thoại</a>-->
-            <!--<a th:href="@{/Handshop/admin/add}" class="addphone" style=" margin: 15px">Thêm điện thoại mới</a>-->
-            <!--<a th:href="@{/Handshop/admin/brandandcategory}" class="addphone" style=" margin: 15px">Thêm Brand hoặc Category</a>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</header-admin>-->
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>

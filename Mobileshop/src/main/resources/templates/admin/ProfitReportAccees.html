@@ -28,7 +28,6 @@
 </head>
 <body>
 <div th:replace="admin/headerAdmin :: header-admin"></div>
-<a style="margin-left: 30px" th:href="@{'/Handshop/admin/download'}" type="button" class="btn-success">Dowload file exel mẫu</a>
 <form th:action="@{'/Handshop/admin/ProfitReport'}" method="post">
     <div class="col-lg-6;" style=" display:flex; flex-direction: row; justify-content: space-around" >
         <div class="col-lg-2;">
@@ -53,16 +52,16 @@
         <thead class="thead-dark">
         <tr>
             <th>Mã đơn hàng</th>
-            <th>Tên khách hàng</th>
-            <th>Địa chỉ giao hàng</th>
-            <th>Thông tin liên hệ</th>
+            <!--<th>Tên khách hàng</th>-->
+            <!--<th>Địa chỉ giao hàng</th>-->
+            <!--<th>Thông tin liên hệ</th>-->
             <th>Sản phẩm</th>
-            <th>Số lượng đặt hàng</th>
+            <!--<th>Số lượng đặt hàng</th>-->
             <th>Số lượng đáp ứng</th>
-            <th>Số lượng bổ sung</th>
+            <!--<th>Số lượng bổ sung</th>-->
             <th>Giá/SP</th>
             <th>Tổng giá</th>
-            <th>Ngày đặt hàng</th>
+            <!--<th>Ngày đặt hàng</th>-->
             <th>Xử lý lần cuối</th>
             <th>Thao tác</th>
         </tr>
@@ -70,37 +69,37 @@
         <tbody>
         <tr th:each="order : ${orderDTOs}">
             <td th:text="${order.getOrderID}"></td>
-            <td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>
-            <td class="wrap" th:text="${order.getCustomer.getAddress}"></td>
-            <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
-                <p th:text="${order.getCustomer.getEmail}"></p></td>
+            <!--<td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>-->
+            <!--<td class="wrap" th:text="${order.getCustomer.getAddress}"></td>-->
+            <!--<td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>-->
+                <!--<p th:text="${order.getCustomer.getEmail}"></p></td>-->
             <td>
                 <div th:each="phone : ${order.getPhones}">
                     <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
                 </div>
             </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getQuantity}"></p>
-                </div>
-            </td>
+            <!--<td>-->
+                <!--<div th:each="orderitem : ${order.getOrderitemDTOS}">-->
+                    <!--<p th:text="${orderitem.getQuantity}"></p>-->
+                <!--</div>-->
+            <!--</td>-->
             <td>
                 <div th:each="orderitem : ${order.getOrderitemDTOS}">
                     <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
                 </div>
             </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>
-                </div>
-            </td>
+            <!--<td>-->
+                <!--<div th:each="orderitem : ${order.getOrderitemDTOS}">-->
+                    <!--<p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>-->
+                <!--</div>-->
+            <!--</td>-->
             <td>
                 <div th:each="orderitem : ${order.getOrderitemDTOS}">
                     <p th:text="'$'+${orderitem.price}"></p>
                 </div>
             </td>
             <td th:text="'$'+${order.getAmount}"></td>
-            <td class="wrap" th:text="${order.getOrderDate}"></td>
+            <!--<td class="wrap" th:text="${order.getOrderDate}"></td>-->
             <td class="wrap" th:text="${order.getDateProcessed}"></td>
             <td>
                 <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
@@ -121,4 +120,7 @@
     <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }" ></h2>
 </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>

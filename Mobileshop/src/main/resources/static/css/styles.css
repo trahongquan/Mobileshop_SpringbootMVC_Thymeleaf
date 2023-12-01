@@ -265,3 +265,16 @@ header-admin{
 .control-pannel{
     border: 2px solid #3498db; padding: 20px; display: flex; justify-content: center;
 }
+.dropdown-menu{
+    background-color: rgba(255, 157, 86, 0.4);
+}
+.dropdown-item:hover{
+    background-color: rgb(255, 235, 51);
+    font-weight: bold;
+}
+.nav-item{
+    font-weight: bold;
+}
+.nav-link:hover{
+    background-color: rgba(90, 156, 255, 0.4);
+}
