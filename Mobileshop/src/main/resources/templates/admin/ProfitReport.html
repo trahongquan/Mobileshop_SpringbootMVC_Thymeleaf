@@ -8,7 +8,6 @@
 </head>
 <body>
 <div th:replace="admin/headerAdmin :: header-admin"></div>
-<a style="margin-left: 30px" th:href="@{'/Handshop/admin/download'}" type="button" class="btn-success">Dowload file exel mẫu</a>
 <form th:action="@{'/Handshop/admin/ProfitReport'}" method="post">
     <div class="col-lg-6;" style=" display:flex; flex-direction: row; justify-content: space-around" >
         <div class="col-lg-2;">
@@ -25,4 +24,8 @@
     </div>
 </form>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </html>
