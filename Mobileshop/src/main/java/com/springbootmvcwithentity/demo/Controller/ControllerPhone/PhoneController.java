@@ -1,4 +1,4 @@
-package com.springbootmvcwithentity.demo.Controller;
+package com.springbootmvcwithentity.demo.Controller.ControllerPhone;
 
 import com.springbootmvcwithentity.demo.ClassSuport.SeriMissing;
 import com.springbootmvcwithentity.demo.dao.*;
@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,6 @@ import java.util.stream.Collectors;
 @SpringBootApplication
 @RequestMapping("/Handshop")
 public class PhoneController {
-
 
     private PhoneRepository phoneRepository;
     private PhoneService phoneService;
@@ -94,6 +94,14 @@ public class PhoneController {
 
         }
         return phoneDTOS;
+    }
+    public PhoneDTO Phone2PhoneDTO(Phones phone){
+
+        Brands brand = brandService.findById(phone.getBrandId());
+        Categories category = categoryService.findById(phone.getCategoryId());
+        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
+
+        return phoneDTO;
     }
 
     @GetMapping({"/", ""})
@@ -186,6 +194,37 @@ public class PhoneController {
                                                     /** Khu vực của admin*/
     /******************************************************************************************************/
 
+    @PostMapping("/admin/searchAdmin")
+    public String searchAdmin(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        return "admin/list-phones";
+    }
+    @PostMapping("/admin/searchAdminSold")
+    public String searchAdminSold(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
+  //      List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOSFirst = new LinkedList<>();
+
+        orderItems.forEach(item ->{
+            Phones phone = phoneService.findById(item.getPhoneID());
+            orderitemDTOSFirst.add(new OrderitemDTO(item,Phone2PhoneDTO(phone)));
+        });
+        List<OrderitemDTO> orderitemDTOS = orderitemDTOSFirst
+                .stream()
+                .filter(
+                    orderitemDTO ->
+                        phones.stream().anyMatch(item ->
+                            orderitemDTO.getPhoneDTO().getPhoneName().equals(item.getPhoneName())
+                        )
+                ).collect(Collectors.toList());
+        model.addAttribute("orderitemDTOS", orderitemDTOS); /** cách xử lý ở backEnd*/
+
+        return "admin/list-sold-phones";
+    }
 
     @GetMapping({"/admin", "/admin/"})
     public String redirectToAdminHandshopListAdmin(Model model) {
@@ -229,7 +268,9 @@ public class PhoneController {
         phone.setBrandId(brandID);
         phone.setCategoryId(categoryID);
         List<String> listseri = new StringToList().StringToList(phone.getSeri());
-        phone.setQuantity(listseri.size());
+        if (phone.getSeri().equals("[]")) {phone.setQuantity(0);}
+        else {phone.setQuantity(listseri.size());}
+
 
         if (!file.isEmpty()) {
             try {
@@ -275,7 +316,6 @@ public class PhoneController {
     ) {
         // Tìm đối tượng Phone hiện có trong cơ sở dữ liệu
         Phones existingPhone = phoneService.findById(id);
-
         // Cập nhật thông tin từ updatedPhone vào existingPhone
         existingPhone.setBrandId(updatedPhone.getBrandId());
         existingPhone.setCategoryId(updatedPhone.getCategoryId());
@@ -288,7 +328,8 @@ public class PhoneController {
         existingPhone.setOperatingSystem(updatedPhone.getOperatingSystem());
         existingPhone.setColor(updatedPhone.getColor());
         existingPhone.setSeri(updatedPhone.getSeri());
-        existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());
+        if (updatedPhone.getSeri().equals("[]")) {existingPhone.setQuantity(0);} else {
+        existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());}
 
         if (!file.isEmpty()) {
             try {
@@ -337,27 +378,105 @@ public class PhoneController {
     /******************************************************************************************************/
 
     @GetMapping("/admin/brandandcategory")
-    public String showbrandandcategoryForm(Model model) {
+    public String showbrandandcategoryForm(@ModelAttribute("errorbrand") String errorbrand,
+                                           @ModelAttribute("successbrand") String successbrand,
+                                           @ModelAttribute("errorcategory") String errorcategory,
+                                           @ModelAttribute("successcategory") String successcategory,
+                                           @ModelAttribute("errorbrandadd") String errorbrandadd,
+                                           @ModelAttribute("successbrandadd") String successbrandadd,
+                                           @ModelAttribute("errorcategoryadd") String errorcategoryadd,
+                                           @ModelAttribute("successcategoryadd") String successcategoryadd,
+                                           Model model) {
         List<Brands> brands = brandService.findAll();
         List<Categories> categories = categoryService.findAll();
         Phones phone = new Phones();
         model.addAttribute("phone", phone);
         model.addAttribute("brands", brands);
         model.addAttribute("categories", categories);
+        model.addAttribute("errorbrand", errorbrand);
+        model.addAttribute("successbrand", successbrand);
+        model.addAttribute("errorcategory", errorcategory);
+        model.addAttribute("successcategory", successcategory);
+        model.addAttribute("errorbrandadd", errorbrandadd);
+        model.addAttribute("successbrandadd", successbrandadd);
+        model.addAttribute("errorcategoryadd", errorcategoryadd);
+        model.addAttribute("successcategoryadd", successcategoryadd);
         return "admin/add-Brand-Category";
     }
 
 
     @PostMapping("/admin/brand/add")
-    public String addBrand(@RequestParam("addBrand") String brandName){
-        Brands brand = new Brands(brandName);
-        brandService.save(brand);
+    public String addBrand(@RequestParam("addBrand") String brandName, RedirectAttributes redirectAttributes){
+        try {
+            Brands brand = new Brands(brandName);
+            brandService.save(brand);
+            redirectAttributes.addFlashAttribute("errorbrandadd", "");
+            redirectAttributes.addFlashAttribute("successbrandadd", "Đã thêm Brand thành công");
+        } catch (Exception e) {
+            // Xử lý các lỗi khác nếu có
+            redirectAttributes.addFlashAttribute("errorbrandadd", "Lỗi thêm Brand");
+            redirectAttributes.addFlashAttribute("successbrandadd", "");
+            e.printStackTrace(); // In lỗi ra console hoặc log
+        }
         return "redirect:/Handshop/admin/brandandcategory";
     }
     @PostMapping("/admin/category/add")
-    public String addCategory(@RequestParam("addCategory") String categoryName){
-        Categories category = new Categories(categoryName);
-        categoryService.save(category);
+    public String addCategory(@RequestParam("addCategory") String categoryName, RedirectAttributes redirectAttributes){
+        try {
+            Categories category = new Categories(categoryName);
+            categoryService.save(category);
+            redirectAttributes.addFlashAttribute("errorcategoryadd", "");
+            redirectAttributes.addFlashAttribute("successcategoryadd", "Đã thêm Category thành công");
+        } catch (Exception e) {
+            // Xử lý các lỗi khác nếu có
+            redirectAttributes.addFlashAttribute("errorcategoryadd", "Lỗi thêm Category");
+            redirectAttributes.addFlashAttribute("successcategoryadd", "");
+            e.printStackTrace(); // In lỗi ra console hoặc log
+        }
+        return "redirect:/Handshop/admin/brandandcategory";
+    }
+    @PostMapping("/admin/brand/del")
+    public String delBrand(@RequestParam("brandID") int brandID, RedirectAttributes redirectAttributes) {
+        try {
+            // Kiểm tra xem có dữ liệu nào đang sử dụng brandID không
+            if (brandService.isBrandInUse(brandID)) {
+                // Nếu có, chuyển hướng với thông báo lỗi
+                redirectAttributes.addFlashAttribute("errorbrand", "Không thể xóa Brand đã được sử dụng.");
+                redirectAttributes.addFlashAttribute("successbrand", "");
+            } else {
+                // Nếu không có, thực hiện xóa và chuyển hướng
+                brandService.deleteById(brandID);
+                redirectAttributes.addFlashAttribute("errorbrand", "");
+                redirectAttributes.addFlashAttribute("successbrand", "Brand đã được xóa thành công.");
+            }
+        } catch (Exception e) {
+            // Xử lý các lỗi khác nếu có
+            redirectAttributes.addFlashAttribute("errorbrand", "Đã xảy ra lỗi trong quá trình xóa Brand.");
+            e.printStackTrace(); // In lỗi ra console hoặc log
+        }
+
+        return "redirect:/Handshop/admin/brandandcategory";
+    }
+
+    @PostMapping("/admin/category/del")
+    public String delCategory(@RequestParam("categoryID") int categoryID, RedirectAttributes redirectAttributes) {
+        try {
+            // Kiểm tra xem có dữ liệu nào đang sử dụng brandID không
+            if (categoryService.isCategoryInUse(categoryID)) {
+                // Nếu có, chuyển hướng với thông báo lỗi
+                redirectAttributes.addFlashAttribute("errorcategory", "Không thể xóa Category đã được sử dụng.");
+                redirectAttributes.addFlashAttribute("successcategory", "");
+            } else {
+                // Nếu không có, thực hiện xóa và chuyển hướng
+                categoryService.deleteById(categoryID);
+                redirectAttributes.addFlashAttribute("errorcategory", "");
+                redirectAttributes.addFlashAttribute("successcategory", "Category đã được xóa thành công.");
+            }
+        } catch (Exception e) {
+            // Xử lý các lỗi khác nếu có
+            redirectAttributes.addFlashAttribute("errorcategory", "Đã xảy ra lỗi trong quá trình xóa Category.");
+            e.printStackTrace(); // In lỗi ra console hoặc log
+        }
         return "redirect:/Handshop/admin/brandandcategory";
     }
 

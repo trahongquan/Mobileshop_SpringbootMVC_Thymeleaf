@@ -14,7 +14,16 @@
 </head>
 <body class="scroll-container" >
 <div th:replace="admin/headerAdmin :: header-admin"></div>
-<h1 style="margin-top: 50px; text-align: center;">Danh sách điện thoại </h1><br>
+<h1 style="margin-top: 50px; text-align: center;">Danh sách điện thoại </h1>
+<br>
+<form th:action="@{/Handshop/admin/searchAdmin}" method="post">
+    <div class="search-container" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+        <input style="min-width: 0px; max-width: 300px;" type="text" class="form-control  bg-transparent text-dark" name="inputdatasearch" placeholder="Nhập từ khóa tìm kiếm">
+        <button class="search-button  bg-transparent text-dark" type="submit" style="max-width: max-content">
+            <span> 🔍 </span>
+        </button>
+    </div>
+</form>
 <br>
 <div id="ConDiv" class="container table-container">
 

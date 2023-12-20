@@ -1,7 +1,10 @@
 package com.springbootmvcwithentity.demo.service.categorie;
 
+import com.springbootmvcwithentity.demo.dao.CategorieRepository;
 import com.springbootmvcwithentity.demo.dao.CategoryRepository;
+import com.springbootmvcwithentity.demo.dao.PhoneRepository;
 import com.springbootmvcwithentity.demo.entity.Categories;
+import com.springbootmvcwithentity.demo.entity.Phones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +14,12 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
+    private PhoneRepository phoneRepository;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, PhoneRepository phoneRepository) {
         this.categoryRepository = categoryRepository;
+        this.phoneRepository = phoneRepository;
     }
     @Override
     public List<Categories> findAll(){return categoryRepository.findAll();}
@@ -35,6 +40,12 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteById(int theId){
         categoryRepository.deleteById(theId);
     };
-
+    @Override
+    public boolean isCategoryInUse(int theId) {
+        List<Phones> phones = phoneRepository.findAllByCategoryId(theId);
+        if (!phones.isEmpty()) {
+            return true;
+        }else {return false;}
+    }
 
 }

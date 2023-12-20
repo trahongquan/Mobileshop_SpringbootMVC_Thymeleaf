@@ -1,4 +1,4 @@
-package com.springbootmvcwithentity.demo.Controller;
+package com.springbootmvcwithentity.demo.Controller.ControllerEmployee;
 
 import com.springbootmvcwithentity.demo.dao.PhoneRepository;
 import com.springbootmvcwithentity.demo.entity.Authority;

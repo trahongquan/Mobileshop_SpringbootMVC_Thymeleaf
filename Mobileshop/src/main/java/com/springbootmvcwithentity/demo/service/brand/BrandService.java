@@ -13,4 +13,5 @@ public interface BrandService {
     public Brands findById(int theId);
     public void save(Brands theBrands); // được sử dụng cả add new và update
     public void deleteById(int theId);
+    boolean isBrandInUse(int brandID);
 }
