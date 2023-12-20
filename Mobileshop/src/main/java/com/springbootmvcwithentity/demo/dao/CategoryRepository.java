@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @EnableJpaRepositories(basePackages = "com.springbootmvcwithentity.demo.dao")
 public interface CategoryRepository extends JpaRepository<Categories, Integer> {
+
 }

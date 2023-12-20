@@ -4,7 +4,7 @@ import com.springbootmvcwithentity.demo.entity.Brands;
 import com.springbootmvcwithentity.demo.entity.Categories;
 
 import java.util.List;
-
+//Bỏ
 public interface CategorieService {
 
 /*
