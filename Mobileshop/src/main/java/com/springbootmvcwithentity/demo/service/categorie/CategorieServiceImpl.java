@@ -1,22 +1,28 @@
 package com.springbootmvcwithentity.demo.service.categorie;
 
 import com.springbootmvcwithentity.demo.dao.CategorieRepository;
+import com.springbootmvcwithentity.demo.dao.PhoneRepository;
 import com.springbootmvcwithentity.demo.entity.Brands;
 import com.springbootmvcwithentity.demo.entity.Categories;
+import com.springbootmvcwithentity.demo.entity.Phones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+//Bỏ
 @Service
 public class CategorieServiceImpl implements CategorieService {
     private CategorieRepository categorieRepository;
+    private PhoneRepository phoneRepository;
 
     @Autowired
-    public CategorieServiceImpl(CategorieRepository categorieRepository) {
+    public CategorieServiceImpl(CategorieRepository categorieRepository, PhoneRepository phoneRepository) {
         this.categorieRepository = categorieRepository;
+        this.phoneRepository = phoneRepository;
     }
+
+
 
 /*    public Brands getBrandNameById(int brandId) {
         Brands brand = null; categorieRepository.findById(brandId);

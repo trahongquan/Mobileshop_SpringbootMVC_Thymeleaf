@@ -17,6 +17,15 @@
     <div>
         <h2 style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại đã bán </h2>
     </div>
+<form th:action="@{/Handshop/admin/searchAdminSold}" method="post">
+    <div class="search-container" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+        <input style="min-width: 0px; max-width: 300px;" type="text" class="form-control  bg-transparent text-dark" name="inputdatasearch" placeholder="Nhập từ khóa tìm kiếm">
+        <button class="search-button  bg-transparent text-dark" type="submit" style="max-width: max-content">
+            <span> 🔍 </span>
+        </button>
+    </div>
+</form>
+<br>
 <div id="ConDiv" class="container table-container">
     </br>
 

@@ -14,4 +14,5 @@ public interface CategoryService {
     public Categories findById(int theId);
     public void save(Categories theCategories); // được sử dụng cả add new và update
     public void deleteById(int theId);
+    boolean isCategoryInUse(int theId);
 }
