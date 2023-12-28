@@ -1,0 +1,5 @@
+2023-12-27 20:46:44,988 WARN  [DefaultSoapUICore] Missing folder [C:\Users\Quan\ext] for external libraries
+2023-12-27 20:46:45,128 INFO  [DefaultSoapUICore] initialized soapui-settings from [C:\Users\Quan\soapui-settings.xml]
+2023-12-27 20:46:45,386 INFO  [WorkspaceImpl] Loading workspace from [C:\Users\Quan\intellij-soapui-workspace.xml]
+2023-12-27 22:15:07,876 INFO  [WorkspaceImpl] Saved workspace to [C:\Users\Quan\intellij-soapui-workspace.xml]
+2023-12-27 22:15:07,878 INFO  [DefaultSoapUICore] Settings saved to [C:\Users\Quan\soapui-settings.xml]
