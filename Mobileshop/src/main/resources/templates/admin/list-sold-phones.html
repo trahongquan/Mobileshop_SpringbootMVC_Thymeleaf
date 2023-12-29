@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="scroll-container" >
 <div th:replace="admin/headerAdmin :: header-admin"></div>
@@ -26,6 +25,14 @@
     </div>
 </form>
 <br>
+<div style="display:flex; justify-content:center; align-content: center">
+    <a th:if="${soldphones}" href="/Handshop/admin/ExportSellPhone">
+        <h5>Tài về danh sách</h5>
+    </a>
+    <a th:if="${soldPhonesWait}" href="/Handshop/admin/ExportSoldPhonesWait">
+        <h5>Tài về danh sách</h5>
+    </a>
+</div>
 <div id="ConDiv" class="container table-container">
     </br>
 
@@ -46,6 +53,7 @@
             <th>Price</th>
             <th>Color</th>
             <th >Số lượng</th>
+            <th >Ngày bán</th>
         </tr>
         </thead>
         <tbody>
@@ -64,7 +72,8 @@
             <td th:text="'$' + ${orderitemDTO.price}"></td>
             <td th:text="${orderitemDTO.phoneDTO.color}"></td>
             <td th:text="${orderitemDTO.quantity}"></td>
-<!--            <td>
+            <td th:text="${orderdate[iter.index]}"></td>
+            <!--            <td>
                 <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
                     <form th:action="@{'/Handshop/admin/showFormForUpdate/' + ${phone.phoneId}}" method="get">
                         <button type="submit" class="btn btn-info btn-sm mr-1">Update</button>

@@ -26,7 +26,7 @@ public class StringToList {
         // Xóa ký tự "[" và "]" từ chuỗi
         String cleanedInput = input.replace("[", "").replace("]", "");
 
-        if(containsComma(cleanedInput)) {
+//        if(containsComma(cleanedInput)) {
             // Tách các số bằng dấu phẩy
             String[] seris = cleanedInput.split(",\\s*");
 
@@ -38,8 +38,8 @@ public class StringToList {
                 }
             }
             return result;
-        }
-        return result;
+//        }
+//        return result;
     }
 
     public /*static*/ List<Integer> StringToListINT(String input) {

@@ -11,19 +11,22 @@ import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
 import com.springbootmvcwithentity.demo.service.PrdRevService.brand.PrdRevService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
+import com.springbootmvcwithentity.demo.service.categorie.CategorieService;
 import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
 import com.springbootmvcwithentity.demo.service.order.orderService;
 import com.springbootmvcwithentity.demo.service.orderitem.orderitemsService;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,12 +35,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileOutputStream;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Controller
 @SpringBootApplication
@@ -234,9 +246,7 @@ public class PhoneController {
         return "admin/list-phones";
     }
 
-    @GetMapping({"/admin/soldphones"})
-    public String redirectToAdminHandshopListSoldPhones(Model model) {
-        List<OrderItem> orderItems = orderitemsservice.findAll();
+    private List<OrderitemDTO> orderItems2orderitemDTOS(List<OrderItem> orderItems){
         List<OrderitemDTO> orderitemDTOS = new LinkedList<>();
         orderItems.forEach(item ->{
             Phones phone = phoneService.findById(item.getPhoneID());
@@ -244,7 +254,57 @@ public class PhoneController {
             Categories category = categoryService.findById(phone.getCategoryId());
             orderitemDTOS.add(new OrderitemDTO(item,new PhoneDTO(phone,brand,category)));
         });
-        model.addAttribute("orderitemDTOS", orderitemDTOS); /** cách xử lý ở backEnd*/
+        return orderitemDTOS;
+    }
+    private List<String> GetDateProcess(List<OrderitemDTO> orderitemDTOS){
+        List<String> orderdate =new LinkedList<>();
+        orderitemDTOS.forEach(orderitemDTO -> {
+            Order order = orderservice.findById(orderitemDTO.getOrderID());
+            orderdate.add(order.getDateProcessed());
+        });
+        return orderdate;
+    }
+    private List<OrderitemDTO> filterDateProcess(List<OrderitemDTO> orderitemDTOS, String stringFilter1, String stringFilter2, boolean invertCondition) {
+        return orderitemDTOS.stream()
+                .filter(orderitemDTO -> {
+                    String dateProcessed = orderservice.findById(orderitemDTO.getOrderID()).getDateProcessed();
+                    System.out.println(dateProcessed);
+                    if (invertCondition) {
+                        // Nếu invertCondition là true, đảo ngược điều kiện
+                        return (stringFilter1.equals(dateProcessed) || stringFilter2.equals(dateProcessed));
+                    } else {
+                        // Ngược lại, sử dụng điều kiện như trước
+                        return !(stringFilter1.equals(dateProcessed) || stringFilter2.equals(dateProcessed));
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping({"/admin/soldphones"})
+    public String redirectToAdminHandshopListSoldPhones(Model model) {
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
+        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", false);
+        List<String> orderdate = GetDateProcess(orderitemDTOFilter);
+        model.addAttribute("orderitemDTOS", orderitemDTOFilter); /** cách xử lý ở backEnd*/
+        model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldphones", true); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldPhonesWait", false); /** cách xử lý ở backEnd*/
+        return "admin/list-sold-phones";
+    }
+    @GetMapping({"/admin/soldPhonesWait"})
+    public String redirectToAdminHandshopListSoldPhonesWait(Model model) {
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
+        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", true);
+        List<String> orderdate = GetDateProcess(orderitemDTOFilter);
+        boolean soldphones = false;
+        boolean soldPhonesWait = true;
+        model.addAttribute("orderitemDTOS", orderitemDTOFilter); /** cách xử lý ở backEnd*/
+        model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldphones", false); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldPhonesWait", true); /** cách xử lý ở backEnd*/
         return "admin/list-sold-phones";
     }
 
@@ -267,11 +327,7 @@ public class PhoneController {
                               @RequestParam("file") MultipartFile file) {
         phone.setBrandId(brandID);
         phone.setCategoryId(categoryID);
-        List<String> listseri = new StringToList().StringToList(phone.getSeri());
-        if (phone.getSeri().equals("[]")) {phone.setQuantity(0);}
-        else {phone.setQuantity(listseri.size());}
-
-
+        phone.setQuantity(new StringToList().StringToList(phone.getSeri()).size());
         if (!file.isEmpty()) {
             try {
                 // Lưu ảnh vào thư mục static/images
@@ -328,8 +384,7 @@ public class PhoneController {
         existingPhone.setOperatingSystem(updatedPhone.getOperatingSystem());
         existingPhone.setColor(updatedPhone.getColor());
         existingPhone.setSeri(updatedPhone.getSeri());
-        if (updatedPhone.getSeri().equals("[]")) {existingPhone.setQuantity(0);} else {
-        existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());}
+        existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());
 
         if (!file.isEmpty()) {
             try {
@@ -807,30 +862,30 @@ public class PhoneController {
             // Đọc tệp Excel
             Workbook workbook = WorkbookFactory.create(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
             // Lặp qua từng dòng trong bảng Excel
             for (Row row : sheet) {
-                // Bỏ qua dòng tiêu đề
-                if (row.getRowNum() == 0) {
-                    continue;
-                }
 
+                // Bỏ qua n dòng đầu tiên
+                if (row.getRowNum() < 1) {continue;}
+                CellValue checkrow = formulaEvaluator.evaluate(row.getCell(17));
+                if(checkrow.getBooleanValue()==true){continue;}
                 // Tạo một đối tượng Phones từ dữ liệu trong dòng
                 Phones phone = new Phones();
-                phone.setBrandId((int) row.getCell(0).getNumericCellValue());
-                phone.setCategoryId((int) row.getCell(1).getNumericCellValue());
-                phone.setPhoneName(row.getCell(2).getStringCellValue());
-                phone.setModel(row.getCell(3).getStringCellValue());
-                phone.setReleaseYear((int) row.getCell(4).getNumericCellValue());
-                phone.setScreenSize(row.getCell(5).getNumericCellValue());
-                phone.setStorageCapacity((int) row.getCell(6).getNumericCellValue());
-                phone.setRam((int) row.getCell(7).getNumericCellValue());
-                phone.setOperatingSystem(row.getCell(8).getStringCellValue());
-                phone.setPrice(row.getCell(9).getStringCellValue());
-                phone.setColor(row.getCell(10).getStringCellValue());
-                phone.setImageName(row.getCell(11).getStringCellValue());
-                phone.setQuantity((int) row.getCell(12).getNumericCellValue());
-                phone.setSeri(row.getCell(13).getStringCellValue());
+                phone.setBrandId((int) formulaEvaluator.evaluate(row.getCell(15)).getNumberValue());
+                phone.setCategoryId((int) formulaEvaluator.evaluate(row.getCell(16)).getNumberValue());
+                phone.setPhoneName(row.getCell(3).getStringCellValue());
+                phone.setModel(formulaEvaluator.evaluate(row.getCell(4)).getStringValue());
+                phone.setReleaseYear((int) row.getCell(5).getNumericCellValue());
+                phone.setScreenSize(row.getCell(6).getNumericCellValue());
+                phone.setStorageCapacity((int) row.getCell(7).getNumericCellValue());
+                phone.setRam((int) row.getCell(8).getNumericCellValue());
+                phone.setOperatingSystem(row.getCell(9).getStringCellValue());
+                phone.setPrice(row.getCell(10).getStringCellValue());
+                phone.setColor(row.getCell(11).getStringCellValue());
+                phone.setImageName(row.getCell(12).getStringCellValue());
+                phone.setSeri(row.getCell(14).getStringCellValue());
+                phone.setQuantity(new StringToList().StringToList(phone.getSeri()).size());
 
                 // Lưu đối tượng Phones vào cơ sở dữ liệu
                 phoneService.save(phone);
@@ -854,6 +909,221 @@ public class PhoneController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+    private void fillDataToSheet(Sheet sheet, String[] headers, List<?> dataList, int startCellIndex) {
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i + startCellIndex);
+            cell.setCellValue(headers[i]);
+        }
+
+        int rowIndex = 1;
+        for (Object data : dataList) {
+            Row row = sheet.createRow(rowIndex++);
+            Field[] fields = data.getClass().getDeclaredFields();
+            int cellIndex = startCellIndex;
+            for (Field field : fields) {
+                field.setAccessible(true);
+                try {
+                    Cell cell = row.createCell(cellIndex++);
+                    Object value = field.get(data);
+                    if (value != null) {
+                        cell.setCellValue(value.toString());
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    @GetMapping("/admin/ExportInventory")
+    public ResponseEntity<Resource> exportInventory() {
+        List<Phones> phones = phoneService.findAll();
+        List<Brands> brands = brandService.findAll();
+        List<Categories> categories = categoryService.findAll();
+        // Tạo một Workbook (Sử dụng XSSFWorkbook cho định dạng .xlsx)
+        try (Workbook workbook = new XSSFWorkbook()) {
+            /** Sheet 2*/
+            // Tạo Sheet2 và điền dữ liệu từ brandService và categoryService
+            {
+                Sheet sheet2 = workbook.createSheet("Dữ liệu");
+                Row headerRow = sheet2.createRow(0);
+                String[] headers = {"Brand", "BrandID", "Category", "CategoryID", "Model"};
+
+                for (int i = 0; i < headers.length; i++) {
+                    Cell cell = headerRow.createCell(i+1);
+                    cell.setCellValue(headers[i]);
+                }
+
+                int rowIndexbrand = 1;
+                int brandSize = brands.size();
+                int categorySize = categories.size();
+                int phoneModelSize = phones.size();
+                int max = Math.max(brandSize, Math.max(categorySize, phoneModelSize));
+                for (int i =0 ; i < max ; i++) {
+                    Row row = sheet2.createRow(rowIndexbrand++);
+                    Cell cell = row.createCell(1); // Cột Brands
+                    if(i<brandSize) cell.setCellValue(brands.get(i).getBrandName());
+                    cell = row.createCell(2); // Cột BrandID
+                    if(i<brandSize) cell.setCellValue(brands.get(i).getBrandID());
+                    cell = row.createCell(3); // Cột Categories
+                    if(i<categorySize) cell.setCellValue(categories.get(i).getCategoryName());
+                    cell = row.createCell(4); // Cột CategoryID
+                    if(i<categorySize) cell.setCellValue(categories.get(i).getCategoryID());
+                    cell = row.createCell(5); // Cột Model
+                    if(i<phoneModelSize) cell.setCellValue(phones.get(i).getModel());
+                }
+            }
+                // Sử dụng phương thức fillDataToSheet để điền dữ liệu cho Sheet2
+//                Sheet sheet2 = workbook.createSheet("Sheet2");
+//                String[] brandHeaders = {"Brand", "BrandID"};
+//                fillDataToSheet(sheet2, brandHeaders, brands, 1);
+//
+//                String[] categoryHeaders = {"Category", "CategoryID"};
+//                fillDataToSheet(sheet2, categoryHeaders, categories, 3);
+
+//                String[] phoneHeaders = {"Model"};
+//                fillDataToSheet(sheet2, phoneHeaders, phones, 5);
+
+            /** Sheet 1*/
+
+            // Tạo một Sheet
+            Sheet sheet1 = workbook.createSheet("Danh Sách điện thoại");
+
+            // Thêm header vào dòng đầu tiên
+            Row headerRow1 = sheet1.createRow(0);
+            String[] headers1 = {"ID", "Brand", "Category", "PhoneName", "Model", "ReleaseYear", "ScreenSize", "StorageCapacity",
+                    "RAM", "OperatingSystem", "Price", "Color", "ImageName", "Quantity", "Seri", "BrandID", "CategoryID", "Isblank"};
+
+            for (int i = 0; i < headers1.length; i++) {
+                Cell cell = headerRow1.createCell(i);
+                cell.setCellValue(headers1[i]);
+            }
+
+            // Tạo một DataValidation cho dropdown list Brand từ Sheet2
+//            DataValidationHelper dataValidationHelper = sheet1.getDataValidationHelper();
+//            DataValidationConstraint brandConstraint = dataValidationHelper.createFormulaListConstraint("Dữ liệu!$B$2:$B$" + (brands.size() + 1));
+//            CellRangeAddressList brandRange = new CellRangeAddressList(2, Integer.MAX_VALUE, 1, 1);
+//            DataValidation brandValidation = dataValidationHelper.createValidation(brandConstraint, brandRange);
+//            sheet1.addValidationData(brandValidation);
+
+//            // Tạo một DataValidation cho dropdown list Category từ Sheet2
+//            DataValidationConstraint categoryConstraint = dataValidationHelper.createFormulaListConstraint("Dữ liệu!$D$2:$D$" + (categories.size() + 1));
+//            CellRangeAddressList categoryRange = new CellRangeAddressList(2, Integer.MAX_VALUE, 2, 2);
+//            DataValidation categoryValidation = dataValidationHelper.createValidation(categoryConstraint, categoryRange);
+//            sheet1.addValidationData(categoryValidation);
+
+            // Ghi dữ liệu vào Sheet bắt đầu từ dòng thứ 2
+            int rowIndex1 = 1;
+            for (Phones phone : phones) {
+                Row row = sheet1.createRow(rowIndex1++);
+                int cellIndex = 0;
+                Class<?> phoneClass = phone.getClass();
+                Field[] fields = phoneClass.getDeclaredFields();
+                for (Field field : fields) {
+                    field.setAccessible(true); // Cho phép truy cập các thuộc tính private
+                    try {
+                        Cell cell = row.createCell(cellIndex++);
+                        Object value = field.get(phone); // Lấy giá trị của trường từ đối tượng phone
+                        if (value != null) {
+                            if (value instanceof String) {
+                                cell.setCellValue((String) value);
+                            } else if (value instanceof Integer) {
+                                int id = (Integer) value;
+                                if(cellIndex==2) {
+                                    Brands brand = brandService.findById((id));
+                                    cell.setCellValue(brand.getBrandName());
+                                    Cell cellBrandID = row.createCell(15);
+                                    cellBrandID.setCellValue(id);
+                                }else if(cellIndex==3) {
+                                    Categories category = categoryService.findById(id);
+                                    cell.setCellValue(category.getCategoryName());
+                                    Cell categoryID = row.createCell(16);
+                                    categoryID.setCellValue(id);
+                                } else {cell.setCellValue((Integer) value);}
+                            } else if (value instanceof Double) {
+                                cell.setCellValue((Double) value);
+                            }
+                        }
+                    } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            // Trả về dữ liệu Excel dưới dạng InputStreamResource
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bos.toByteArray()));
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Danh sách điện thoại.xlsx")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @GetMapping("/admin/ExportSellPhone")
+    public ResponseEntity<Resource> ExportSellPhone() {
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
+
+        // Tạo một Workbook (Sử dụng XSSFWorkbook cho định dạng .xlsx)
+        try (Workbook workbook = new XSSFWorkbook()) {
+            // Tạo một Sheet
+            Sheet sheet1 = workbook.createSheet("Danh Sách điện thoại");
+            // Thêm header vào dòng đầu tiên
+            Row headerRow1 = sheet1.createRow(0);
+            String[] headers1 = {"OrderItemID", "OrderID", "PhoneID", "Price", "Quantity", "Missing", "Seri", "Thông tin điện thoại"};
+            fillDataToSheet(sheet1, headers1,
+                    filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", false),
+                    0);
+            // Trả về dữ liệu Excel dưới dạng InputStreamResource
+            return ResponseExel(workbook, "Danh sách điện thoại đã bán");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+    private ResponseEntity<Resource> ResponseExel(Workbook workbook, String ExelName){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            workbook.write(bos);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bos.toByteArray()));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ExelName+".xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+    @GetMapping("/admin/ExportSoldPhonesWait")
+    public ResponseEntity<Resource> ExportSoldPhonesWait() {
+        List<OrderItem> orderItems = orderitemsservice.findAll();
+        List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
+
+        // Tạo một Workbook (Sử dụng XSSFWorkbook cho định dạng .xlsx)
+        try (Workbook workbook = new XSSFWorkbook()) {
+            // Tạo một Sheet
+            Sheet sheet1 = workbook.createSheet("Danh Sách điện thoại");
+            // Thêm header vào dòng đầu tiên
+            Row headerRow1 = sheet1.createRow(0);
+            String[] headers1 = {"OrderItemID", "OrderID", "PhoneID", "Price", "Quantity", "Missing", "Seri", "Thông tin điện thoại"};
+            fillDataToSheet(sheet1, headers1,
+                    filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", true),
+                    0);
+            // Trả về dữ liệu Excel dưới dạng InputStreamResource
+            return ResponseExel(workbook, "Danh sách điện thoại đang trong hàng chờ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
 
     /******************************************************************************************************/
                                     /** Xóa comment */
