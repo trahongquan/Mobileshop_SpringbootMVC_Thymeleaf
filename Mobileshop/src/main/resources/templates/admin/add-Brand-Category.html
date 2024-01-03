@@ -60,14 +60,18 @@
 </section>
 <!-- Input for Brand -->
 <div class="form-group" style="display: flex ; justify-content: space-around">
-    <form th:action="@{'/Handshop/admin/brand/del'}" method="post">
+    <form th:action="@{'/Handshop/admin/brand/del'}" method="post" id="deleteBrandForm">
         <div>
-            <label th:for="@{'brand'}" >Brand:</label>
-            <select th:class="@{'form-control'}" th:id="@{'brand'}" th:name="@{'brandID'}"  required>
+            <label th:for="@{'brand'}" >Brand:
+                <input type="checkbox" id="checkboxBrand">
+            </label>
+            <select th:class="@{'form-control'}" th:id="@{'brand'}" th:name="@{'brandID'}"  required
+                    onchange="enableDeleteButton('deleteBrandForm', 'deleteBrandButton')">
                 <option th:each="brand : ${brands}" th:value="${brand.BrandID}" th:text="${brand.BrandName}"></option>
             </select>
         </div>
-        <button type="submit" class="btn btn-danger" > Delete Brand </button>
+        <!--<button type="submit" class="btn btn-danger" id="deleteBrandButton" disabled > Delete Brand </button>-->
+        <button type="submit" class="btn btn-danger" id="deleteBrandButton" > Delete Brand </button>
     </form>
     <div style="display: flex; justify-content: space-around">
         <form th:action="'/Handshop/admin/brand/add'" method="post">
@@ -82,16 +86,20 @@
 <!-- Input for Category (Dropdown) -->
 <div class="form-group" style="display: flex ; justify-content: space-around">
     <div>
-        <form th:action="@{'/Handshop/admin/category/del'}" method="post">
+        <form th:action="@{'/Handshop/admin/category/del'}" method="post" id="deleteCategoryForm">
             <div>
-                <label for="category">Category:</label>
-                <select class="form-control" id="category" name="categoryID" required>
+                <label for="category">Category:
+                    <input type="checkbox" id="checkboxCategory">
+                </label>
+                <select class="form-control" id="category" name="categoryID" required
+                        onchange="enableDeleteButton('deleteCategoryForm', 'deleteCategoryButton')">
                     <!-- Populate options dynamically from your database -->
                     <option th:each="category : ${categories}"  th:value="${category.CategoryID}" th:text="${category.CategoryName}"></option>
                     <!-- Add more options as needed -->
                 </select>
             </div>
-            <button type="submit" class="btn btn-danger" > Delete Category </button>
+            <!--<button type="submit" class="btn btn-danger" id="deleteCategoryButton" disabled> Delete Category </button>-->
+            <button type="submit" class="btn btn-danger" id="deleteCategoryButton" > Delete Category </button>
         </form>
     </div>
     <div style="display: flex; ">
@@ -104,6 +112,32 @@
         </form>
     </div>
 </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var checkboxBrand = document.getElementById('checkboxBrand');
+            var checkboxCategory = document.getElementById('checkboxCategory');
+            var deleteBrandButton = document.getElementById('deleteBrandButton');
+            var deleteCategoryButton = document.getElementById('deleteCategoryButton');
+
+            // Kiểm tra trạng thái ban đầu của checkbox và gán giá trị disabled cho nút delete
+            setDisabledState(deleteBrandButton, checkboxBrand.checked);
+            setDisabledState(deleteCategoryButton, checkboxCategory.checked);
+
+            // Thêm sự kiện cho checkbox
+            checkboxBrand.addEventListener("change", function () {
+                setDisabledState(deleteBrandButton, this.checked);
+            });
+
+            checkboxCategory.addEventListener("change", function () {
+                setDisabledState(deleteCategoryButton, this.checked);
+            });
+        });
+
+        // Hàm để gán giá trị disabled cho nút delete
+        function setDisabledState(deleteButton, isChecked) {
+            deleteButton.disabled = !isChecked;
+        }
+    </script>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>

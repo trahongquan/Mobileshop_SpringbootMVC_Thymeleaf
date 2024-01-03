@@ -199,4 +199,25 @@ public class Phones {
     public void setSeri(String seri) {
         this.seri = seri;
     }
+
+    @Override
+    public String toString() {
+        return "Phones{" +
+                "phoneId=" + phoneId +
+                ", brandId=" + brandId +
+                ", categoryId=" + categoryId +
+                ", phoneName='" + phoneName + '\'' +
+                ", model='" + model + '\'' +
+                ", releaseYear=" + releaseYear +
+                ", screenSize=" + screenSize +
+                ", storageCapacity=" + storageCapacity +
+                ", ram=" + ram +
+                ", operatingSystem='" + operatingSystem + '\'' +
+                ", price='" + price + '\'' +
+                ", color='" + color + '\'' +
+                ", ImageName='" + ImageName + '\'' +
+                ", quantity=" + quantity +
+                ", seri='" + seri + '\'' +
+                '}';
+    }
 }

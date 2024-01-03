@@ -99,11 +99,6 @@ public class PhoneController {
             Categories category = categoryService.findById(phone.getCategoryId());
             PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
             phoneDTOS.add(phoneDTO);
-            // Khai báo đối tượng DecimalFormat với mẫu định dạng mong muốn
-//                DecimalFormat df = new DecimalFormat("#.##");
-//                double result = Double.parseDouble(phoneDTO.getPriceDTO().getSellPrice()) / (1 - Double.parseDouble(phoneDTO.getPriceDTO().getDiscount()))/* + random*/;
-//                String formattedResult = df.format(result);
-
         }
         return phoneDTOS;
     }
@@ -146,9 +141,8 @@ public class PhoneController {
             PrdRevDTO prdRevDTO = new PrdRevDTO(productreview, customer);
             prdRevDTOS.add(prdRevDTO);
         });
-        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(phone.getPhoneName().split(" ")[0]);
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(phone.getPhoneName().split(" ")[0],phone.getPhoneName().split(" ")[0]);
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
-        System.out.println(phone.getPhoneName().split(" ")[0]);
         if (phoneDTO != null) {
             model.addAttribute("prdRevDTOS", prdRevDTOS);
             model.addAttribute("phoneDTO", phoneDTO);
@@ -196,7 +190,7 @@ public class PhoneController {
 
     @PostMapping("/list/search")
     public String Search(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
-        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
@@ -208,32 +202,50 @@ public class PhoneController {
 
     @PostMapping("/admin/searchAdmin")
     public String searchAdmin(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
-        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "admin/list-phones";
     }
     @PostMapping("/admin/searchAdminSold")
-    public String searchAdminSold(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
-        List<Phones> phones = phoneRepository.findAllByPhoneNameContaining(inputdatasearch);
-  //      List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
-
+    public String searchAdminSold(Model model,
+                                  @RequestParam("inputdatasearch") String inputdatasearch,
+                                  @RequestParam("soldphones") boolean soldphones,
+                                  @RequestParam("soldPhonesWait") boolean soldPhonesWait) {
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
+        phones.forEach(phones1 -> System.out.println(phones1.toString()));
         List<OrderItem> orderItems = orderitemsservice.findAll();
-        List<OrderitemDTO> orderitemDTOSFirst = new LinkedList<>();
-
-        orderItems.forEach(item ->{
-            Phones phone = phoneService.findById(item.getPhoneID());
-            orderitemDTOSFirst.add(new OrderitemDTO(item,Phone2PhoneDTO(phone)));
-        });
-        List<OrderitemDTO> orderitemDTOS = orderitemDTOSFirst
+        List<OrderitemDTO> orderitemDTOSFirst = orderItems2orderitemDTOS(orderItems);
+        List<OrderitemDTO> orderitemDTOSFilter = new LinkedList<>();
+        if(soldphones == true) {
+            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,"0000-00-00 00:00:00", "", false);
+        }
+        if(soldPhonesWait == true) {
+            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,"0000-00-00 00:00:00", "", true);
+        }
+                                    /**********************************/
+                                    /** Chưa tìm kiếm bằng seri được  */
+                                    /**********************************/
+        List<OrderitemDTO> orderitemDTOS = orderitemDTOSFilter
                 .stream()
                 .filter(
                     orderitemDTO ->
-                        phones.stream().anyMatch(item ->
-                            orderitemDTO.getPhoneDTO().getPhoneName().equals(item.getPhoneName())
-                        )
+                        phones.stream().anyMatch(item ->{
+
+                            if(inputdatasearch != null && (orderitemDTO.getSeris() != null && orderitemDTO.getSeris().toString().contains(inputdatasearch))) {
+                                return orderitemDTO.getSeris().toString().contains(inputdatasearch) || orderitemDTO.getPhoneDTO().getPhoneName().equals(item.getPhoneName());
+                            } else {
+                                return orderitemDTO.getPhoneDTO().getPhoneName().equals(item.getPhoneName());
+                            }
+                        })
+
                 ).collect(Collectors.toList());
+        List<String> orderdate = GetDateProcess(orderitemDTOS);
+
         model.addAttribute("orderitemDTOS", orderitemDTOS); /** cách xử lý ở backEnd*/
+        model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldphones", soldphones); /** cách xử lý ở backEnd*/
+        model.addAttribute("soldPhonesWait", soldPhonesWait); /** cách xử lý ở backEnd*/
 
         return "admin/list-sold-phones";
     }
@@ -250,9 +262,7 @@ public class PhoneController {
         List<OrderitemDTO> orderitemDTOS = new LinkedList<>();
         orderItems.forEach(item ->{
             Phones phone = phoneService.findById(item.getPhoneID());
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            orderitemDTOS.add(new OrderitemDTO(item,new PhoneDTO(phone,brand,category)));
+            orderitemDTOS.add(new OrderitemDTO(item,Phone2PhoneDTO(phone)));
         });
         return orderitemDTOS;
     }
@@ -268,7 +278,6 @@ public class PhoneController {
         return orderitemDTOS.stream()
                 .filter(orderitemDTO -> {
                     String dateProcessed = orderservice.findById(orderitemDTO.getOrderID()).getDateProcessed();
-                    System.out.println(dateProcessed);
                     if (invertCondition) {
                         // Nếu invertCondition là true, đảo ngược điều kiện
                         return (stringFilter1.equals(dateProcessed) || stringFilter2.equals(dateProcessed));
@@ -415,7 +424,6 @@ public class PhoneController {
         Phones phone = phoneService.findById(idt);
         if (phone != null) {
             model.addAttribute("phone", phone);
-            System.out.println(phone);
             return "admin/delete";
         } else {
             throw new RuntimeException("Không tìm thấy điện thoại với ID=" + id);
@@ -629,7 +637,6 @@ public class PhoneController {
             int missing = orderItem.getMissing();
             seriMissings.add(new SeriMissing(phone, missing));
         });
-        System.out.println(seriMissings.toString());
         model.addAttribute("seriMissings", seriMissings);
         model.addAttribute("orderItems", orderItems);
         model.addAttribute("order", order);
@@ -775,8 +782,6 @@ public class PhoneController {
         for (Map.Entry<Integer, List<String>> entry : resullt.entrySet()) {
             int phoneID = entry.getKey();
             List<String> seriList = entry.getValue();
-            System.out.println("PhoneID: " + phoneID);
-            System.out.println("Seri List: " + seriList);
         }
         return resullt;
     }

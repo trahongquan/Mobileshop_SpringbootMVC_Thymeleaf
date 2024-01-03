@@ -9,8 +9,12 @@
 <header-admin>
     <nav class="container" style="margin: 20px; ">
         <div class="user-role" style="justify-content: flex-start;">
-            <a th:href="@{/Handshop}"> Về trang chủ </a>||
-            <a th:href="@{/logout}"> Logout </a> <br>
+            <div class="d-flex" style="flex-direction: row">
+                <a th:href="@{/Handshop}" th:text="'Về trang chủ  ||'"> </a>
+                <form th:action="@{/logout}" method="POST">
+                    <input type="submit" value="Đăng xuất" class="button-logout" style="border: none; color: rgba(255,45,86,1); font-weight: bold"/>
+                </form>
+            </div>
             User: <span sec:authentication="name"></span>
             <br>
             Role(s): <span sec:authentication="principal.authorities"></span> <br><br>
@@ -23,7 +27,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" th:href="@{/Handshop/admin/addOrderImport}" >Thêm đơn nhập hàng</a>
-                        <a class="dropdown-item" th:href="@{/Handshop/admin/add}" >Thêm điện thoại mới</a>
+                        <a class="dropdown-item" th:href="@{/Handshop/admin/add}" >Thêm điện lẻ thoại mới</a>
                         <a class="dropdown-item" th:href="@{/Handshop/admin/importExel}" >Import lô điện thoại</a>
                         <a class="dropdown-item" th:href="@{/Handshop/admin/brandandcategory}">Thêm Brand hoặc Category</a>
                     </div>

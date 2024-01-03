@@ -26,7 +26,7 @@
     <section class="phone-list">
         <div class="phone-item" th:each="phone,iter:${phoneDTOS}"> <!--Dùng DTO để xử lsy tại backend-->
             <div th:data-phoneid="${phone.phoneId}">
-                <span class="Cart-icon" th:if="${#authorization.expression('isAuthenticated()')}" > <a href="#" class="iconcart"> <img th:src="@{'/Images/icon-shopping-cart.png'}" > </a> </span>
+                <span class="Cart-icon" th:if="${#authorization.expression('isAuthenticated()')}" > <a th:href="@{'/Handshop/addWhis/' + ${phone.phoneId}+'/'+${#authentication.name}}" class="iconcart"> <img th:src="@{'/Images/heart.png'}"  style="width: 40px"> </a> </span>
                 <!--<span class="Cart-icon" th:if="${#authorization.expression('isAuthenticated()')}" > <a th:href="@{'/addToCart/'+ ${phone.phoneId}}"> <img th:src="@{'/Images/icon-shopping-cart.png'}" > </a> </span>-->
                 <a th:href="@{'/Handshop/ViewDetailPhone/' + ${phone.phoneId}}" th:data-phoneID="${phone.phoneId}" >
                 <img class="img-phones" th:src="'/Images/' + ${phone.ImageName}" th:alt="iPhone"

@@ -13,12 +13,31 @@
         <h2 style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Nhập file exel: </h2>
     </div>
 <div style="display: flex; justify-content: center; align-content: center; margin-top:3%;">
+<!--<form th:action="@{'/Handshop/admin/importExel'}" method="post" enctype="multipart/form-data">-->
+    <!--<div class="d-flex" style="justify-content: center">-->
+        <!--<input class="form-control" type="file" name="file" accept=".xlsx, .xls">-->
+        <!--<button th:if="" type="submit" class="btn btn-success">Import</button>-->
+    <!--</div>-->
+<!--</form>-->
 <form th:action="@{'/Handshop/admin/importExel'}" method="post" enctype="multipart/form-data">
     <div class="d-flex" style="justify-content: center">
-        <input class="form-control" type="file" name="file" accept=".xlsx, .xls">
-        <button type="submit" class="btn btn-success">Import</button>
+        <input id="fileInput" class="form-control" type="file" name="file" accept=".xlsx, .xls" onchange="enableImportButton()">
+        <button id="importButton" type="submit" class="btn btn-success" disabled>Import</button>
     </div>
 </form>
+<script>
+    function enableImportButton() {
+        var fileInput = document.getElementById('fileInput');
+        var importButton = document.getElementById('importButton');
+
+        // Kiểm tra xem có file được chọn hay không
+        if (fileInput.files.length > 0) {
+            importButton.disabled = false; // Kích hoạt nút import
+        } else {
+            importButton.disabled = true; // Vô hiệu hóa nút import
+        }
+    }
+</script>
 </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>

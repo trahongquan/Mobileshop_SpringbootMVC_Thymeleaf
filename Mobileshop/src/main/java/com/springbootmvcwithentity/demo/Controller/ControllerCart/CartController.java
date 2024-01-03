@@ -4,17 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbootmvcwithentity.demo.ClassSuport.CartCookie;
 import com.springbootmvcwithentity.demo.dao.CustomerRepository;
+import com.springbootmvcwithentity.demo.dao.WishRepository;
 import com.springbootmvcwithentity.demo.dto.PhoneCartDTO;
 import com.springbootmvcwithentity.demo.entity.*;
 import com.springbootmvcwithentity.demo.service.PaymentMethod.PaymentMethodService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
+import com.springbootmvcwithentity.demo.service.cart.WishService;
 import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
@@ -33,16 +36,19 @@ public class CartController {
     private BrandService brandService;
     private CategoryService categoryService;
     private PaymentMethodService paymentMethodService;
-
-    @Autowired
+    private WishService wishService;
+    private WishRepository wishRepository;
     private CustomerRepository customerRepository;
 
     @Autowired
-    public CartController(PhoneService phoneService, BrandService brandService, CategoryService categoryService, PaymentMethodService paymentMethodService) {
-        this.phonesService = phoneService;
+    public CartController(PhoneService phonesService, BrandService brandService, CategoryService categoryService, PaymentMethodService paymentMethodService, WishService wishService, WishRepository wishRepository, CustomerRepository customerRepository) {
+        this.phonesService = phonesService;
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.paymentMethodService = paymentMethodService;
+        this.wishService = wishService;
+        this.wishRepository = wishRepository;
+        this.customerRepository = customerRepository;
     }
 
         @GetMapping("/Handshop/cart")
@@ -167,6 +173,28 @@ public class CartController {
         model.addAttribute("paymentMethods", paymentMethods);
 
         return "phones/order-item-payment";
+    }
+
+    @GetMapping("/Handshop/addWhis/{phoneID}/{email}")
+    public String addWhis(@PathVariable int phoneID,@PathVariable String email){
+        Customer customer = customerRepository.findByEmail(email);
+        if(customer != null) {
+            try {
+                Wish wish = wishRepository.findByCustomerId(customer.getCustomerId());
+                if (wish != null && phoneID == wish.getPhoneID()) {
+                    wish.setQuantity(wish.getQuantity() + 1);
+                    wishService.addToWish(wish);
+                } else {
+                    wishService.addToWish(new Wish(customer.getCustomerId(), phoneID, 1));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                wishService.addToWish(new Wish(customer.getCustomerId(), phoneID, 1));
+            }
+        } else {
+            wishService.addToWish(new Wish(customer.getCustomerId(),phoneID,1));
+        }
+        return "index";
     }
 }
 

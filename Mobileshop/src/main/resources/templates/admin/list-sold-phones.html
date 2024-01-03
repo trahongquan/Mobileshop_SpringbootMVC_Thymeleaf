@@ -14,7 +14,8 @@
 <body class="scroll-container" >
 <div th:replace="admin/headerAdmin :: header-admin"></div>
     <div>
-        <h2 style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại đã bán </h2>
+        <h2 th:if="${soldphones}" style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại đã bán </h2>
+        <h2 th:if="${soldPhonesWait}" style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại Chờ duyệt </h2>
     </div>
 <form th:action="@{/Handshop/admin/searchAdminSold}" method="post">
     <div class="search-container" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
@@ -23,19 +24,20 @@
             <span> 🔍 </span>
         </button>
     </div>
+    <br>
+    <div style="display:flex; justify-content:center; align-content: center">
+        <input type="hidden" name="soldphones" th:value="${soldphones}">
+        <input type="hidden" name="soldPhonesWait" th:value="${soldPhonesWait}">
+        <a th:if="${soldphones}" href="/Handshop/admin/ExportSellPhone">
+            <h5>Tài về danh sách</h5>
+        </a>
+        <a th:if="${soldPhonesWait}" href="/Handshop/admin/ExportSoldPhonesWait">
+            <h5>Tài về danh sách</h5>
+        </a>
+    </div>
 </form>
-<br>
-<div style="display:flex; justify-content:center; align-content: center">
-    <a th:if="${soldphones}" href="/Handshop/admin/ExportSellPhone">
-        <h5>Tài về danh sách</h5>
-    </a>
-    <a th:if="${soldPhonesWait}" href="/Handshop/admin/ExportSoldPhonesWait">
-        <h5>Tài về danh sách</h5>
-    </a>
-</div>
-<div id="ConDiv" class="container table-container">
-    </br>
-
+<div class="d-flex" style="flex-direction: row; justify-content: flex-end;margin-right: 10%"><a href="/Handshop/admin/OrderRequest" style="">đi đến trang chờ duyệt</a></div>
+<div id="ConDiv" class="container table-container d-flex flex-column">
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -73,22 +75,6 @@
             <td th:text="${orderitemDTO.phoneDTO.color}"></td>
             <td th:text="${orderitemDTO.quantity}"></td>
             <td th:text="${orderdate[iter.index]}"></td>
-            <!--            <td>
-                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                    <form th:action="@{'/Handshop/admin/showFormForUpdate/' + ${phone.phoneId}}" method="get">
-                        <button type="submit" class="btn btn-info btn-sm mr-1">Update</button>
-                    </form>
-                    <form th:action="@{'/Handshop/admin/delete/' + ${phone.phoneId}}" method="POST" id="deletePhoneForm">
-                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(this)" th:data="${phone.phoneId}" >Delete</button>
-                    </form>
-                </div>
-            </td>
-            <script>
-                function confirmDelete(button) {
-                    var phoneID = button.getAttribute("data") + "";
-                    window.location.href = '/Handshop/admin/delete/' + phoneID;
-                }
-            </script>-->
         </tr>
         </tbody>
     </table>
