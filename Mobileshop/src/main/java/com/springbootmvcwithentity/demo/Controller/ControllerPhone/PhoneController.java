@@ -205,7 +205,7 @@ public class PhoneController {
         List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
-        return "admin/list-phones";
+        return "admin/templateAdmin";
     }
     @PostMapping("/admin/searchAdminSold")
     public String searchAdminSold(Model model,
@@ -246,8 +246,9 @@ public class PhoneController {
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
         model.addAttribute("soldphones", soldphones); /** cách xử lý ở backEnd*/
         model.addAttribute("soldPhonesWait", soldPhonesWait); /** cách xử lý ở backEnd*/
+        model.addAttribute("searchAdminSold", true); /** cách xử lý ở backEnd*/
 
-        return "admin/list-sold-phones";
+        return "admin/templateAdmin";
     }
 
     @GetMapping({"/admin", "/admin/"})
@@ -255,7 +256,8 @@ public class PhoneController {
         List<Phones> phones = phoneService.findAll();
         List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
-        return "admin/list-phones";
+//        return "admin/list-phones";
+        return "admin/templateAdmin";
     }
 
     private List<OrderitemDTO> orderItems2orderitemDTOS(List<OrderItem> orderItems){
@@ -300,7 +302,8 @@ public class PhoneController {
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
         model.addAttribute("soldphones", true); /** cách xử lý ở backEnd*/
         model.addAttribute("soldPhonesWait", false); /** cách xử lý ở backEnd*/
-        return "admin/list-sold-phones";
+        model.addAttribute("searchAdminSold", false); /** cách xử lý ở backEnd*/
+        return "admin/templateAdmin";
     }
     @GetMapping({"/admin/soldPhonesWait"})
     public String redirectToAdminHandshopListSoldPhonesWait(Model model) {
@@ -314,7 +317,8 @@ public class PhoneController {
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
         model.addAttribute("soldphones", false); /** cách xử lý ở backEnd*/
         model.addAttribute("soldPhonesWait", true); /** cách xử lý ở backEnd*/
-        return "admin/list-sold-phones";
+        model.addAttribute("searchAdminSold", false); /** cách xử lý ở backEnd*/
+        return "admin/templateAdmin";
     }
 
 
@@ -326,7 +330,7 @@ public class PhoneController {
         model.addAttribute("phone", phone);
         model.addAttribute("brands", brands);
         model.addAttribute("categories", categories);
-        return "admin/form-phone";
+        return "admin/templateAdmin";
     }
 
     @PostMapping("/admin/add")
@@ -367,7 +371,7 @@ public class PhoneController {
         model.addAttribute("phone", phone);
         if (phone != null) {
             model.addAttribute("phone", phone);
-            return "admin/form-edit-phone";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy điện thoại với ID=" + id);
         }
@@ -424,7 +428,7 @@ public class PhoneController {
         Phones phone = phoneService.findById(idt);
         if (phone != null) {
             model.addAttribute("phone", phone);
-            return "admin/delete";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy điện thoại với ID=" + id);
         }
@@ -440,8 +444,8 @@ public class PhoneController {
     /** Brand & Category - Admin */
     /******************************************************************************************************/
 
-    @GetMapping("/admin/brandandcategory")
-    public String showbrandandcategoryForm(@ModelAttribute("errorbrand") String errorbrand,
+    @GetMapping("/admin/brand")
+    public String showbrandForm(@ModelAttribute("errorbrand") String errorbrand,
                                            @ModelAttribute("successbrand") String successbrand,
                                            @ModelAttribute("errorcategory") String errorcategory,
                                            @ModelAttribute("successcategory") String successcategory,
@@ -464,7 +468,33 @@ public class PhoneController {
         model.addAttribute("successbrandadd", successbrandadd);
         model.addAttribute("errorcategoryadd", errorcategoryadd);
         model.addAttribute("successcategoryadd", successcategoryadd);
-        return "admin/add-Brand-Category";
+        return "admin/templateAdmin";
+    }
+    @GetMapping("/admin/category")
+    public String showcategoryForm(@ModelAttribute("errorbrand") String errorbrand,
+                                           @ModelAttribute("successbrand") String successbrand,
+                                           @ModelAttribute("errorcategory") String errorcategory,
+                                           @ModelAttribute("successcategory") String successcategory,
+                                           @ModelAttribute("errorbrandadd") String errorbrandadd,
+                                           @ModelAttribute("successbrandadd") String successbrandadd,
+                                           @ModelAttribute("errorcategoryadd") String errorcategoryadd,
+                                           @ModelAttribute("successcategoryadd") String successcategoryadd,
+                                           Model model) {
+        List<Brands> brands = brandService.findAll();
+        List<Categories> categories = categoryService.findAll();
+        Phones phone = new Phones();
+        model.addAttribute("phone", phone);
+        model.addAttribute("brands", brands);
+        model.addAttribute("categories", categories);
+        model.addAttribute("errorbrand", errorbrand);
+        model.addAttribute("successbrand", successbrand);
+        model.addAttribute("errorcategory", errorcategory);
+        model.addAttribute("successcategory", successcategory);
+        model.addAttribute("errorbrandadd", errorbrandadd);
+        model.addAttribute("successbrandadd", successbrandadd);
+        model.addAttribute("errorcategoryadd", errorcategoryadd);
+        model.addAttribute("successcategoryadd", successcategoryadd);
+        return "admin/templateAdmin";
     }
 
 
@@ -481,7 +511,7 @@ public class PhoneController {
             redirectAttributes.addFlashAttribute("successbrandadd", "");
             e.printStackTrace(); // In lỗi ra console hoặc log
         }
-        return "redirect:/Handshop/admin/brandandcategory";
+        return "redirect:/Handshop/admin/brand";
     }
     @PostMapping("/admin/category/add")
     public String addCategory(@RequestParam("addCategory") String categoryName, RedirectAttributes redirectAttributes){
@@ -496,7 +526,7 @@ public class PhoneController {
             redirectAttributes.addFlashAttribute("successcategoryadd", "");
             e.printStackTrace(); // In lỗi ra console hoặc log
         }
-        return "redirect:/Handshop/admin/brandandcategory";
+        return "redirect:/Handshop/admin/category";
     }
     @PostMapping("/admin/brand/del")
     public String delBrand(@RequestParam("brandID") int brandID, RedirectAttributes redirectAttributes) {
@@ -518,7 +548,7 @@ public class PhoneController {
             e.printStackTrace(); // In lỗi ra console hoặc log
         }
 
-        return "redirect:/Handshop/admin/brandandcategory";
+        return "redirect:/Handshop/admin/brand";
     }
 
     @PostMapping("/admin/category/del")
@@ -540,16 +570,14 @@ public class PhoneController {
             redirectAttributes.addFlashAttribute("errorcategory", "Đã xảy ra lỗi trong quá trình xóa Category.");
             e.printStackTrace(); // In lỗi ra console hoặc log
         }
-        return "redirect:/Handshop/admin/brandandcategory";
+        return "redirect:/Handshop/admin/category";
     }
 
     /******************************************************************************************************/
                         /** OrderRequest & Payment - Admin */
     /******************************************************************************************************/
 
-
-    @GetMapping("/admin/OrderRequest")
-    public String showOrderRequest(Model model) {
+    private List<OrderDTO> ReturnOrderDTOs(){
         List<Order> orders = orderservice.findAll();
         List<OrderItem> orderItems = orderitemsservice.findAll();
         List<OrderitemDTO> orderitemDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
@@ -566,7 +594,6 @@ public class PhoneController {
         orders.forEach(order -> {
             List<String> serisOrder = new LinkedList<>(); /** List phone nằm trong orderItem*/
             orderitemDTOs.forEach(item -> item.getSeris().forEach(seriItem -> serisOrder.add(seriItem)));
-//            String employeeID = !order.getEmployeeID().equals("") ? order.getEmployeeID() : "";
             Customer customer = customerService.findById(order.getCustomerId());
 
             List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
@@ -580,17 +607,27 @@ public class PhoneController {
             OrderDTO orderDTO = new OrderDTO(order, orderitemDTOs2, serisOrder, phonesOrder, customer);
             orderDTOs.add(orderDTO);
         });
+        return orderDTOs;
+    }
 
-        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+    @GetMapping("/admin/OrderRequestWait")
+    public String showOrderRequest(Model model) {
+        LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
         LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
         List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-
-
-        model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
         model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
         model.addAttribute("orderDTOs", orderDTOs);
-        return "/admin/order-request";
+        return "/admin/templateAdmin";
+    }
+
+    @GetMapping("/admin/OrderRequestDone")
+    public String showOrderRequestDone(Model model) {
+        LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
+        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
+        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
+        model.addAttribute("orderDTOs", orderDTOs);
+        return "/admin/templateAdmin";
     }
 
 
@@ -631,9 +668,9 @@ public class PhoneController {
         Order order = orderservice.findById(orderID);
         List<OrderItem> orderItems = orderItemRepository.findAllByOrderID(orderID);
         orderItems.forEach(orderItem -> {
-            List<String> serisOrderItem = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();
+//            List<String> serisOrderItem = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();
             Phones phone = phoneService.findById(orderItem.getPhoneID());
-            List<String> serisPhone = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
+//            List<String> serisPhone = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
             int missing = orderItem.getMissing();
             seriMissings.add(new SeriMissing(phone, missing));
         });
@@ -654,11 +691,6 @@ public class PhoneController {
             for (Phones phone : phones) {
                 List<String> listSeriCheckFollowPhoneKey = checkseriexist.get(phone.getPhoneId());
                 if (listSeriCheckFollowPhoneKey.contains(seri)) {
-//                    List<String> seriOfPhoneKey = !phone.getSeri().equals("") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-//                    seriOfPhoneKey.remove(seri);
-//                    phone.setSeri(seriOfPhoneKey.toString());
-//                    phone.setQuantity(phone.getQuantity()-1);
-//                    phoneService.save(phone);
                     seriduplicate.add(seri);
                 }
             }
@@ -686,7 +718,6 @@ public class PhoneController {
                 if (missing <= seriesPhone.size()) {
                     seriesPhone.subList(0, missing).clear();
                 }
-
             });
             Order order = orderservice.findById(orderID);
             model.addAttribute("order", order);
@@ -766,7 +797,7 @@ public class PhoneController {
         Order order = orderservice.findById(orderID);
         if (order != null) {
             model.addAttribute("order", order);
-            return "admin/rejectOrderForm";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy order với ID=" + orderID);
         }
@@ -791,31 +822,34 @@ public class PhoneController {
     /******************************************************************************************************/
     @GetMapping("/admin/ProfitReport")
     public String ShowProfitReportForm() {
-        return "/admin/ProfitReport";
+        return "/admin/templateAdmin";
     }
 
     @PostMapping("/admin/ProfitReport")
     public String ProfitReport(@RequestParam("start_date") String startDate,
                                @RequestParam("end_date") String endDate,
                                Model model) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime start_Date = LocalDateTime.parse(startDate, formatter);
+        LocalDateTime end_Date = LocalDateTime.parse(endDate, formatter);
         String startDateFormat = startDate.replace("T", " ");
         String endDateFormat = endDate.replace("T", " ");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime start_date = LocalDateTime.parse(startDateFormat, formatter);
-        LocalDateTime end_date = LocalDateTime.parse(endDateFormat, formatter);
+
         List<Order> orders = orderservice.findAll().stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
 
-        orders.stream().filter(item -> {
+        List<Order> ordersFilterDate = orders.stream().filter(item -> {
             LocalDateTime dateTime = LocalDateTime.parse(item.getDateProcessed(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             String DateTimeStr = dateTime.format(newFormatter);
             LocalDateTime dateTimeFormat = LocalDateTime.parse(DateTimeStr, newFormatter);
-            return dateTimeFormat.isAfter(start_date) && dateTimeFormat.isBefore(end_date);
+            return dateTimeFormat.isAfter(start_Date) && dateTimeFormat.isBefore(end_Date);
         }).collect(Collectors.toList());
 
         double profit = 0;
-        for (Order order : orders) {
-            profit += order.getAmount();
+        if(!ordersFilterDate.isEmpty()){
+            for (Order order : ordersFilterDate) {
+                profit += order.getAmount();
+            }
         }
         List<OrderItem> orderItems = orderitemsservice.findAll();
         List<OrderitemDTO> orderitemDTOs = new LinkedList<>(); /** List OrderItemDTO nằm trong OrderDTO */
@@ -829,7 +863,7 @@ public class PhoneController {
         });
 
         /** Tạo một List orderDTOs: danh sách các hóa đơn*/
-        orders.forEach(order -> {
+        ordersFilterDate.forEach(order -> {
             List<String> serisOrder = new LinkedList<>(); /** List phone nằm trong orderItem*/
             orderitemDTOs.forEach(item -> item.getSeris().forEach(seriItem -> serisOrder.add(seriItem)));
             Customer customer = customerService.findById(order.getCustomerId());
@@ -850,7 +884,7 @@ public class PhoneController {
         model.addAttribute("profit", profit);
         model.addAttribute("startDate", startDateFormat);
         model.addAttribute("endDate", endDateFormat);
-        return "/admin/ProfitReportAccees";
+        return "/admin/templateAdmin";
     }
     /******************************************************************************************************/
                                             /** Import file exel */
@@ -858,7 +892,7 @@ public class PhoneController {
 
     @GetMapping("/admin/importExel")
     public String importPhonesGet() {
-    return "admin/importExel";
+    return "admin/templateAdmin";
     }
 
     @PostMapping("/admin/importExel")

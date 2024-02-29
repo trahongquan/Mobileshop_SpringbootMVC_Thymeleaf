@@ -73,8 +73,15 @@ public class CustomerController {
         model.addAttribute("customer", new Customer());
         model.addAttribute("user", new Users());
         model.addAttribute("authority", new Authority());
-
         return "/customer/registration-form";
+    }
+
+    @GetMapping("/Handshop/admin/register")
+    public String showRegistrationFormForAdmin(Model model) {
+        model.addAttribute("customer", new Customer());
+        model.addAttribute("user", new Users());
+        model.addAttribute("authority", new Authority());
+        return "/admin/templateAdmin";
     }
 
     @PostMapping("/register")
@@ -306,7 +313,7 @@ public class CustomerController {
         Customer customer = customerService.findById(id);
         if (customer != null) {
             model.addAttribute("customer", customer);
-            return "customer/form-edit-customer";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy nhân viên với ID=" + id);
         }
@@ -355,7 +362,7 @@ public class CustomerController {
         Customer customer = customerService.findById(idt);
         if (customer != null) {
             model.addAttribute("customer", customer);
-            return "customer/delete";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy nhân viên với ID=" + idt);
         }

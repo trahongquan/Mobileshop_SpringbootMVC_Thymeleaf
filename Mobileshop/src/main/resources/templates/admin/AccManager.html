@@ -11,47 +11,52 @@
 </head>
 
 <body>
-<div th:replace="admin/headerAdmin :: header-admin"></div>
-<h2 style="text-align: center; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2; margin-top: 30px">Danh sách tài khoản của khách hàng</h2>
-<table class="container" border="1">
-    <tr>
-        <th>Name</th>
-        <th>Email/Username</th>
-        <th>Phone</th>
-        <th>Pass</th>
-        <th>Address</th>
-        <th>Registration Date</th>
-        <th>Authority</th>
-        <th>Action</th>
-    </tr>
-    <tr th:each="accCustomerDTO : ${accCustomerDTOS}">
-        <td th:text="${accCustomerDTO.getFirstName} +' ' + ${accCustomerDTO.getLastName}"></td>
-        <td th:text="${accCustomerDTO.getEmail}"></td>
-        <td th:text="${accCustomerDTO.getPhone}"></td>
-        <td th:text="${accCustomerDTO.getPass}"></td>
-        <td th:text="${accCustomerDTO.getAddress}"></td>
-        <td th:text="${accCustomerDTO.getRegistrationDate}"></td>
-        <td th:text="${accCustomerDTO.getAuthority.getAuthority}"></td>
-        <td>
-            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                <!--<form th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn">
-                    <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                    <input type="hidden" name="dateProcessed"
-                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
-                    <button type="submit" class="btn btn-success btn-sm"
-                            onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
-                    </button>
-                </form>-->
-                <a th:href="@{'/Handshop/admin/UpdateCustomerInfo/' + ${accCustomerDTO.getCustomerId}}" class="actionbtn">
-                    <button type="button" class="btn btn-primary btn-sm"> Update </button>
-                </a>
-                <a th:href="@{'/Handshop/admin/DeleteCustomer/'+ ${accCustomerDTO.getCustomerId}}" class="actionbtn">
-                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                </a>
-            </div>
-        </td>
-    </tr>
-</table>
+<!--<div th:replace="admin/headerAdmin :: header-admin"></div>-->
+<AccManager>
+    <h2 style="text-align: center; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2; margin-top: 30px">
+        Danh sách tài khoản của khách hàng</h2>
+    <table class="container" border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email/Username</th>
+            <th>Phone</th>
+            <th>Pass</th>
+            <th>Address</th>
+            <th>Registration Date</th>
+            <th>Authority</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="accCustomerDTO : ${accCustomerDTOS}">
+            <td th:text="${accCustomerDTO.getFirstName} +' ' + ${accCustomerDTO.getLastName}"></td>
+            <td th:text="${accCustomerDTO.getEmail}"></td>
+            <td th:text="${accCustomerDTO.getPhone}"></td>
+            <td th:text="${accCustomerDTO.getPass}"></td>
+            <td th:text="${accCustomerDTO.getAddress}"></td>
+            <td th:text="${accCustomerDTO.getRegistrationDate}"></td>
+            <td th:text="${accCustomerDTO.getAuthority.getAuthority}"></td>
+            <td>
+                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                    <!--<form th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn">
+                        <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                        <input type="hidden" name="dateProcessed"
+                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
+                        <button type="submit" class="btn btn-success btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
+                        </button>
+                    </form>-->
+                    <a th:href="@{'/Handshop/admin/UpdateCustomerInfo/' + ${accCustomerDTO.getCustomerId}}"
+                       class="actionbtn">
+                        <button type="button" class="btn btn-primary btn-sm"> Update</button>
+                    </a>
+                    <a th:href="@{'/Handshop/admin/DeleteCustomer/'+ ${accCustomerDTO.getCustomerId}}"
+                       class="actionbtn">
+                        <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</AccManager>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->

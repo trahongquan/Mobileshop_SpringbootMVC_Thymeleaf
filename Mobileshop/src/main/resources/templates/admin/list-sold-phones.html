@@ -12,7 +12,8 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body class="scroll-container" >
-<div th:replace="admin/headerAdmin :: header-admin"></div>
+<list-sold-phone>
+<!--<div th:replace="admin/headerAdmin :: header-admin"></div>-->
     <div>
         <h2 th:if="${soldphones}" style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại đã bán </h2>
         <h2 th:if="${soldPhonesWait}" style="text-align: center; margin: 50px; color: #FF5733; font-size: 2.5em;font-weight: 500; line-height: 1.2;">Danh sách điện thoại Chờ duyệt </h2>
@@ -36,7 +37,7 @@
         </a>
     </div>
 </form>
-<div class="d-flex" style="flex-direction: row; justify-content: flex-end;margin-right: 10%"><a href="/Handshop/admin/OrderRequest" style="">đi đến trang chờ duyệt</a></div>
+<div class="d-flex" style="flex-direction: row; justify-content: flex-end;margin-right: 10%"><a href="/Handshop/admin/OrderRequestWait" style="">đi đến trang chờ duyệt</a></div>
 <div id="ConDiv" class="container table-container d-flex flex-column">
     <table class="table table-bordered">
         <thead>
@@ -90,5 +91,6 @@
     </form>
     <!--<div sec:authorize="isAuthenticated" style="color: red"> Authenticated as <span sec:authentication=""></span></div>-->
 </div>
+</list-sold-phone>
 </body>
 </html>

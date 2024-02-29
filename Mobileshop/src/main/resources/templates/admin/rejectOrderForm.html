@@ -8,8 +8,8 @@
     <link rel="stylesheet" th:href="@{/css/Header.css}" sec:authorize="hasAnyRole('ROLE_CUSTOMER')">
 </head>
 <body class="scroll-container" >
-<div class="container">
-    <div th:replace="admin/headerAdmin :: header-admin" sec:authorize="hasAnyRole('ROLE_ADMIN')" ></div>
+<reject-Order-Form>
+    <div sec:authorize="hasAnyRole('ROLE_ADMIN')" ></div>
     <div th:replace="header :: header" sec:authorize="hasAnyRole('ROLE_CUSTOMER')"></div>
     <h1 style="margin-top: 250px; text-align: center;"> Xác nhận xóa đơn đặt hàng </h1><br>
     <p>Bạn có chắc chắn muốn xóa đơn đặt hàng này không?</p>
@@ -23,7 +23,7 @@
         <button type="submit" class="btn btn-danger" onclick="confirmDelete(this)" >Xóa</button>
         <a href="/Handshop/admin/OrderRequest" class="btn btn-secondary">Hủy</a>
     </form>
-</div>
+</reject-Order-Form>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->

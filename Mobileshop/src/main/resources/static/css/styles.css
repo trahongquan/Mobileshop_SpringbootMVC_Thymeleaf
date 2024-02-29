@@ -256,6 +256,9 @@ h1{
     margin-top: 50px;
     text-align: center;
 }
+/*.form-control{*/
+    /*width: 50%;!important;*/
+/*}*/
 /*//////////////////////////////////////*/
         /** Header Admin */
 /*//////////////////////////////////////*/

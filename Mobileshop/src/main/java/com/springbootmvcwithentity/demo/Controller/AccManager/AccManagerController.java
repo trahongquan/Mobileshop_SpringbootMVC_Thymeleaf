@@ -42,7 +42,7 @@ public class AccManagerController {
             accCustomerDTOS.add(accCustomerDTO);
         });
         model.addAttribute("accCustomerDTOS",accCustomerDTOS);
-        return "admin/AccManager";
+        return "admin/templateAdmin";
     }
 
     /******************************************************************************************************/

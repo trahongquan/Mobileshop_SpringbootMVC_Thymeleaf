@@ -261,7 +261,7 @@
  * Lấy dữ liệu từ local Session hiển thị lên row
  * *******************************************
  */
-$(document).ready(function () {
+window.onload = function () {
 
     // Lấy dữ liệu từ Local Storage
     var selectedProducts = localStorage.getItem('selectedProducts');
@@ -269,53 +269,62 @@ $(document).ready(function () {
     // Kiểm tra xem dữ liệu có tồn tại trong Local Storage không
     if (selectedProducts) {
         var parsedData = JSON.parse(selectedProducts); // Deserialize the JSON
-        var tableBody = document.getElementById('productTableBody');
-        tableBody.style.backgroundColor = "white";
-        var total = 0;
-        // Lặp qua dữ liệu và cập nhật nội dung HTML
-        parsedData.forEach(function(product, index) {
-            var newRow = tableBody.insertRow();
-            var cellIndex = newRow.insertCell(0);
-            var cellImage = newRow.insertCell(1);
-            var cellName = newRow.insertCell(2);
-            var cellPrice = newRow.insertCell(3);
-            var cellQuantity = newRow.insertCell(4);
-            var cellTotal = newRow.insertCell(5);
+        var tableBody = document.getElementById("productTableBody");
+        if(tableBody){
+            tableBody.style.backgroundColor = "white";
+            var total = 0;
+            // Lặp qua dữ liệu và cập nhật nội dung HTML
+            parsedData.forEach(function(product, index) {
+                var newRow = tableBody.insertRow();
+                var cellIndex = newRow.insertCell(0);
+                var cellImage = newRow.insertCell(1);
+                var cellName = newRow.insertCell(2);
+                var cellPrice = newRow.insertCell(3);
+                var cellQuantity = newRow.insertCell(4);
+                var cellTotal = newRow.insertCell(5);
 
-            newRow.setAttribute('data-model', product.model);
+                newRow.setAttribute('data-model', product.model);
 
-            //tạo một thẻ input hiden lưu model
-            var inputmodel = document.createElement('input');
-            inputmodel.type = "hidden"; // Loại input là "hidden"
-            inputmodel.value = product.model;
-            inputmodel.name = "inputmodel";
-            newRow.append(inputmodel)
-            //tạo một thẻ input hiden lưu quantity
-            var inputquantity = document.createElement('input');
-            inputquantity.type = "hidden"; // Loại input là "hidden"
-            inputquantity.value = product.quantity;
-            inputquantity.name = "inputquantity";
-            newRow.append(inputquantity);
+                //tạo một thẻ input hiden lưu model
+                var inputmodel = document.createElement('input');
+                inputmodel.type = "hidden"; // Loại input là "hidden"
+                inputmodel.value = product.model;
+                inputmodel.name = "inputmodel";
+                newRow.append(inputmodel)
+                //tạo một thẻ input hiden lưu quantity
+                var inputquantity = document.createElement('input');
+                inputquantity.type = "hidden"; // Loại input là "hidden"
+                inputquantity.value = product.quantity;
+                inputquantity.name = "inputquantity";
+                newRow.append(inputquantity);
 
-            // Tạo một thẻ img
-            var img = document.createElement('img');
-            img.src = '/Images/' + product.imageName;
-            img.alt = 'Product Image';
-            img.style.width = '100px';
+                // Tạo một thẻ img
+                var img = document.createElement('img');
+                img.src = '/Images/' + product.imageName;
+                img.alt = 'Product Image';
+                img.style.width = '100px';
 
-            cellIndex.textContent = index + 1;
-            cellImage.appendChild(img);
-            cellName.textContent = product.phoneName;
-            cellPrice.textContent = '$'+product.price;
-            cellQuantity.textContent = product.quantityorder;
-            cellTotal.textContent = '$'+ (parseFloat(product.price)*product.quantityorder).toFixed(2);
-            total += parseFloat(product.price)*product.quantityorder;
-        });
-        $('#totalAmount').text('$'+total.toFixed(2));
-        // var x = total.toFixed(2)+'';
-        $('.totalAmount').attr('value',total.toFixed(2));
+                cellIndex.textContent = index + 1;
+                cellImage.appendChild(img);
+                cellName.textContent = product.phoneName;
+                cellPrice.textContent = '$'+product.price;
+                cellQuantity.textContent = product.quantityorder;
+                cellTotal.textContent = '$'+ (parseFloat(product.price)*product.quantityorder).toFixed(2);
+                total += parseFloat(product.price)*product.quantityorder;
+            });
+            $('#totalAmount').text('$'+total.toFixed(2));
+            // var x = total.toFixed(2)+'';
+            $('.totalAmount').attr('value',total.toFixed(2));
+        } else {
+            var alertDiv = document.getElementById('nocitceAdmin');
+            alertDiv.innerHTML = '<br><br><br><br><br><strong>Thông báo:</strong> Bạn cần đăng nhập bằng tài khoản Khách hàng';
+            alertDiv.style.display = 'block';
+            alertDiv.style.color = 'red';
+            alertDiv.style.fontSize = '3em';
+        }
+
     }
-});
+};
 /**
  * *******************************************
  * gửi dữ liệu mua hàng cho trang chờ xử lý

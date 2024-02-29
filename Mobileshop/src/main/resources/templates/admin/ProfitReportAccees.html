@@ -27,98 +27,83 @@
     </style>
 </head>
 <body>
-<div th:replace="admin/headerAdmin :: header-admin"></div>
-<form th:action="@{'/Handshop/admin/ProfitReport'}" method="post">
-    <div class="col-lg-6;" style=" display:flex; flex-direction: row; justify-content: space-around" >
-        <div class="col-lg-2;">
-            <label for="start_date">Ngày bắt đầu:</label><br>
-            <input type="datetime-local" class="form-control" id="start_date" name="start_date" required><br><br>
+<profit-report>
+    <div>
+        <form th:action="@{'/Handshop/admin/ProfitReport'}" method="post">
+            <div class="col-lg-6;" style=" display:flex; flex-direction: row; justify-content: space-around">
+                <div class="col-lg-2;">
+                    <label for="start_date">Ngày bắt đầu:</label><br>
+                    <input type="datetime-local" class="form-control" id="start_date" name="start_date"
+                           required><br><br>
+                </div>
+                <div class="col-lg-2;">
+                    <label for="end_date">Ngày kết thúc:</label><br>
+                    <input type="datetime-local" class="form-control" id="end_date" name="end_date" required><br><br>
+                </div>
+            </div>
+            <div style=" display:flex; flex-direction: row; justify-content: space-around">
+                <button type="submit" class="btn btn-success">Báo cáo lợi nhuận</button>
+            </div>
+        </form>
+    </div>
+    <div th:if="${startDate!=null && endDate!=null}">
+        <div class="container table-container">
+            <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
+                <h1 class="align-items-center justify-content-center">Báo cáo Doanh thu</h1>
+                <h3 th:text="@{'Từ ngày ' + ${startDate} + ' đến ngày ' + ${endDate} }"></h3>
+            </div>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng đáp ứng</th>
+                    <th>Giá/SP</th>
+                    <th>Tổng giá</th>
+                    <th>Xử lý lần cuối</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orderDTOs}">
+                    <td th:text="${order.getOrderID}"></td>
+                    <td>
+                        <div th:each="phone : ${order.getPhones}">
+                            <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="'$'+${orderitem.price}"></p>
+                        </div>
+                    </td>
+                    <td th:text="'$'+${order.getAmount}"></td>
+                    <td class="wrap" th:text="${order.getDateProcessed}"></td>
+                    <td>
+                        <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                            <form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
+                                <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                                <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
+                                <button type="submit" class="btn btn-success btn-sm"
+                                        onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="col-lg-2;">
-            <label for="end_date">Ngày kết thúc:</label><br>
-            <input type="datetime-local" class="form-control" id="end_date" name="end_date" required><br><br>
+        <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
+            <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }"></h2>
         </div>
     </div>
-    <div style=" display:flex; flex-direction: row; justify-content: space-around" >
-        <button type="submit" class="btn btn-success">Báo cáo lợi nhuận</button>
-    </div>
-    <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
-        <h1 class="align-items-center justify-content-center">Báo cáo Doanh thu</h1>
-        <h3 th:text="@{'Từ ngày ' + ${startDate} + ' đến ngày ' + ${endDate} }"></h3>
-    </div>
-</form>
-<div class="container table-container">
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-        <tr>
-            <th>Mã đơn hàng</th>
-            <!--<th>Tên khách hàng</th>-->
-            <!--<th>Địa chỉ giao hàng</th>-->
-            <!--<th>Thông tin liên hệ</th>-->
-            <th>Sản phẩm</th>
-            <!--<th>Số lượng đặt hàng</th>-->
-            <th>Số lượng đáp ứng</th>
-            <!--<th>Số lượng bổ sung</th>-->
-            <th>Giá/SP</th>
-            <th>Tổng giá</th>
-            <!--<th>Ngày đặt hàng</th>-->
-            <th>Xử lý lần cuối</th>
-            <th>Thao tác</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orderDTOs}">
-            <td th:text="${order.getOrderID}"></td>
-            <!--<td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>-->
-            <!--<td class="wrap" th:text="${order.getCustomer.getAddress}"></td>-->
-            <!--<td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>-->
-                <!--<p th:text="${order.getCustomer.getEmail}"></p></td>-->
-            <td>
-                <div th:each="phone : ${order.getPhones}">
-                    <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
-                </div>
-            </td>
-            <!--<td>-->
-                <!--<div th:each="orderitem : ${order.getOrderitemDTOS}">-->
-                    <!--<p th:text="${orderitem.getQuantity}"></p>-->
-                <!--</div>-->
-            <!--</td>-->
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
-                </div>
-            </td>
-            <!--<td>-->
-                <!--<div th:each="orderitem : ${order.getOrderitemDTOS}">-->
-                    <!--<p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>-->
-                <!--</div>-->
-            <!--</td>-->
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="'$'+${orderitem.price}"></p>
-                </div>
-            </td>
-            <td th:text="'$'+${order.getAmount}"></td>
-            <!--<td class="wrap" th:text="${order.getOrderDate}"></td>-->
-            <td class="wrap" th:text="${order.getDateProcessed}"></td>
-            <td>
-                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                    <form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
-                        <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                        <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
-                        <button type="submit" class="btn btn-success btn-sm"
-                                onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
-                        </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
-    <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }" ></h2>
-</div>
+</profit-report>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--Phải load jquery trước khi load bootstrap js-->

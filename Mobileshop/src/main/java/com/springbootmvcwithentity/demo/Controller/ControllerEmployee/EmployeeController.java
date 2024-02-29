@@ -43,14 +43,14 @@ public class EmployeeController {
     public String listEmployees(Model model) {
         List<Employees> employees = employeeService.findAll();
         model.addAttribute("employees", employees);
-        return "employees/list-employees";
+        return "admin/templateAdmin";
     }
 
     @GetMapping("/add")
     public String showEmployeeForm(Model model) {
         Employees employee = new Employees();
         model.addAttribute("employee", employee);
-        return "employees/form-employee";
+        return "admin/templateAdmin";
     }
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String addEmployee(@ModelAttribute("employee") Employees employee, Authority authority, Users user) {
@@ -61,8 +61,8 @@ public class EmployeeController {
         userService.save(user);
         authority = new Authority("ROLE_EMPLOYEE",user);
         authorityService.createAuthority(authority);
-//        return "redirect:/Handshop/admin/AccEmployeesManager";
-        return "/customer/registration-success";
+        return "redirect:/Handshop/admin/AccEmployeesManager";
+//        return "admin/templateAdmin";
     }
 
     @GetMapping("/showFormForUpdate/{id}")
@@ -70,7 +70,7 @@ public class EmployeeController {
         Employees employee = employeeService.findById(id);
         if (employee != null) {
             model.addAttribute("employee", employee);
-            return "employees/form-edit-employee";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy nhân viên với ID=" + id);
         }
@@ -119,7 +119,7 @@ public class EmployeeController {
         Employees employee = employeeService.findById(idt);
         if (employee != null) {
             model.addAttribute("employee", employee);
-            return "employees/delete";
+            return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy nhân viên với ID=" + idt);
         }

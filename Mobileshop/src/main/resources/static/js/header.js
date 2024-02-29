@@ -41,39 +41,41 @@ $(document).ready(function() {
  * *******************************************
  */
 // <!-- Initialize Swiper -->
-var swiper = new Swiper(".mySwiper", {
-    effect: "coverflow",
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: "auto",
-    coverflowEffect: {
-        rotate: 0,
-        stretch: 0,
-        depth: 300,
-        modifier: 1,
-        slideShadows: false,
-    },
-    pagination: {
-        el: ".swiper-pagination",
-    },
-    loop: true, // Chạy vòng vô tận
-    slidesPerView: 3, // Hiển thị 1 slide tại một thời điểm
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    on: {
-        transitionEnd: function () {
-            $('.mySwiper').css({
-                transform: 'translate3d(0px, 0px, 0px)',
-            })
-            $('.swiper-wrapper').css({
-                transform: 'translate3d(0px, 0px, 0px)',
-            })
+if(document.querySelector('banner')){
+    var swiper = new Swiper(".mySwiper", {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 300,
+            modifier: 1,
+            slideShadows: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        loop: true, // Chạy vòng vô tận
+        slidesPerView: 3, // Hiển thị 1 slide tại một thời điểm
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        on: {
+            transitionEnd: function () {
+                $('.mySwiper').css({
+                    transform: 'translate3d(0px, 0px, 0px)',
+                })
+                $('.swiper-wrapper').css({
+                    transform: 'translate3d(0px, 0px, 0px)',
+                })
+            }
         }
-    }
 
-});
+    });
+}
 // $(document).ready(function () {
 //     var swiperWrapper = document.getElementById("x100");
 //     swiperWrapper.style.transform = "translate3d(0px, 0px, 0px)";
