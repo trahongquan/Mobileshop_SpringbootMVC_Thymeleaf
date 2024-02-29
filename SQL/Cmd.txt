@@ -1,4 +1,6 @@
 mysqldump -u root -p mobileshopdb > mySQL_mobileshop_05.11.2023_bak.sql
+mysqldump -u root -p mobileshopdb3 > mySQL_mobileshop_05.01.2024_bak.sql
+
 =================
 mysql -u root -p -e "create database mobileshopdb";
 mysql -u root -p mobileshopdb < mySQL_mobileshop_04.10.2023_bak.sql
