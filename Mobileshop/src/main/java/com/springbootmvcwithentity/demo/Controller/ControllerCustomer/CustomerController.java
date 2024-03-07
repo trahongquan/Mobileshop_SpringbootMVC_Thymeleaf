@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
 
 @Controller
 public class CustomerController {
-
-
     private CustomerRepository customerRepository;
     private UserService userService;
     private AuthorityService authorityService;
@@ -107,21 +105,12 @@ public class CustomerController {
     }
 
     @GetMapping("/Handshop/myAccount/{username}")
-    public String showMyAccount(Model model, @PathVariable("username") String username){
+    public String showMyAccount(Model model, @PathVariable("username") String username
+            ,@RequestParam(value = "changedPass", defaultValue = "false") boolean changedPass){
         Customer customerpath = customerRepository.findByEmail(username);
         model.addAttribute("customer",customerpath);
-
-        List<OrderDTO> orderDTOs = InputCustomerOutputListOrderDTO(customerpath);
-
-        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-        LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-
-
-        model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
-        model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
-        model.addAttribute("orderDTOs", orderDTOs);
+        model.addAttribute("changedPass", changedPass);
+        filterOrderDTOs(model, customerpath);
         return "customer/customerinfo";
     }
 
@@ -172,6 +161,19 @@ public class CustomerController {
         return "redirect:/Handshop/myAccount/"+existingCustomer.getEmail();
     }
 
+    @PostMapping("/Handshop/editpassCustomer")
+    public String editpassCustomer( Model model,
+                                    @RequestParam("passCustomer") String passCustomer,
+                                    @RequestParam("emailCustomer") String emailCustomer) {
+        Customer customer = customerRepository.findByEmail(emailCustomer);
+        customer.setPass(passCustomer);
+        customerService.save(customer);
+        Users user = userService.findByUsername(customer.getEmail());
+        user.setPassword(passwordEncoder.encode(customer.getPass()));
+        userService.save(user);
+        filterOrderDTOs(model, customer);
+        return "redirect:/Handshop/myAccount/"+ customer.getEmail() + "?changedPass=true";
+    }
 
     /******************************************************************************************************/
                                 /** Invoice - Hóa đơn */
@@ -197,32 +199,18 @@ public class CustomerController {
         return "customer/invoice";
     }
 
-    @PostMapping("/Handshop/editpassCustomer")
-    public String editpassCustomer( Model model,
-                                    @RequestParam("passCustomer") String passCustomer,
-                                    @RequestParam("emailCustomer") String emailCustomer) {
-        Customer customer = customerRepository.findByEmail(emailCustomer);
-        customer.setPass(passCustomer);
-        customerService.save(customer);
-
-        Users user = userService.findByUsername(customer.getEmail());
-        user.setPassword(passwordEncoder.encode(customer.getPass()));
-        userService.save(user);
-
+    private void filterOrderDTOs(Model model, Customer customer){
         List<OrderDTO> orderDTOs = InputCustomerOutputListOrderDTO(customer);
-
         LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
         List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
         LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
         List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-
         model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
         model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
         model.addAttribute("orderDTOs", orderDTOs);
         model.addAttribute("customer",customer);
-
-        return "customer/customerinfo";
     }
+
 
     public List<OrderDTO> InputCustomerOutputListOrderDTO(Customer customer){
         int customerid = customer.getCustomerId();
@@ -327,32 +315,7 @@ public class CustomerController {
     @Transactional
     @PostMapping("/Handshop/admin/UpdateCustomerInfo/{id}")
     public String editEmployee(@PathVariable int id, @ModelAttribute("customer") Customer updatedCustomer) {
-        // Tìm đối tượng Employee hiện có trong cơ sở dữ liệu
-        Customer existingCustomer = customerService.findById(id);
-        if(updatedCustomer.getEmail().equals(existingCustomer.getEmail())){
-            Users user = userService.findByUsername(existingCustomer.getEmail());
-            user.setPassword(passwordEncoder.encode(existingCustomer.getPass()));
-            userService.save(user);
-        }else {
-            authorityService.deleteAuthority(existingCustomer.getEmail()); /** xóa authority trước vì có email là khóa ngoại từ bảng user*/
-            userService.deleteUser(existingCustomer.getEmail());
-            Users user = new Users(updatedCustomer.getEmail(),passwordEncoder.encode(updatedCustomer.getPass()),(long) existingCustomer.getCustomerId(),1);
-            userService.save(user);
-            Authority authority = new Authority("ROLE_CUSTOMER",user);
-            authorityService.createAuthority(authority);
-        }
-
-        // Cập nhật thông tin từ updatedCustomer vào existingCustomer
-        existingCustomer.setFirstName(updatedCustomer.getFirstName());
-        existingCustomer.setLastName(updatedCustomer.getLastName());
-        existingCustomer.setEmail(updatedCustomer.getEmail());
-        existingCustomer.setPhone(updatedCustomer.getPhone());
-        existingCustomer.setPass(updatedCustomer.getPass());
-        existingCustomer.setAddress(updatedCustomer.getAddress());
-
-        // Lưu lại thông tin cập nhật vào cơ sở dữ liệu
-        customerService.save(existingCustomer);
-
+        CustomerUpdateCustomerInfo(id, updatedCustomer);
         return "redirect:/Handshop/admin/AccCustomerManager";
     }
 

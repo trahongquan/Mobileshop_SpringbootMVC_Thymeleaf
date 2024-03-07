@@ -1,6 +1,7 @@
 package com.springbootmvcwithentity.demo.WebSecurityConfig;
 
 
+import com.springbootmvcwithentity.demo.ClassSuport.SecretKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.sql.DataSource;
 
@@ -24,6 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // add a reference to our security data source
         @Qualifier("securityDataSource")
         private DataSource securityDataSource;
+
         @Override
         protected void configure (AuthenticationManagerBuilder auth) throws Exception {
             // Use jdbc authentication... ah yeah!!!
@@ -38,6 +42,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             return new BCryptPasswordEncoder();
         }
 
+        @Bean
+        public PersistentTokenRepository persistentTokenRepository() {
+            JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+            tokenRepository.setDataSource(securityDataSource); // Cung cấp DataSource
+            tokenRepository.setCreateTableOnStartup(false);
+            return tokenRepository;
+        }
     /**  ************************************************************* */
 
 //   public void configureGlobal (AuthenticationManagerBuilder auth) {
@@ -74,7 +85,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logout()
                     .permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/access-denied");
+                    .exceptionHandling().accessDeniedPage("/access-denied")
+                .and()
+                    .rememberMe()
+                    .key(new SecretKeyGenerator().SecretKeyGenerator())
+                    .tokenValiditySeconds(86400) // Thời gian hết hạn của cookie (ở đây là 1 ngày)
+                    .tokenRepository(persistentTokenRepository()); // Sử dụng PersistentTokenRepository
+
     }
 }
 

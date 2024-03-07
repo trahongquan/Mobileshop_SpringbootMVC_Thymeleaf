@@ -318,6 +318,31 @@
         </table>
     </div>
 </div>
+<div th:if="${changedPass}" style="display: flex; justify-content: flex-end; align-items: flex-end;
+                                position: fixed; top: 150px; right: 10px;
+                                background: linear-gradient(45deg, rgba(229,191,22,0.45), rgba(152,229,18,0.45));">
+    <p id="successMessage" style="padding: 15px;
+                                border: 1px solid transparent;
+                                border-radius: 4px;
+                                color: #721c24;
+                                border-color: black;
+                                margin-bottom: 0;
+                                font-weight: bold;">Đổi mật khẩu thành công (<span id="countdown">3</span>)</p>
+</div>
+<script>
+    var countdown = 3; // Số giây còn lại
+    var countdownElement = document.getElementById("countdown");
+    // Cập nhật số giây còn lại và ẩn thông báo khi hết thời gian
+    var countdownInterval = setInterval(function() {
+        countdown--;
+        countdownElement.textContent = countdown;
+
+        if (countdown < 0) {
+            document.getElementById("successMessage").style.display = "none";
+            clearInterval(countdownInterval);
+        }
+    }, 1000);
+</script>
 <br>
 <br>
 <div th:replace="footer :: footer"></div>

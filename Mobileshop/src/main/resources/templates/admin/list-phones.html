@@ -44,14 +44,14 @@
                 <th>Category</th>
                 <th>Phone Name</th>
                 <th>Model</th>
-                <th>Release Year</th>
-                <th>Screen Size</th>
-                <th>Storage Capacity</th>
-                <th>RAM</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">Release Year</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">Screen Size</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">Storage Capacity</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">RAM</th>
                 <th>Operating System</th>
                 <th>Price</th>
-                <th>Color</th>
-                <th>Số lượng</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">Color</th>
+                <th th:unless="${#request.requestURI == '/Handshop/admin/listphone'}">Số lượng</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -63,21 +63,26 @@
                 <td th:text="${phone.category.getCategoryName}"></td>
                 <td th:text="${phone.phoneName}"></td>
                 <td th:text="${phone.model}"></td>
-                <td th:text="${phone.releaseYear}"></td>
-                <td th:text="${phone.screenSize}+ 'inch'"></td>
-                <td th:text="${phone.storageCapacity}+'GB'"></td>
-                <td th:text="${phone.ram}+'GB'"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.releaseYear}"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.screenSize}+ 'inch'"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.storageCapacity}+'GB'"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.ram}+'GB'"></td>
                 <td th:text="${phone.operatingSystem}"></td>
                 <td th:text="'$' + ${phone.getPrice}"></td>
-                <td th:text="${phone.color}"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.color}"></td>
                 <!--Đếm số lượng máy theo model-->
-                <td th:text="${phone.getQuantity}"></td>
+                <td th:unless="${#request.requestURI == '/Handshop/admin/listphone'}" th:text="${phone.getQuantity}"></td>
                 <td>
                     <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
                         <form th:action="@{'/Handshop/admin/showFormForUpdate/' + ${phone.phoneId}}" method="get">
-                            <button type="submit" class="btn btn-info btn-sm mr-1">Update</button>
+                            <button th:unless="${#request.requestURI == '/Handshop/admin/listphone'}"
+                                    type="submit" class="btn btn-info btn-sm mr-1">Detail</button>
+
+                            <button th:if="${#request.requestURI == '/Handshop/admin/listphone'}"
+                                    type="submit" class="btn btn-info btn-sm mr-1">Update</button>
                         </form>
-                        <form th:action="@{'/Handshop/admin/delete/' + ${phone.phoneId}}" method="POST"
+                        <form th:if="${#request.requestURI == '/Handshop/admin/listphone'}"
+                              th:action="@{'/Handshop/admin/delete/' + ${phone.phoneId}}" method="POST"
                               id="deletePhoneForm">
                             <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(this)"
                                     th:data="${phone.phoneId}">Delete

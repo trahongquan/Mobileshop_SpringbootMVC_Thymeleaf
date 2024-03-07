@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" xmlns:sec="https://www.thymeleaf.org/thyme leaf-extras-springsecurity5">
 <head>
     <title>Template Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,6 +46,7 @@
                 </span>
             </div>
             <div class="app-header__content">
+                <!--app-header-left-->
                 <div class="app-header-left">
                     <div class="search-wrapper">
                         <div class="input-holder">
@@ -55,7 +56,19 @@
                         <button class="close"></button>
                     </div>
                     <ul class="header-megamenu nav">
-                        <li class="nav-item">
+                        <li>
+                            <a class="nav-link" href="/Handshop/admin" target="_blank">
+                                <i class="nav-link-icon pe-7s-settings"></i> Admin homepage
+                                <!--<i class="fa fa-angle-down ml-2 opacity-5"></i>-->
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="/Handshop" target="_blank">
+                                <i class="nav-link-icon pe-7s-home"></i> Handshop homepage
+                                <!--<i class="fa fa-angle-down ml-2 opacity-5"></i>-->
+                            </a>
+                        </li>
+                        <!--<li class="nav-item">
                             <a href="javascript:void(0);" data-placement="bottom" rel="popover-focus" data-offset="300"
                                data-toggle="popover-custom" class="nav-link">
                                 <i class="nav-link-icon pe-7s-gift"> </i> Mega Menu
@@ -245,12 +258,13 @@
                                         class="dropdown-icon lnr-file-empty"> </i>Frontend Dev
                                 </button>
                             </div>
-                        </li>
+                        </li>-->
                     </ul>
                 </div>
+                <!--app-header-right-->
                 <div class="app-header-right">
                     <div class="header-dots">
-                        <div class="dropdown">
+                        <!--<div class="dropdown">
                             <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"
                                     class="p-0 mr-2 btn btn-link">
                             <span class="icon-wrapper icon-wrapper-alt rounded-circle">
@@ -317,7 +331,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div>-->
                         <div class="dropdown">
                             <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"
                                     class="p-0 mr-2 btn btn-link">
@@ -649,7 +663,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="dropdown">
+                        <!--<div class="dropdown">
                             <button type="button" data-toggle="dropdown" class="p-0 mr-2 btn btn-link">
                             <span class="icon-wrapper icon-wrapper-alt rounded-circle">
                                 <span class="icon-wrapper-bg bg-focus"></span>
@@ -699,8 +713,8 @@
                                     Italy
                                 </button>
                             </div>
-                        </div>
-                        <div class="dropdown">
+                        </div>-->
+                        <!--<div class="dropdown">
                             <button type="button" aria-haspopup="true" data-toggle="dropdown" aria-expanded="false"
                                     class="p-0 btn btn-link dd-chart-btn">
                             <span class="icon-wrapper icon-wrapper-alt rounded-circle">
@@ -759,7 +773,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
 
                     <div class="header-btn-lg pr-0">
@@ -787,41 +801,41 @@
                                                                          src="../assets/images/avatars/1.jpg" alt="">
                                                                 </div>
                                                                 <div class="widget-content-left">
-                                                                    <div class="widget-heading">Alina Mcloughlin
+                                                                    <div class="widget-heading" sec:authentication="name">
                                                                     </div>
                                                                     <div class="widget-subheading opacity-8">A short
                                                                         profile description
                                                                     </div>
                                                                 </div>
                                                                 <div class="widget-content-right mr-2">
-                                                                    <button class="btn-pill btn-shadow btn-shine btn btn-focus">
-                                                                        Logout
-                                                                    </button>
+                                                                    <form th:action="@{/logout}" method="POST" class="btn-pill btn btn-gradient-success">
+                                                                        <input type="submit" value="Logout" style="border: none; background-color: transparent; font-weight: bold;"/>
+                                                                    </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- box admin -->
                                             <div class="scroll-area-xs" style="height: 150px;">
                                                 <div class="scrollbar-container ps">
                                                     <ul class="nav flex-column">
-                                                        <li class="nav-item-header nav-item">Activity
+                                                        <li class="nav-item-header nav-item">
+                                                            <a th:href="'/Handshop/admin/AccEmployeesManager/myAccount/'+${#authentication.name}"> My Account</a>
                                                         </li>
-                                                        <li class="nav-item">
+                                                        <!--<li class="nav-item">
                                                             <a href="javascript:void(0);" class="nav-link">Chat
                                                                 <div class="ml-auto badge badge-pill badge-info">8
                                                                 </div>
                                                             </a>
-                                                        </li>
+                                                        </li>-->
                                                         <li class="nav-item">
                                                             <a href="javascript:void(0);" class="nav-link">Recover
                                                                 Password
                                                             </a>
                                                         </li>
-                                                        <li class="nav-item-header nav-item">My Account
-                                                        </li>
-                                                        <li class="nav-item">
+                                                        <!--<li class="nav-item">
                                                             <a href="javascript:void(0);" class="nav-link">Settings
                                                                 <div class="ml-auto badge badge-success">New
                                                                 </div>
@@ -836,11 +850,11 @@
                                                         <li class="nav-item">
                                                             <a href="javascript:void(0);" class="nav-link">Logs
                                                             </a>
-                                                        </li>
+                                                        </li>-->
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <ul class="nav flex-column">
+                                            <!--<ul class="nav flex-column">
                                                 <li class="nav-item-divider mb-0 nav-item"></li>
                                             </ul>
                                             <div class="grid-menu grid-menu-2col">
@@ -867,16 +881,14 @@
                                                         Open Messages
                                                     </button>
                                                 </li>
-                                            </ul>
+                                            </ul>-->
                                         </div>
                                     </div>
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
-                                    <div class="widget-heading">
-                                        Alina Mclourd
+                                    <div class="widget-heading" sec:authentication="name">
                                     </div>
-                                    <div class="widget-subheading">
-                                        VP People Manager
+                                    <div class="widget-subheading" sec:authentication="principal.authorities">
                                     </div>
                                 </div>
                                 <div class="widget-content-right header-user-info ml-3">
@@ -1400,7 +1412,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="/Handshop/admin/listphone">
                                                     <i class="metismenu-icon">
                                                     </i>Danh sách điện thoại
                                                 </a>
@@ -1523,6 +1535,9 @@
                 <div th:if="${(#request.requestURI == '/Handshop/admin/' || #request.requestURI == '/Handshop/admin') && !(#strings.contains(#request.requestURI, 'searchAdmin'))}" class="app-main__inner">
                     <div th:replace="admin/list-phones.html :: list-phone"></div>
                 </div>
+                <div th:if="${(#request.requestURI == '/Handshop/admin/listphone' || #request.requestURI == '/Handshop/admin/listphone/') && !(#strings.contains(#request.requestURI, 'searchAdmin'))}" class="app-main__inner">
+                    <div th:replace="admin/list-phones.html :: list-phone"></div>
+                </div>
                 <div th:if="${#request.requestURI == '/Handshop/admin/soldphones' && !(#strings.contains(#request.requestURI, 'searchAdminSold'))}" class="app-main__inner">
                     <div th:replace="admin/list-sold-phones.html :: list-sold-phone"></div>
                 </div>
@@ -1613,11 +1628,16 @@
                 <div th:if="${#strings.contains(#request.requestURI, 'Handshop/admin/AccEmployeesManager/delete')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="employees/delete.html :: delete-employe"></div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/AccEmployeesManager/myAccount')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="employees/employeinfo.html::employeinfo"></div>
+                </div>
 
-    <!--SCRIPTS INCLUDES-->
+
+</div>
+</div>
+</div>
+
+<!--SCRIPTS INCLUDES-->
 
 </header-admin>
 </body>

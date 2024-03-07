@@ -1,7 +1,10 @@
 package com.springbootmvcwithentity.demo.Controller.ControllerEmployee;
 
+import com.springbootmvcwithentity.demo.dao.EmployeeRepository;
 import com.springbootmvcwithentity.demo.dao.PhoneRepository;
+import com.springbootmvcwithentity.demo.dto.OrderDTO;
 import com.springbootmvcwithentity.demo.entity.Authority;
+import com.springbootmvcwithentity.demo.entity.Customer;
 import com.springbootmvcwithentity.demo.entity.Employees;
 import com.springbootmvcwithentity.demo.entity.Users;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
@@ -14,7 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.springbootmvcwithentity.demo.service.emp.EmployeeService;
 
 
@@ -23,6 +30,7 @@ import com.springbootmvcwithentity.demo.service.emp.EmployeeService;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private EmployeeRepository employeeRepository;
     private UserService userService;
     private AuthorityService authorityService;
     private PasswordEncoder passwordEncoder; // Mã hóa mật khẩu customer theo luật BCryt
@@ -30,8 +38,9 @@ public class EmployeeController {
     private PhoneService phoneService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService, UserService userService, AuthorityService authorityService, PasswordEncoder passwordEncoder, PhoneRepository phoneRepository, PhoneService phoneService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository, UserService userService, AuthorityService authorityService, PasswordEncoder passwordEncoder, PhoneRepository phoneRepository, PhoneService phoneService) {
         this.employeeService = employeeService;
+        this.employeeRepository = employeeRepository;
         this.userService = userService;
         this.authorityService = authorityService;
         this.passwordEncoder = passwordEncoder;
@@ -46,6 +55,15 @@ public class EmployeeController {
         return "admin/templateAdmin";
     }
 
+    @GetMapping("/myAccount/{username}")
+    public String showMyAccount(Model model, @PathVariable("username") String username
+                                , @RequestParam(value = "changedPass", defaultValue = "false") boolean changedPass){
+        Employees employees = employeeRepository.findByEmail(username);
+        model.addAttribute("employees",employees);
+        model.addAttribute("changedPass",changedPass);
+        return "admin/templateAdmin";
+    }
+
     @GetMapping("/add")
     public String showEmployeeForm(Model model) {
         Employees employee = new Employees();
@@ -54,19 +72,18 @@ public class EmployeeController {
     }
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String addEmployee(@ModelAttribute("employee") Employees employee, Authority authority, Users user) {
-        String encodedPassword = passwordEncoder.encode(employee.getPass());
-        employeeService.save(employee);
-        user = new Users(employee, 1);
-        user.setPassword(encodedPassword);
-        userService.save(user);
+        saveUser(employee, user);
         authority = new Authority("ROLE_EMPLOYEE",user);
         authorityService.createAuthority(authority);
         return "redirect:/Handshop/admin/AccEmployeesManager";
-//        return "admin/templateAdmin";
     }
 
     @GetMapping("/showFormForUpdate/{id}")
     public String showEditEmployeeForm(@PathVariable int id, Model model) {
+        return checkEmployee(model, id);
+    }
+
+    private String checkEmployee(Model model, int id){
         Employees employee = employeeService.findById(id);
         if (employee != null) {
             model.addAttribute("employee", employee);
@@ -116,13 +133,7 @@ public class EmployeeController {
     @GetMapping("/delete/{id}")
     public String showDeleteEmployeeForm(@PathVariable String id, Model model) {
         int idt = Integer.parseInt(id);
-        Employees employee = employeeService.findById(idt);
-        if (employee != null) {
-            model.addAttribute("employee", employee);
-            return "admin/templateAdmin";
-        } else {
-            throw new RuntimeException("Không tìm thấy nhân viên với ID=" + idt);
-        }
+        return checkEmployee(model,idt);
     }
 
     @PostMapping("/delete/{id}")
@@ -134,6 +145,23 @@ public class EmployeeController {
         return "redirect:/Handshop/admin/AccEmployeesManager";
     }
 
+    @PostMapping("/editpassEmployee")
+    public String editpassCustomer( Model model,
+                                    @RequestParam("passEmployee") String passEmployee,
+                                    @RequestParam("emailEmployee") String emailEmployee) {
+        Employees employee = employeeRepository.findByEmail(emailEmployee);
+        employee.setPass(passEmployee);
+        Users user = new Users();
+        saveUser(employee, user);
+        return "redirect:/Handshop/admin/AccEmployeesManager/myAccount/"+employee.getEmail()+ "?changedPass=true";
+    }
+
+    private void saveUser(Employees employee, Users user){
+        employeeService.save(employee);
+        user = userService.findByUsername(employee.getEmail());
+        user.setPassword(passwordEncoder.encode(employee.getPass()));
+        userService.save(user);
+    }
 }
 
 

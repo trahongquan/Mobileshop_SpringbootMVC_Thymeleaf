@@ -24,6 +24,7 @@ public class Users implements Serializable {
 
 
     public Users() {
+        enabled = 1;
     }
 
     public Users(String username, String password, Long customerID, int enabled) {

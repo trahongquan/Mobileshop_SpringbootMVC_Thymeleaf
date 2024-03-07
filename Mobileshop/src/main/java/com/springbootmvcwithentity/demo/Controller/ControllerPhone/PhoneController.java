@@ -259,6 +259,14 @@ public class PhoneController {
 //        return "admin/list-phones";
         return "admin/templateAdmin";
     }
+    @GetMapping({"/admin/listphone", "/admin/listphone/"})
+    public String redirectToAdminHandshopListphone(Model model) {
+        List<Phones> phones = phoneService.findAll();
+        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+//        return "admin/list-phones";
+        return "admin/templateAdmin";
+    }
 
     private List<OrderitemDTO> orderItems2orderitemDTOS(List<OrderItem> orderItems){
         List<OrderitemDTO> orderitemDTOS = new LinkedList<>();
