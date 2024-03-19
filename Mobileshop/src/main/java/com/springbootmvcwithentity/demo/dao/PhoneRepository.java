@@ -11,9 +11,7 @@ package com.springbootmvcwithentity.demo.dao;
 @EnableJpaRepositories(basePackages = "com.springbootmvcwithentity.demo.dao")
 
 public interface PhoneRepository extends JpaRepository<Phones, Integer>{
-        public Phones findByModel(String model);
-        public Phones findFirstByModel(String model);
-        public List<Phones> findAllByModel(String model);
+        public Phones findByModelID (int modelID);
         List<Phones> findAllByPhoneNameContainingOrSeriContaining(String search1, String search2);
         List<Phones> findAllByBrandId(int id);
         List<Phones> findAllByCategoryId(int id);

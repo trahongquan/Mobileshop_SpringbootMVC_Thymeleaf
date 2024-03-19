@@ -55,15 +55,6 @@ public class EmployeeController {
         return "admin/templateAdmin";
     }
 
-    @GetMapping("/myAccount/{username}")
-    public String showMyAccount(Model model, @PathVariable("username") String username
-                                , @RequestParam(value = "changedPass", defaultValue = "false") boolean changedPass){
-        Employees employees = employeeRepository.findByEmail(username);
-        model.addAttribute("employees",employees);
-        model.addAttribute("changedPass",changedPass);
-        return "admin/templateAdmin";
-    }
-
     @GetMapping("/add")
     public String showEmployeeForm(Model model) {
         Employees employee = new Employees();
@@ -145,18 +136,7 @@ public class EmployeeController {
         return "redirect:/Handshop/admin/AccEmployeesManager";
     }
 
-    @PostMapping("/editpassEmployee")
-    public String editpassCustomer( Model model,
-                                    @RequestParam("passEmployee") String passEmployee,
-                                    @RequestParam("emailEmployee") String emailEmployee) {
-        Employees employee = employeeRepository.findByEmail(emailEmployee);
-        employee.setPass(passEmployee);
-        Users user = new Users();
-        saveUser(employee, user);
-        return "redirect:/Handshop/admin/AccEmployeesManager/myAccount/"+employee.getEmail()+ "?changedPass=true";
-    }
-
-    private void saveUser(Employees employee, Users user){
+    public void saveUser(Employees employee, Users user){
         employeeService.save(employee);
         user = userService.findByUsername(employee.getEmail());
         user.setPassword(passwordEncoder.encode(employee.getPass()));

@@ -9,8 +9,14 @@ import com.springbootmvcwithentity.demo.dto.OrderitemDTO;
 import com.springbootmvcwithentity.demo.dto.PhoneDTO;
 import com.springbootmvcwithentity.demo.entity.*;
 //import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
+import com.springbootmvcwithentity.demo.entity.extand.*;
+import com.springbootmvcwithentity.demo.service.Color.ColorService;
 import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
+import com.springbootmvcwithentity.demo.service.Model.ModelService;
+import com.springbootmvcwithentity.demo.service.OperatingSystem.OperatingSystemService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
+import com.springbootmvcwithentity.demo.service.RAM.RAMService;
+import com.springbootmvcwithentity.demo.service.StorageCapacity.StorageCapacityService;
 import com.springbootmvcwithentity.demo.service.Users.UserService;
 import com.springbootmvcwithentity.demo.service.authority.AuthorityService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
@@ -39,6 +45,11 @@ public class CustomerController {
     private PasswordEncoder passwordEncoder; // Mã hóa mật khẩu customer theo luật BCryt
     private PhoneRepository phoneRepository;
     private PhoneService phoneService;
+    private ModelService modelService;
+    private OperatingSystemService operatingSystemService;
+    private StorageCapacityService storageCapacityService;
+    private RAMService ramService;
+    private ColorService colorService;
     private CustomerService customerService;
     private BrandService brandService;
     private CategoryService categoryService;
@@ -48,13 +59,18 @@ public class CustomerController {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
-    public CustomerController(CustomerRepository customerRepository, UserService userService, AuthorityService authorityService, PasswordEncoder passwordEncoder, PhoneRepository phoneRepository, PhoneService phoneService, CustomerService customerService, BrandService brandService, CategoryService categoryService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+    public CustomerController(CustomerRepository customerRepository, UserService userService, AuthorityService authorityService, PasswordEncoder passwordEncoder, PhoneRepository phoneRepository, PhoneService phoneService, ModelService modelService, OperatingSystemService operatingSystemService, StorageCapacityService storageCapacityService, RAMService ramService, ColorService colorService, CustomerService customerService, BrandService brandService, CategoryService categoryService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
         this.customerRepository = customerRepository;
         this.userService = userService;
         this.authorityService = authorityService;
         this.passwordEncoder = passwordEncoder;
         this.phoneRepository = phoneRepository;
         this.phoneService = phoneService;
+        this.modelService = modelService;
+        this.operatingSystemService = operatingSystemService;
+        this.storageCapacityService = storageCapacityService;
+        this.ramService = ramService;
+        this.colorService = colorService;
         this.customerService = customerService;
         this.brandService = brandService;
         this.categoryService = categoryService;
@@ -63,8 +79,6 @@ public class CustomerController {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
     }
-
-
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -178,7 +192,17 @@ public class CustomerController {
     /******************************************************************************************************/
                                 /** Invoice - Hóa đơn */
     /******************************************************************************************************/
-
+    public PhoneDTO Phone2PhoneDTO(Phones phone){
+        Brands brand = brandService.findById(phone.getBrandId());
+        Categories category = categoryService.findById(phone.getCategoryId());
+        Models model = modelService.findById(phone.getModelID());
+        OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
+        StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
+        RAM ram = ramService.findById(phone.getRamID());
+        Color color = colorService.findById(phone.getColorID());
+        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color);
+        return phoneDTO;
+    }
     @GetMapping("/Handshop/invoiceCustomer")
     public String invoiceCustomer(@RequestParam("OrderID") int orderID, Model model){
         Order order = orderservice.findById(orderID);
@@ -188,9 +212,7 @@ public class CustomerController {
 
         orderItems.forEach(orderItem -> {
             Phones phone = phoneService.findById(orderItem.getPhoneID());
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            OrderitemDTO orderitemDTO = new OrderitemDTO(orderItem, new PhoneDTO(phone,brand,category));
+            OrderitemDTO orderitemDTO = new OrderitemDTO(orderItem, Phone2PhoneDTO(phone));
             orderitemDTOs.add(orderitemDTO);
         });
 

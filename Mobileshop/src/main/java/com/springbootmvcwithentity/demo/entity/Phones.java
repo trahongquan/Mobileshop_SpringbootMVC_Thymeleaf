@@ -1,12 +1,13 @@
 package com.springbootmvcwithentity.demo.entity;
-    import com.fasterxml.jackson.annotation.JsonProperty;
-    import lombok.Data;
 
-    import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "Phones")
+@Table(name = "phones")
 public class Phones {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +23,8 @@ public class Phones {
     @Column(name = "PhoneName")
     private String phoneName;
 
-    @Column(name = "Model")
-    private String model;
+    @Column(name = "ModelID")
+    private int modelID;
 
     @Column(name = "ReleaseYear")
     private int releaseYear;
@@ -31,20 +32,20 @@ public class Phones {
     @Column(name = "ScreenSize")
     private double screenSize;
 
-    @Column(name = "StorageCapacity")
-    private int storageCapacity;
+    @Column(name = "StorageCapacityID")
+    private int storageCapacityID;
 
-    @Column(name = "RAM")
-    private int ram;
+    @Column(name = "RAMID")
+    private int ramID;
 
-    @Column(name = "OperatingSystem")
-    private String operatingSystem;
+    @Column(name = "OperatingSystemID")
+    private int operatingSystemID;
 
     @Column(name = "Price")
     private String price;
 
-    @Column(name = "Color")
-    private String color;
+    @Column(name = "ColorID")
+    private int colorID;
 
     @JsonProperty("ImageName")
     @Column(name = "ImageName")
@@ -60,21 +61,21 @@ public class Phones {
     // ...
 
 
-        public Phones() {
-        }
+    public Phones() {
+    }
 
-    public Phones(int brandId, int categoryId, String phoneName, String model, int releaseYear, double screenSize, int storageCapacity, int ram, String operatingSystem, String price, String color, String imageName, int quantity, String seri) {
+    public Phones(int brandId, int categoryId, String phoneName, int modelID, int releaseYear, double screenSize, int storageCapacityID, int ramID, int operatingSystemID, String price, int colorID, String imageName, int quantity, String seri) {
         this.brandId = brandId;
         this.categoryId = categoryId;
         this.phoneName = phoneName;
-        this.model = model;
+        this.modelID = modelID;
         this.releaseYear = releaseYear;
         this.screenSize = screenSize;
-        this.storageCapacity = storageCapacity;
-        this.ram = ram;
-        this.operatingSystem = operatingSystem;
+        this.storageCapacityID = storageCapacityID;
+        this.ramID = ramID;
+        this.operatingSystemID = operatingSystemID;
         this.price = price;
-        this.color = color;
+        this.colorID = colorID;
         ImageName = imageName;
         this.quantity = quantity;
         this.seri = seri;
@@ -112,12 +113,12 @@ public class Phones {
         this.phoneName = phoneName;
     }
 
-    public String getModel() {
-        return model;
+    public int getModelID() {
+        return modelID;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setModelID(int modelID) {
+        this.modelID = modelID;
     }
 
     public int getReleaseYear() {
@@ -136,28 +137,28 @@ public class Phones {
         this.screenSize = screenSize;
     }
 
-    public int getStorageCapacity() {
-        return storageCapacity;
+    public int getStorageCapacityID() {
+        return storageCapacityID;
     }
 
-    public void setStorageCapacity(int storageCapacity) {
-        this.storageCapacity = storageCapacity;
+    public void setStorageCapacityID(int storageCapacityID) {
+        this.storageCapacityID = storageCapacityID;
     }
 
-    public int getRam() {
-        return ram;
+    public int getRamID() {
+        return ramID;
     }
 
-    public void setRam(int ram) {
-        this.ram = ram;
+    public void setRamID(int ramID) {
+        this.ramID = ramID;
     }
 
-    public String getOperatingSystem() {
-        return operatingSystem;
+    public int getOperatingSystemID() {
+        return operatingSystemID;
     }
 
-    public void setOperatingSystem(String operatingSystem) {
-        this.operatingSystem = operatingSystem;
+    public void setOperatingSystemID(int operatingSystemID) {
+        this.operatingSystemID = operatingSystemID;
     }
 
     public String getPrice() {
@@ -168,12 +169,12 @@ public class Phones {
         this.price = price;
     }
 
-    public String getColor() {
-        return color;
+    public int getColorID() {
+        return colorID;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColorID(int colorID) {
+        this.colorID = colorID;
     }
 
     public String getImageName() {
@@ -202,22 +203,23 @@ public class Phones {
 
     @Override
     public String toString() {
-        return "Phones{" +
+        return "Phone{" +
                 "phoneId=" + phoneId +
                 ", brandId=" + brandId +
                 ", categoryId=" + categoryId +
                 ", phoneName='" + phoneName + '\'' +
-                ", model='" + model + '\'' +
+                ", modelID=" + modelID +
                 ", releaseYear=" + releaseYear +
                 ", screenSize=" + screenSize +
-                ", storageCapacity=" + storageCapacity +
-                ", ram=" + ram +
-                ", operatingSystem='" + operatingSystem + '\'' +
+                ", storageCapacityID=" + storageCapacityID +
+                ", ramID=" + ramID +
+                ", operatingSystemID=" + operatingSystemID +
                 ", price='" + price + '\'' +
-                ", color='" + color + '\'' +
+                ", colorID=" + colorID +
                 ", ImageName='" + ImageName + '\'' +
                 ", quantity=" + quantity +
                 ", seri='" + seri + '\'' +
                 '}';
     }
 }
+

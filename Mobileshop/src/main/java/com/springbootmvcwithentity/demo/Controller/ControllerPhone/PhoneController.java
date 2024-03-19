@@ -1,5 +1,9 @@
 package com.springbootmvcwithentity.demo.Controller.ControllerPhone;
 
+import com.springbootmvcwithentity.demo.entity.extand.*;
+import com.springbootmvcwithentity.demo.entity.extand.Color;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.ui.Model;
 import com.springbootmvcwithentity.demo.ClassSuport.SeriMissing;
 import com.springbootmvcwithentity.demo.dao.*;
 import com.springbootmvcwithentity.demo.dto.OrderDTO;
@@ -7,19 +11,23 @@ import com.springbootmvcwithentity.demo.dto.OrderitemDTO;
 import com.springbootmvcwithentity.demo.dto.PhoneDTO;
 import com.springbootmvcwithentity.demo.dto.PrdRevDTO;
 import com.springbootmvcwithentity.demo.entity.*;
+import com.springbootmvcwithentity.demo.service.Color.ColorService;
 import com.springbootmvcwithentity.demo.service.Customer.CustomerService;
+import com.springbootmvcwithentity.demo.service.Model.ModelService;
+import com.springbootmvcwithentity.demo.service.OperatingSystem.OperatingSystemService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
 import com.springbootmvcwithentity.demo.service.PrdRevService.brand.PrdRevService;
+import com.springbootmvcwithentity.demo.service.RAM.RAMService;
+import com.springbootmvcwithentity.demo.service.StorageCapacity.StorageCapacityService;
+import com.springbootmvcwithentity.demo.service.Users.UserService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
-import com.springbootmvcwithentity.demo.service.categorie.CategorieService;
 import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
+import com.springbootmvcwithentity.demo.service.emp.EmployeeService;
 import com.springbootmvcwithentity.demo.service.order.orderService;
 import com.springbootmvcwithentity.demo.service.orderitem.orderitemsService;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +37,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -39,16 +48,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.FileOutputStream;
-import org.apache.poi.ss.usermodel.Name;
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Controller
@@ -62,6 +66,11 @@ public class PhoneController {
     private CustomerRepository customerRepository;
     private BrandService brandService;
     private CategoryService categoryService;
+    private ModelService modelService;
+    private OperatingSystemService operatingSystemService;
+    private StorageCapacityService storageCapacityService;
+    private RAMService ramService;
+    private ColorService colorService;
     private orderitemsService orderitemsservice;
     private orderService orderservice;
     private OrderRepository orderRepository;
@@ -69,15 +78,23 @@ public class PhoneController {
     private EmployeeRepository employeeRepository;
     private PrdRevService prdRevService;
     private PrdRevRepository prdRevRepository;
+    private EmployeeService employeeService;
+    private UserService userService;
+    private PasswordEncoder passwordEncoder; // Mã hóa mật khẩu customer theo luật BCryt
 
     @Autowired
-    public PhoneController(PhoneRepository phoneRepository, PhoneService phoneService, CustomerService customerService, CustomerRepository customerRepository, BrandService brandService, CategoryService categoryService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository, EmployeeRepository employeeRepository, PrdRevService prdRevService, PrdRevRepository prdRevRepository) {
+    public PhoneController(PhoneRepository phoneRepository, PhoneService phoneService, CustomerService customerService, CustomerRepository customerRepository, BrandService brandService, CategoryService categoryService, ModelService modelService, OperatingSystemService operatingSystemService, StorageCapacityService storageCapacityService, RAMService ramService, ColorService colorService, orderitemsService orderitemsservice, orderService orderservice, OrderRepository orderRepository, OrderItemRepository orderItemRepository, EmployeeRepository employeeRepository, PrdRevService prdRevService, PrdRevRepository prdRevRepository, EmployeeService employeeService, UserService userService, PasswordEncoder passwordEncoder) {
         this.phoneRepository = phoneRepository;
         this.phoneService = phoneService;
         this.customerService = customerService;
         this.customerRepository = customerRepository;
         this.brandService = brandService;
         this.categoryService = categoryService;
+        this.modelService = modelService;
+        this.operatingSystemService = operatingSystemService;
+        this.storageCapacityService = storageCapacityService;
+        this.ramService = ramService;
+        this.colorService = colorService;
         this.orderitemsservice = orderitemsservice;
         this.orderservice = orderservice;
         this.orderRepository = orderRepository;
@@ -85,29 +102,31 @@ public class PhoneController {
         this.employeeRepository = employeeRepository;
         this.prdRevService = prdRevService;
         this.prdRevRepository = prdRevRepository;
+        this.employeeService = employeeService;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /******************************************************************************************************/
                                             /** Khu vực Chung*/
     /******************************************************************************************************/
 
-    public List<PhoneDTO> Phone2PhoneDTOS(List<Phones> phones){
+    public List<PhoneDTO> Phones2PhoneDTOS(List<Phones> phones){
         List<PhoneDTO> phoneDTOS = new ArrayList<>();
-
         for (Phones phone : phones) {
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
-            phoneDTOS.add(phoneDTO);
+            phoneDTOS.add(Phone2PhoneDTO(phone));
         }
         return phoneDTOS;
     }
     public PhoneDTO Phone2PhoneDTO(Phones phone){
-
         Brands brand = brandService.findById(phone.getBrandId());
         Categories category = categoryService.findById(phone.getCategoryId());
-        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
-
+        Models model = modelService.findById(phone.getModelID());
+        OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
+        StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
+        RAM ram = ramService.findById(phone.getRamID());
+        Color color = colorService.findById(phone.getColorID());
+        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color);
         return phoneDTO;
     }
 
@@ -119,9 +138,8 @@ public class PhoneController {
 
     @GetMapping({"/list"})
     public String getPhones(Model model) {
-
         List<Phones> phones = phoneService.findAll().stream().filter(item->item.getQuantity()!=0).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
@@ -129,9 +147,7 @@ public class PhoneController {
     @GetMapping("/ViewDetailPhone/{id}")
     public String ViewDetailPhone(@PathVariable int id, Model model) {
         Phones phone = phoneService.findById(id);
-        Brands brand = brandService.findById(phone.getBrandId());
-        Categories category = categoryService.findById(phone.getCategoryId());
-        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category);
+        PhoneDTO phoneDTO = Phone2PhoneDTO(phone);
 
         List<productreview> productreviews = prdRevRepository.findAllByPhoneID(id);
 
@@ -142,7 +158,7 @@ public class PhoneController {
             prdRevDTOS.add(prdRevDTO);
         });
         List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(phone.getPhoneName().split(" ")[0],phone.getPhoneName().split(" ")[0]);
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         if (phoneDTO != null) {
             model.addAttribute("prdRevDTOS", prdRevDTOS);
             model.addAttribute("phoneDTO", phoneDTO);
@@ -170,16 +186,16 @@ public class PhoneController {
     @GetMapping({"/iphone"})
     public String getListiPhones(Model model) {
 
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystem().equals("IOS")).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystemID()==2).collect(Collectors.toList());
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
 
     @GetMapping({"/Android"})
     public String getListAndroids(Model model) {
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystem().equals("Android")).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystemID()==1).collect(Collectors.toList());
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
@@ -191,7 +207,7 @@ public class PhoneController {
     @PostMapping("/list/search")
     public String Search(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
         List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
     }
@@ -203,7 +219,7 @@ public class PhoneController {
     @PostMapping("/admin/searchAdmin")
     public String searchAdmin(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
         List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "admin/templateAdmin";
     }
@@ -252,18 +268,20 @@ public class PhoneController {
     }
 
     @GetMapping({"/admin", "/admin/"})
-    public String redirectToAdminHandshopListAdmin(Model model) {
+    public String redirectToAdminHandshopListAdmin(Model model,@RequestParam(value = "addphone", defaultValue = "false") boolean addphone) {
         List<Phones> phones = phoneService.findAll();
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        model.addAttribute("addphone", addphone); /** cách xử lý ở backEnd*/
 //        return "admin/list-phones";
         return "admin/templateAdmin";
     }
     @GetMapping({"/admin/listphone", "/admin/listphone/"})
-    public String redirectToAdminHandshopListphone(Model model) {
+    public String redirectToAdminHandshopListphone(Model model,@RequestParam(value = "addphone", defaultValue = "false") boolean addphone) {
         List<Phones> phones = phoneService.findAll();
-        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        model.addAttribute("addphone", addphone); /** cách xử lý ở backEnd*/
 //        return "admin/list-phones";
         return "admin/templateAdmin";
     }
@@ -319,8 +337,6 @@ public class PhoneController {
         List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
         List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", true);
         List<String> orderdate = GetDateProcess(orderitemDTOFilter);
-        boolean soldphones = false;
-        boolean soldPhonesWait = true;
         model.addAttribute("orderitemDTOS", orderitemDTOFilter); /** cách xử lý ở backEnd*/
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
         model.addAttribute("soldphones", false); /** cách xử lý ở backEnd*/
@@ -329,15 +345,18 @@ public class PhoneController {
         return "admin/templateAdmin";
     }
 
-
+    @GetMapping("/admin/selectModel")
+    public String selectModel(Model model) {
+        List<Models> models = modelService.findAll();
+        PhoneNameList(model);
+        model.addAttribute("models", models);
+        return "admin/templateAdmin";
+    }
     @GetMapping("/admin/add")
-    public String showPhoneForm(Model model) {
-        List<Brands> brands = brandService.findAll();
-        List<Categories> categories = categoryService.findAll();
-        Phones phone = new Phones();
-        model.addAttribute("phone", phone);
-        model.addAttribute("brands", brands);
-        model.addAttribute("categories", categories);
+    public String showPhoneForm(Model model, @RequestParam("modelID") int modelID) {
+        findAllid(model, phoneRepository.findByModelID(modelID), false);
+        Models models = modelService.findById(modelID);
+        model.addAttribute("models", models);
         return "admin/templateAdmin";
     }
 
@@ -345,9 +364,19 @@ public class PhoneController {
     public String createPhone(@ModelAttribute("phone") Phones phone,
                               @RequestParam("categoryID") int categoryID,
                               @RequestParam("brandID") int brandID,
+                              @RequestParam("modelID") int modelID,
+                              @RequestParam("storageCapacityID") int storageCapacityID,
+                              @RequestParam("ramID") int ramID,
+                              @RequestParam("operatingSystemID") int operatingSystemID,
+                              @RequestParam("colorID") int colorID,
                               @RequestParam("file") MultipartFile file) {
         phone.setBrandId(brandID);
         phone.setCategoryId(categoryID);
+        phone.setModelID(modelID);
+        phone.setStorageCapacityID(storageCapacityID);
+        phone.setRamID(ramID);
+        phone.setOperatingSystemID(operatingSystemID);
+        phone.setColorID(colorID);
         phone.setQuantity(new StringToList().StringToList(phone.getSeri()).size());
         if (!file.isEmpty()) {
             try {
@@ -359,35 +388,65 @@ public class PhoneController {
                 // Cập nhật trường ImageName trong Entity Phones
                 phone.setImageName(imageName);
                 phoneService.save(phone);
-                return "redirect:/Handshop/admin";
+                return "redirect:/Handshop/admin?addphone=true";
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return "redirect:/Handshop/admin?error";
+        return "redirect:/Handshop/admin?addphone=false?error";
     }
 
     //////////////////////
+    private void findAllid(Model model, Phones phone, boolean modelselect){
+        List<Brands> brands = brandService.findAll();
+        List<Categories> categories = categoryService.findAll();
+        List<OperatingSystem> operatingSystems = operatingSystemService.findAll();
+        List<StorageCapacity> storageCapacities = storageCapacityService.findAll();
+        List<RAM> rams = ramService.findAll();
+        List<Color> colors = colorService.findAll();
+        if(modelselect) {
+            List<Models> models = modelService.findAll();
+            model.addAttribute("models", models);}
+        model.addAttribute("brands", brands);
+        model.addAttribute("categories", categories);
+        model.addAttribute("operatingSystems", operatingSystems);
+        model.addAttribute("storageCapacities", storageCapacities);
+        model.addAttribute("rams", rams);
+        model.addAttribute("colors", colors);
+        model.addAttribute("phone", phone);
+    }
 
     @GetMapping("/admin/showFormForUpdate/{id}")
     public String showEditPhoneForm(@PathVariable int id, Model model) {
-        List<Brands> brands = brandService.findAll();
-        List<Categories> categories = categoryService.findAll();
         Phones phone = phoneService.findById(id);
-        model.addAttribute("brands", brands);
-        model.addAttribute("categories", categories);
-        model.addAttribute("phone", phone);
+        findAllid(model, phone, false);
+        Models modelphone = modelService.findById(phone.getModelID());
+        model.addAttribute("modelphone", modelphone);
         if (phone != null) {
-            model.addAttribute("phone", phone);
+//            model.addAttribute("phone", phone);
             return "admin/templateAdmin";
         } else {
             throw new RuntimeException("Không tìm thấy điện thoại với ID=" + id);
+        }
+    }
+    @GetMapping("/admin/showFormForUpdate")
+    public String showEditPhoneFormbyModel(@RequestParam("modelID") int modelID, Model model) {
+        Phones phone = phoneRepository.findByModelID(modelID);
+        findAllid(model, phone, false);
+        Models modelphone = modelService.findById(phone.getModelID());
+        model.addAttribute("modelphone", modelphone);
+        if (phone != null) {
+//            model.addAttribute("phone", phone);
+            return "admin/templateAdmin";
+        } else {
+            throw new RuntimeException("Không tìm thấy điện thoại với modelID =" + modelphone.getModel());
         }
     }
 
     @PostMapping("/admin/showFormForUpdate/{id}")
     public String editPhone(@PathVariable int id
             , @ModelAttribute("phone") Phones updatedPhone
+            , @RequestParam("model") String modelName
             , @RequestParam("file") MultipartFile file
             , Model model
     ) {
@@ -397,13 +456,18 @@ public class PhoneController {
         existingPhone.setBrandId(updatedPhone.getBrandId());
         existingPhone.setCategoryId(updatedPhone.getCategoryId());
         existingPhone.setPhoneName(updatedPhone.getPhoneName());
-        existingPhone.setModel(updatedPhone.getModel());
+
+        Models modelTemp = modelService.findById(existingPhone.getModelID());
+        modelTemp.setModel(modelName);
+        modelService.save(modelTemp);
+
         existingPhone.setReleaseYear(updatedPhone.getReleaseYear());
         existingPhone.setScreenSize(updatedPhone.getScreenSize());
-        existingPhone.setStorageCapacity(updatedPhone.getStorageCapacity());
-        existingPhone.setRam(updatedPhone.getRam());
-        existingPhone.setOperatingSystem(updatedPhone.getOperatingSystem());
-        existingPhone.setColor(updatedPhone.getColor());
+        existingPhone.setStorageCapacityID(updatedPhone.getStorageCapacityID());
+        existingPhone.setRamID(updatedPhone.getRamID());
+        existingPhone.setOperatingSystemID(updatedPhone.getOperatingSystemID());
+        existingPhone.setColorID(updatedPhone.getColorID());
+        existingPhone.setPrice(updatedPhone.getPrice());
         existingPhone.setSeri(updatedPhone.getSeri());
         existingPhone.setQuantity(new StringToList().StringToList(updatedPhone.getSeri()).size());
 
@@ -420,14 +484,14 @@ public class PhoneController {
                 phoneService.save(existingPhone);
                 String Mess = "Cập nhật điện thoại thành công";
                 model.addAttribute("Mess", Mess);
-                return "redirect:/Handshop/admin";
+                return "redirect:/Handshop/admin"+ "?addphone=true";
             } catch (IOException e) {
                 e.printStackTrace();
                 return "redirect:/Handshop/showFormForUpdate?eror";
             }
         }
         phoneService.save(existingPhone);
-        return "redirect:/Handshop/admin";
+        return "redirect:/Handshop/admin"+ "?addphone=true";
     }
 
     @GetMapping("/admin/delete/{id}")
@@ -445,11 +509,11 @@ public class PhoneController {
     @PostMapping("/admin/delete/{id}")
     public String deletePhone(@PathVariable int id) {
         phoneService.deleteById(id);
-        return "redirect:/Handshop/admin";
+        return "redirect:/Handshop/admin"+ "?addphone=true";
     }
 
     /******************************************************************************************************/
-    /** Brand & Category - Admin */
+                /** Brand, Category, Model, Color, OS, RAM, Storage Capacity - Admin */
     /******************************************************************************************************/
 
     @GetMapping("/admin/brand")
@@ -581,6 +645,183 @@ public class PhoneController {
         return "redirect:/Handshop/admin/category";
     }
 
+    @GetMapping("/admin/color")
+    public String ShowColorForm(Model model,
+                                @RequestParam(value = "success",defaultValue = "false") boolean success){
+        List<Color> colors = colorService.findAll();
+        model.addAttribute("colors", colors);
+        model.addAttribute("success", success);
+        return "admin/templateAdmin";
+    }
+    @PostMapping("/admin/color/add")
+    public String submitColor(@RequestParam("addcolor") String addcolor,
+                              @RequestParam("hexCode")  String hexCode, Model model) {
+        try {
+            colorService.save(new Color(addcolor, hexCode));
+            return "redirect:/Handshop/admin/color?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/color?"+"success=false";
+        }
+    }
+    @PostMapping("/admin/color/del")
+    public String submitColor(@RequestParam("delcolorID") int delcolorID, Model model) {
+        try {
+            colorService.deleteById(delcolorID);
+            return "redirect:/Handshop/admin/color?"+"success=true";
+        } catch (Exception e){
+        return "redirect:/Handshop/admin/color?"+ "success=false";
+        }
+    }
+    private void PhoneNameList(Model model){
+        List<String> phoneNameList = new ArrayList<>();
+        phoneService.findAll().forEach(v->{
+            phoneNameList.add(v.getPhoneName()+ " | "
+                    + Phone2PhoneDTO(v).getRam().getCapacity() + "GB | "
+                    + Phone2PhoneDTO(v).getStorageCapacity().getCapacity() + "GB");
+        });
+        model.addAttribute("phoneNameList", phoneNameList);
+    }
+    @GetMapping("/admin/model")
+    public String ShowModelForm(Model model,
+                                @RequestParam(value = "success",defaultValue = "false") boolean success){
+        List<Models> models = modelService.findAll();
+        PhoneNameList(model);
+        model.addAttribute("models", models);
+        model.addAttribute("success", success);
+
+        List<OperatingSystem> OSs = operatingSystemService.findAll();
+        model.addAttribute("OSs", OSs);
+
+        List<StorageCapacity> storageCapacities = storageCapacityService.findAll();
+        model.addAttribute("storageCapacities", storageCapacities);
+
+        List<RAM> rams = ramService.findAll();
+        model.addAttribute("rams", rams);
+
+        List<Color> colors = colorService.findAll();
+        model.addAttribute("colors", colors);
+
+        List<Categories> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+
+        List<Brands> brands = brandService.findAll();
+        model.addAttribute("brands", brands);
+
+        return "admin/templateAdmin";
+    }
+    @PostMapping("/admin/model/add")
+    public String submitmodel(@RequestParam("colorID") int colorID,
+                              @RequestParam("categoryID")  int categoryID,
+                              @RequestParam("brandID")  int brandID,
+                              @RequestParam("ramID")  int ramID,
+                              @RequestParam("storageCapacityID")  int storageCapacityID,
+                              @RequestParam("OSID")  int OSID,
+                              @RequestParam("releaseYear")  int releaseYear,
+                              @RequestParam("phoneName")  String phoneName,
+                              @RequestParam("addmodel")  String addmodel) {
+        try {
+            Models mod = new Models(addmodel);
+            modelService.save(mod);
+            phoneService.save(
+                    new Phones(
+                            brandID, categoryID, phoneName, mod.getId(), releaseYear,
+                            0.00,storageCapacityID, ramID, OSID,
+                            "0.00", colorID, null, 0,"[]"
+                    ));
+            return "redirect:/Handshop/admin/model?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/model?"+"success=false";
+        }
+    }
+    @PostMapping("/admin/model/del")
+    public String submitmodel(@RequestParam("delmodelID") int delmodelID) {
+        try {
+            modelService.deleteById(delmodelID);
+            return "redirect:/Handshop/admin/model?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/model?"+ "success=false";
+        }
+    }
+
+    @GetMapping("/admin/OS")
+    public String ShowOSForm(Model model,
+                                @RequestParam(value = "success",defaultValue = "false") boolean success){
+        List<OperatingSystem> OSs = operatingSystemService.findAll();
+        model.addAttribute("OSs", OSs);
+        model.addAttribute("success", success);
+        return "admin/templateAdmin";
+    }
+    @PostMapping("/admin/OS/add")
+    public String submitOS(@RequestParam("addOS") String addOS) {
+        try {
+            operatingSystemService.save(new OperatingSystem(addOS));
+            return "redirect:/Handshop/admin/OS?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/OS?"+"success=false";
+        }
+    }
+    @PostMapping("/admin/OS/del")
+    public String submitOS(@RequestParam("OSID") int OSID) {
+        try {
+            operatingSystemService.deleteById(OSID);
+            return "redirect:/Handshop/admin/OS?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/OS?"+ "success=false";
+        }
+    }
+
+    @GetMapping("/admin/StorageCapacity")
+    public String ShowStorageCapacityForm(Model model,
+                             @RequestParam(value = "success",defaultValue = "false") boolean success){
+        List<StorageCapacity> storageCapacities = storageCapacityService.findAll();
+        model.addAttribute("storageCapacities", storageCapacities);
+        model.addAttribute("success", success);
+        return "admin/templateAdmin";
+    }
+    @PostMapping("/admin/StorageCapacity/add")
+    public String submitStorageCapacity(@RequestParam("addstorageCapacity") String addstorageCapacity) {
+        try {
+            storageCapacityService.save(new StorageCapacity(addstorageCapacity));
+            return "redirect:/Handshop/admin/StorageCapacity?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/StorageCapacity?"+"success=false";
+        }
+    }
+    @PostMapping("/admin/StorageCapacity/del")
+    public String submitStorageCapacity(@RequestParam("storageCapacity") int storageCapacity) {
+        try {
+            storageCapacityService.deleteById(storageCapacity);
+            return "redirect:/Handshop/admin/StorageCapacity?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/StorageCapacity?"+ "success=false";
+        }
+    }
+    @GetMapping("/admin/RAM")
+    public String ShowRAMForm(Model model,
+                             @RequestParam(value = "success",defaultValue = "false") boolean success){
+        List<RAM> rams = ramService.findAll();
+        model.addAttribute("rams", rams);
+        model.addAttribute("success", success);
+        return "admin/templateAdmin";
+    }
+    @PostMapping("/admin/RAM/add")
+    public String submitRAM(@RequestParam("addram") String addram) {
+        try {
+            ramService.save(new RAM(addram));
+            return "redirect:/Handshop/admin/RAM?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/RAM?"+"success=false";
+        }
+    }
+    @PostMapping("/admin/RAM/del")
+    public String submitRAM(@RequestParam("OSID") int OSID) {
+        try {
+            operatingSystemService.deleteById(OSID);
+            return "redirect:/Handshop/admin/color?"+"success=true";
+        } catch (Exception e){
+            return "redirect:/Handshop/admin/color?"+ "success=false";
+        }
+    }
     /******************************************************************************************************/
                         /** OrderRequest & Payment - Admin */
     /******************************************************************************************************/
@@ -921,15 +1162,16 @@ public class PhoneController {
                 Phones phone = new Phones();
                 phone.setBrandId((int) formulaEvaluator.evaluate(row.getCell(15)).getNumberValue());
                 phone.setCategoryId((int) formulaEvaluator.evaluate(row.getCell(16)).getNumberValue());
+//                phone.setModel(formulaEvaluator.evaluate(row.getCell(4)).getStringValue());
+                phone.setModelID((int) formulaEvaluator.evaluate(row.getCell(17)).getNumberValue());
+                phone.setOperatingSystemID((int) formulaEvaluator.evaluate(row.getCell(18)).getNumberValue());
+                phone.setStorageCapacityID((int) formulaEvaluator.evaluate(row.getCell(19)).getNumberValue());
+                phone.setRamID((int) formulaEvaluator.evaluate(row.getCell(20)).getNumberValue());
+                phone.setColorID((int) formulaEvaluator.evaluate(row.getCell(21)).getNumberValue());
                 phone.setPhoneName(row.getCell(3).getStringCellValue());
-                phone.setModel(formulaEvaluator.evaluate(row.getCell(4)).getStringValue());
                 phone.setReleaseYear((int) row.getCell(5).getNumericCellValue());
                 phone.setScreenSize(row.getCell(6).getNumericCellValue());
-                phone.setStorageCapacity((int) row.getCell(7).getNumericCellValue());
-                phone.setRam((int) row.getCell(8).getNumericCellValue());
-                phone.setOperatingSystem(row.getCell(9).getStringCellValue());
                 phone.setPrice(row.getCell(10).getStringCellValue());
-                phone.setColor(row.getCell(11).getStringCellValue());
                 phone.setImageName(row.getCell(12).getStringCellValue());
                 phone.setSeri(row.getCell(14).getStringCellValue());
                 phone.setQuantity(new StringToList().StringToList(phone.getSeri()).size());
@@ -982,11 +1224,17 @@ public class PhoneController {
             }
         }
     }
+
     @GetMapping("/admin/ExportInventory")
     public ResponseEntity<Resource> exportInventory() {
         List<Phones> phones = phoneService.findAll();
         List<Brands> brands = brandService.findAll();
         List<Categories> categories = categoryService.findAll();
+        List<Models> models = modelService.findAll();
+        List<OperatingSystem> operatingSystems = operatingSystemService.findAll();
+        List<RAM> rams = ramService.findAll();
+        List<StorageCapacity> storageCapacities = storageCapacityService.findAll();
+        List<Color> colors = colorService.findAll();
         // Tạo một Workbook (Sử dụng XSSFWorkbook cho định dạng .xlsx)
         try (Workbook workbook = new XSSFWorkbook()) {
             /** Sheet 2*/
@@ -994,7 +1242,8 @@ public class PhoneController {
             {
                 Sheet sheet2 = workbook.createSheet("Dữ liệu");
                 Row headerRow = sheet2.createRow(0);
-                String[] headers = {"Brand", "BrandID", "Category", "CategoryID", "Model"};
+                String[] headers = {"Brand", "BrandID", "Category", "CategoryID", "Model", "ModelID", "operatingSystems", "operatingSystemsID",
+                                    "ram", "ramID", "storageCapacities", "storageCapacityID", "colors", "colorID"};
 
                 for (int i = 0; i < headers.length; i++) {
                     Cell cell = headerRow.createCell(i+1);
@@ -1004,32 +1253,62 @@ public class PhoneController {
                 int rowIndexbrand = 1;
                 int brandSize = brands.size();
                 int categorySize = categories.size();
-                int phoneModelSize = phones.size();
-                int max = Math.max(brandSize, Math.max(categorySize, phoneModelSize));
+                int phoneModelSize = models.size();
+                int operatingSystemsSize = operatingSystems.size();
+                int ramsSize = rams.size();
+                int storageCapacitiesSize = storageCapacities.size();
+                int colorsSize = colors.size();
+
+                List<Integer> sizes = Arrays.asList(brandSize, categorySize, phoneModelSize, operatingSystemsSize, ramsSize, storageCapacitiesSize, colorsSize);
+                int max = Collections.max(sizes);
+
                 for (int i =0 ; i < max ; i++) {
                     Row row = sheet2.createRow(rowIndexbrand++);
-                    Cell cell = row.createCell(1); // Cột Brands
-                    if(i<brandSize) cell.setCellValue(brands.get(i).getBrandName());
-                    cell = row.createCell(2); // Cột BrandID
-                    if(i<brandSize) cell.setCellValue(brands.get(i).getBrandID());
-                    cell = row.createCell(3); // Cột Categories
-                    if(i<categorySize) cell.setCellValue(categories.get(i).getCategoryName());
-                    cell = row.createCell(4); // Cột CategoryID
-                    if(i<categorySize) cell.setCellValue(categories.get(i).getCategoryID());
-                    cell = row.createCell(5); // Cột Model
-                    if(i<phoneModelSize) cell.setCellValue(phones.get(i).getModel());
+                    Cell cell;
+                    if(i<brandSize) {
+                        cell = row.createCell(1); // Cột Brands
+                        cell.setCellValue(brands.get(i).getBrandName());
+                        cell = row.createCell(2); // Cột BrandID
+                        cell.setCellValue(brands.get(i).getBrandID());
+                    }
+                    if(i<categorySize){
+                        cell = row.createCell(3); // Cột Categories
+                        cell.setCellValue(categories.get(i).getCategoryName());
+                        cell = row.createCell(4); // Cột CategoryID
+                        cell.setCellValue(categories.get(i).getCategoryID());
+                    }
+                    if(i<phoneModelSize) {
+                        cell = row.createCell(5); // Cột Model
+                        cell.setCellValue(models.get(i).getModel());
+                        cell = row.createCell(6); // Cột CategoryID
+                        cell.setCellValue(models.get(i).getId());
+                    }
+                    if(i<operatingSystemsSize){
+                        cell = row.createCell(7); // Cột CategoryID
+                        cell.setCellValue(operatingSystems.get(i).getOsType());
+                        cell = row.createCell(8); // Cột CategoryID
+                        cell.setCellValue(operatingSystems.get(i).getId());
+                    }
+                    if(i<ramsSize){
+                        cell = row.createCell(9); // Cột CategoryID
+                        cell.setCellValue(rams.get(i).getCapacity());
+                        cell = row.createCell(10); // Cột CategoryID
+                        cell.setCellValue(rams.get(i).getId());
+                    }
+                    if(i<storageCapacitiesSize){
+                        cell = row.createCell(11); // Cột CategoryID
+                        cell.setCellValue(storageCapacities.get(i).getCapacity());
+                        cell = row.createCell(12); // Cột CategoryID
+                        cell.setCellValue(storageCapacities.get(i).getId());
+                    }
+                    if(i<colorsSize){
+                        cell = row.createCell(13); // Cột CategoryID
+                        cell.setCellValue(colors.get(i).getColor());
+                        cell = row.createCell(14); // Cột CategoryID
+                        cell.setCellValue(colors.get(i).getId());
+                    }
                 }
             }
-                // Sử dụng phương thức fillDataToSheet để điền dữ liệu cho Sheet2
-//                Sheet sheet2 = workbook.createSheet("Sheet2");
-//                String[] brandHeaders = {"Brand", "BrandID"};
-//                fillDataToSheet(sheet2, brandHeaders, brands, 1);
-//
-//                String[] categoryHeaders = {"Category", "CategoryID"};
-//                fillDataToSheet(sheet2, categoryHeaders, categories, 3);
-
-//                String[] phoneHeaders = {"Model"};
-//                fillDataToSheet(sheet2, phoneHeaders, phones, 5);
 
             /** Sheet 1*/
 
@@ -1039,25 +1318,13 @@ public class PhoneController {
             // Thêm header vào dòng đầu tiên
             Row headerRow1 = sheet1.createRow(0);
             String[] headers1 = {"ID", "Brand", "Category", "PhoneName", "Model", "ReleaseYear", "ScreenSize", "StorageCapacity",
-                    "RAM", "OperatingSystem", "Price", "Color", "ImageName", "Quantity", "Seri", "BrandID", "CategoryID", "Isblank"};
+                    "RAM", "OperatingSystem", "Price", "Color", "ImageName", "Quantity", "Seri", "BrandID", "CategoryID",
+                    "ModelID", "StorageCapacityID", "RAMID", "OperatingSystemID", "ColorID", "Isblank"};
 
             for (int i = 0; i < headers1.length; i++) {
                 Cell cell = headerRow1.createCell(i);
                 cell.setCellValue(headers1[i]);
             }
-
-            // Tạo một DataValidation cho dropdown list Brand từ Sheet2
-//            DataValidationHelper dataValidationHelper = sheet1.getDataValidationHelper();
-//            DataValidationConstraint brandConstraint = dataValidationHelper.createFormulaListConstraint("Dữ liệu!$B$2:$B$" + (brands.size() + 1));
-//            CellRangeAddressList brandRange = new CellRangeAddressList(2, Integer.MAX_VALUE, 1, 1);
-//            DataValidation brandValidation = dataValidationHelper.createValidation(brandConstraint, brandRange);
-//            sheet1.addValidationData(brandValidation);
-
-//            // Tạo một DataValidation cho dropdown list Category từ Sheet2
-//            DataValidationConstraint categoryConstraint = dataValidationHelper.createFormulaListConstraint("Dữ liệu!$D$2:$D$" + (categories.size() + 1));
-//            CellRangeAddressList categoryRange = new CellRangeAddressList(2, Integer.MAX_VALUE, 2, 2);
-//            DataValidation categoryValidation = dataValidationHelper.createValidation(categoryConstraint, categoryRange);
-//            sheet1.addValidationData(categoryValidation);
 
             // Ghi dữ liệu vào Sheet bắt đầu từ dòng thứ 2
             int rowIndex1 = 1;
@@ -1086,7 +1353,32 @@ public class PhoneController {
                                     cell.setCellValue(category.getCategoryName());
                                     Cell categoryID = row.createCell(16);
                                     categoryID.setCellValue(id);
-                                } else {cell.setCellValue((Integer) value);}
+                                }else if(cellIndex==5) {
+                                    Models cellmodels = modelService.findById(id);
+                                    cell.setCellValue(cellmodels.getModel());
+                                    Cell ModelID = row.createCell(17);
+                                    ModelID.setCellValue(id);
+                                }else if(cellIndex==8) {
+                                    StorageCapacity storageCapacity = storageCapacityService.findById(id);
+                                    cell.setCellValue(storageCapacity.getCapacity());
+                                    Cell CapacityID = row.createCell(18);
+                                    CapacityID.setCellValue(id);
+                                }else if(cellIndex==9) {
+                                    RAM ram = ramService.findById(id);
+                                    cell.setCellValue(ram.getCapacity());
+                                    Cell RAMID = row.createCell(19);
+                                    RAMID.setCellValue(id);
+                                }else if(cellIndex==10) {
+                                    OperatingSystem operatingSystem = operatingSystemService.findById(id);
+                                    cell.setCellValue(operatingSystem.getOsType());
+                                    Cell OperatingSystemID = row.createCell(20);
+                                    OperatingSystemID.setCellValue(id);
+                                }else if(cellIndex==12) {
+                                    Color color = colorService.findById(id);
+                                    cell.setCellValue(color.getColor());
+                                    Cell ColorID = row.createCell(21);
+                                    ColorID.setCellValue(id);
+                                }else {cell.setCellValue((Integer) value);}
                             } else if (value instanceof Double) {
                                 cell.setCellValue((Double) value);
                             }
@@ -1180,5 +1472,34 @@ public class PhoneController {
                                     @PathVariable("phoneId") int phoneId) {
             prdRevService.deleteById(idcom);
         return "redirect:/Handshop/ViewDetailPhone/" + phoneId;
+    }
+
+
+
+    @GetMapping("/admin/myAccount/{username}")
+    public String showMyAccount(Model model, @PathVariable("username") String username
+            , @RequestParam(value = "changedPass", defaultValue = "false") boolean changedPass){
+        Employees employees = employeeRepository.findByEmail(username);
+        model.addAttribute("employees",employees);
+        model.addAttribute("changedPass",changedPass);
+        return "admin/templateAdmin";
+    }
+
+    @PostMapping("/admin/editpassEmployee")
+    public String editpassCustomer( Model model,
+                                    @RequestParam("passEmployee") String passEmployee,
+                                    @RequestParam("emailEmployee") String emailEmployee) {
+        Employees employee = employeeRepository.findByEmail(emailEmployee);
+        employee.setPass(passEmployee);
+        Users user = new Users();
+        saveUser(employee, user);
+        return "redirect:/Handshop/admin/myAccount/"+employee.getEmail()+ "?changedPass=true";
+    }
+
+    public void saveUser(Employees employee, Users user){
+        employeeService.save(employee);
+        user = userService.findByUsername(employee.getEmail());
+        user.setPassword(passwordEncoder.encode(employee.getPass()));
+        userService.save(user);
     }
 }

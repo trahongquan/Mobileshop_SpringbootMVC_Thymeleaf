@@ -58,7 +58,7 @@ public class ControllerPhoneImport {
     @GetMapping({"/admin/addOrderImport"})
     public String addOrderImport(Model model) {
 //        List<Phones> phones = phoneService.findAll();
-//        List<PhoneDTO> phoneDTOS = Phone2PhoneDTOS(phones);
+//        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
 //        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "admin/list-phones";
     }

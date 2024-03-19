@@ -82,7 +82,7 @@ public class PaymentController {
         ordeservice.save(order);
         for (int i = 0; i < inputmodel.size(); i++) {
             /** Lọc lấy các phone còn trong kho*/
-            Phones phone = phoneRepository.findByModel(inputmodel.get(i));
+            Phones phone = phoneRepository.findByModelID(Integer.parseInt(inputmodel.get(i)));
 
             int qtyInventory = phone.getQuantity();
             int qtyOrder = Integer.parseInt(inputquantity.get(i));
@@ -170,7 +170,7 @@ public class PaymentController {
         ordeservice.save(order);
         for (int i = 0; i < inputmodel.size(); i++) {
             /** Lọc lấy các phone còn trong kho*/
-            Phones phone = phoneRepository.findByModel(inputmodel.get(i));
+            Phones phone = phoneRepository.findByModelID(Integer.parseInt(inputmodel.get(i)));
 
             int qtyInventory = phone.getQuantity();
             int qtyOrder = Integer.parseInt(inputquantity.get(i));

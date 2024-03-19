@@ -58,7 +58,7 @@
                         <th>Mật khẩu</th>
                         <td>
                             <div class="d-flex" style="flex-direction: row; justify-content: space-around">
-                                <form th:action="@{/Handshop/admin/AccEmployeesManager/editpassEmployee}" method="post">
+                                <form th:action="@{/Handshop/admin/editpassEmployee}" method="post">
                                     <input type="text" th:value="${employees.pass}" name="passEmployee">
                                     <input type="hidden" th:value="${employees.email}" name="emailEmployee">
                                     <button type="submit" class="btn btn-primary"

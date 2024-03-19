@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.rememberme.JdbcTokenRepos
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -67,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 /** Tất cả các request tới web đều phải authorize - kiểm tra quyền*/
-                    .antMatchers("/Handshop/admin/AccEmployeesManager**").access("hasRole('ROLE_ADMIN')")
+                    .antMatchers("/Handshop/admin/AccEmployeesManager/**").access("hasRole('ROLE_ADMIN')")
                     .antMatchers("/Handshop/admin/**").access("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
                     /** ' ** ' để có thể authorize các link con phía sau*/
                     .antMatchers("/**").permitAll()

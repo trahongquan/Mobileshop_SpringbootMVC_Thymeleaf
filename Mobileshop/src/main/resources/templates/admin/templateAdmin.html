@@ -822,7 +822,7 @@
                                                 <div class="scrollbar-container ps">
                                                     <ul class="nav flex-column">
                                                         <li class="nav-item-header nav-item">
-                                                            <a th:href="'/Handshop/admin/AccEmployeesManager/myAccount/'+${#authentication.name}"> My Account</a>
+                                                            <a th:href="'/Handshop/admin/myAccount/'+${#authentication.name}"> My Account</a>
                                                         </li>
                                                         <!--<li class="nav-item">
                                                             <a href="javascript:void(0);" class="nav-link">Chat
@@ -1045,7 +1045,7 @@
                                         <div class="swatch-holder bg-midnight-bloom switch-header-cs-class"
                                              data-class="bg-midnight-bloom header-text-light">
                                         </div>
-                                        <div class="swatch-holder bg-night-sky switch-header-cs-class"
+                                        <div class="swatch-holder bg-night-sky switch-header-cs-class active"
                                              data-class="bg-night-sky header-text-light">
                                         </div>
                                         <div class="swatch-holder bg-slick-carbon switch-header-cs-class"
@@ -1170,7 +1170,7 @@
                                         <div class="swatch-holder bg-vicious-stance switch-sidebar-cs-class"
                                              data-class="bg-vicious-stance sidebar-text-light">
                                         </div>
-                                        <div class="swatch-holder bg-midnight-bloom switch-sidebar-cs-class"
+                                        <div class="swatch-holder bg-midnight-bloom switch-sidebar-cs-class active"
                                              data-class="bg-midnight-bloom sidebar-text-light">
                                         </div>
                                         <div class="swatch-holder bg-night-sky switch-sidebar-cs-class"
@@ -1359,7 +1359,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="/Handshop/admin/color">
                                             <i class="metismenu-icon">
                                             </i>DM Màu
                                         </a>
@@ -1373,19 +1373,25 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="#">
+                                        <a href="/Handshop/admin/model">
                                             <i class="metismenu-icon">
                                             </i>DM kiểu Model
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="/Handshop/admin/OS">
+                                            <i class="metismenu-icon">
+                                            </i>DM Hệ điều hành
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/Handshop/admin/StorageCapacity">
                                             <i class="metismenu-icon">
                                             </i>DM Bộ nhớ trong
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="/Handshop/admin/RAM">
                                             <i class="metismenu-icon">
                                             </i>DM Bộ nhớ Ram
                                         </a>
@@ -1406,7 +1412,7 @@
                                         </a>
                                         <ul>
                                             <li>
-                                                <a href="/Handshop/admin/add">
+                                                <a href="/Handshop/admin/selectModel">
                                                     <i class="metismenu-icon">
                                                     </i>Thêm điện thoại
                                                 </a>
@@ -1494,6 +1500,7 @@
                                 </ul>
                             </li>
                             <li>
+                            <!--<li sec:authorize="hasRole('ROLE_ADMIN')" >-->
                                 <a href="#">
                                     <i class="metismenu-icon pe-7s-id">
                                     </i>QL Tài khoản nhân viên
@@ -1561,6 +1568,21 @@
                 <div th:if="${#request.requestURI == '/Handshop/admin/category'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="admin/add-Category.html :: add-Category"></div>
                 </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/color'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/add-Color.html :: add-color"></div>
+                </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/OS'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/add-OperationSystem.html :: add-OS"></div>
+                </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/RAM'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/add-RAM.html :: add-ram"></div>
+                </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/StorageCapacity'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/add-StorageCapacity.html :: add-StorageCapacity"></div>
+                </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/model'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/add-Model.html :: add-model"></div>
+                </div>
 
                                                 <!--/////////////////////////////////-->
                                                             <!-- Phone -->
@@ -1568,6 +1590,9 @@
 
                 <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/importExel')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="admin/importExel.html :: import-Exel"></div>
+                </div>
+                <div th:if="${#request.requestURI == '/Handshop/admin/selectModel'}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/selectModel.html :: select-Model"></div>
                 </div>
                 <div th:if="${#request.requestURI == '/Handshop/admin/add'}" class="app-main__inner" >
                     <div th:replace="admin/form-phone.html :: form-phone"></div>
@@ -1628,7 +1653,7 @@
                 <div th:if="${#strings.contains(#request.requestURI, 'Handshop/admin/AccEmployeesManager/delete')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="employees/delete.html :: delete-employe"></div>
                 </div>
-                <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/AccEmployeesManager/myAccount')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/myAccount')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="employees/employeinfo.html::employeinfo"></div>
                 </div>
 
@@ -1651,4 +1676,21 @@
     <script th:src="@{/js/demo.js}"></script>
     <script th:src="@{/js/add-brand-category.js}"></script>
     <script th:src="@{/js/importExel.js}"></script>
+    <script th:src="@{/js/noticePopUp.js}"></script>
+    <script>
+        window.addEventListener('load', function() {
+            // Lấy các phần tử cần click
+            var nightskyBeachElement = document.querySelector('.swatch-holder.bg-night-sky.switch-header-cs-class.active');
+            var midnightBloomElement = document.querySelector('.swatch-holder.bg-midnight-bloom.switch-sidebar-cs-class.active');
+            // var malibuBeachElement = document.querySelector('.swatch-holder.bg-malibu-beach.switch-header-cs-class.active');
+
+            // Thực hiện click vào các phần tử
+            if (midnightBloomElement) {
+                midnightBloomElement.click();
+            }
+            if (nightskyBeachElement) {
+                nightskyBeachElement.click();
+            }
+        });
+    </script>
 </html>

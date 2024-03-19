@@ -35,7 +35,7 @@
                 <!--<p> <strong> <del th:text="${pricePreSale[iter.index]} + ' $'" th:data="${pricePreSale[iter.index]}"></del> </strong> </p>-->
                 <strong><p class="price" th:text="@{'Giá: ' + '$'+ ${phone.getPrice}}"></p></strong>
                 <p th:text="'Mô tả: Chiếc điện thoại thông minh từ ' + ${phone.getBrand.getBrandName}"></p>
-                <p th:text="'Phiên bản: ' + ${phone.getStorageCapacity} + 'GB | ' + ${phone.getRam} + 'GB' " style="color: red; font-weight: bold"></p>
+                <p th:text="'Phiên bản: ' + ${phone.getStorageCapacity.getCapacity} + 'GB | ' + ${phone.getRam.getCapacity} + 'GB' " style="color: red; font-weight: bold"></p>
                     <p th:if="${phone.getQuantity==0}" th:text="'Đang hết hàng'"></p>
             </a>
                 <a th:href="@{'/Handshop/cart?Id='+ ${phone.phoneId}}">

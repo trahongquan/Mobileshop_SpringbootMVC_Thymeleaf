@@ -4,6 +4,7 @@ package com.springbootmvcwithentity.demo.dto;
 import com.springbootmvcwithentity.demo.entity.Brands;
 import com.springbootmvcwithentity.demo.entity.Categories;
 import com.springbootmvcwithentity.demo.entity.Phones;
+import com.springbootmvcwithentity.demo.entity.extand.*;
 
 import java.io.Serializable;
 
@@ -17,64 +18,83 @@ public class PhoneCartDTO implements Serializable {
 
     private String phoneName;
 
-    private String model;
+    private int modelId;
 
     private int releaseYear;
 
     private double screenSize;
 
-    private int storageCapacity;
+    private int storageCapacityId;
 
-    private int ram;
+    private int ramId;
 
-    private String operatingSystem;
-
-    private String color;
-
-    private String ImageName;
+    private int operatingSystemId;
 
     private String price;
 
+    private int colorId;
+
+    private String ImageName;
+
     private int quantity;
+    private int quantityorder;
 
     private String seri;
 
-    private Brands brand;
+    Brands brand;
+    Categories category;
+    Models model;
+    OperatingSystem operatingSystem;
+    RAM ram;
+    StorageCapacity storageCapacity;
+    Color color;
 
-    private Categories category;
-
-    private int quantityorder;
-
-    public int getQuantityorder() {
-        return quantityorder;
+    public PhoneCartDTO() {
     }
 
-    public void setQuantityorder(int quantityorder) {
-        this.quantityorder = quantityorder;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public Categories getCategory() {
-
-        return category;
-    }
-    public String getImageName() {
-        return ImageName;
-    }
-
-    public void setImageName(String imageName) {
+    public PhoneCartDTO(int phoneId, int brandId, int categoryId, String phoneName, int modelId, int releaseYear, double screenSize, int storageCapacityId, int ramId, int operatingSystemId, String price, int colorId, String imageName, int quantity, int quantityorder, String seri, Brands brand, Categories category, Models model, OperatingSystem operatingSystem, RAM ram, StorageCapacity storageCapacity, Color color) {
+        this.phoneId = phoneId;
+        this.brandId = brandId;
+        this.categoryId = categoryId;
+        this.phoneName = phoneName;
+        this.modelId = modelId;
+        this.releaseYear = releaseYear;
+        this.screenSize = screenSize;
+        this.storageCapacityId = storageCapacityId;
+        this.ramId = ramId;
+        this.operatingSystemId = operatingSystemId;
+        this.price = price;
+        this.colorId = colorId;
         ImageName = imageName;
+        this.quantity = quantity;
+        this.quantityorder = quantityorder;
+        this.seri = seri;
+        this.brand = brand;
+        this.category = category;
+        this.model = model;
+        this.operatingSystem = operatingSystem;
+        this.ram = ram;
+        this.storageCapacity = storageCapacity;
+        this.color = color;
     }
 
-    public void setCategory(Categories category) {
+    public PhoneCartDTO(Phones phone, Brands brand, Categories category, Models model, OperatingSystem operatingSystem, RAM ram, StorageCapacity storageCapacity, Color color, int quantityorder) {
+        this.phoneId = phone.getPhoneId();
+        this.phoneName = phone.getPhoneName();
+        this.releaseYear = phone.getReleaseYear();
+        this.screenSize = phone.getScreenSize();
+        this.price = phone.getPrice();
+        ImageName = phone.getImageName();
+        this.quantity = phone.getQuantity();
+        this.seri = phone.getSeri();
+        this.brand = brand;
         this.category = category;
+        this.model = model;
+        this.operatingSystem = operatingSystem;
+        this.ram = ram;
+        this.storageCapacity = storageCapacity;
+        this.color = color;
+        this.quantityorder = quantityorder;
     }
 
     public int getPhoneId() {
@@ -109,12 +129,12 @@ public class PhoneCartDTO implements Serializable {
         this.phoneName = phoneName;
     }
 
-    public String getModel() {
-        return model;
+    public int getModelId() {
+        return modelId;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setModelId(int modelId) {
+        this.modelId = modelId;
     }
 
     public int getReleaseYear() {
@@ -133,28 +153,28 @@ public class PhoneCartDTO implements Serializable {
         this.screenSize = screenSize;
     }
 
-    public int getStorageCapacity() {
-        return storageCapacity;
+    public int getStorageCapacityId() {
+        return storageCapacityId;
     }
 
-    public void setStorageCapacity(int storageCapacity) {
-        this.storageCapacity = storageCapacity;
+    public void setStorageCapacityId(int storageCapacityId) {
+        this.storageCapacityId = storageCapacityId;
     }
 
-    public int getRam() {
-        return ram;
+    public int getRamId() {
+        return ramId;
     }
 
-    public void setRam(int ram) {
-        this.ram = ram;
+    public void setRamId(int ramId) {
+        this.ramId = ramId;
     }
 
-    public String getOperatingSystem() {
-        return operatingSystem;
+    public int getOperatingSystemId() {
+        return operatingSystemId;
     }
 
-    public void setOperatingSystem(String operatingSystem) {
-        this.operatingSystem = operatingSystem;
+    public void setOperatingSystemId(int operatingSystemId) {
+        this.operatingSystemId = operatingSystemId;
     }
 
     public String getPrice() {
@@ -165,12 +185,44 @@ public class PhoneCartDTO implements Serializable {
         this.price = price;
     }
 
-    public String getColor() {
-        return color;
+    public int getColorId() {
+        return colorId;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColorId(int colorId) {
+        this.colorId = colorId;
+    }
+
+    public String getImageName() {
+        return ImageName;
+    }
+
+    public void setImageName(String imageName) {
+        ImageName = imageName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getQuantityorder() {
+        return quantityorder;
+    }
+
+    public void setQuantityorder(int quantityorder) {
+        this.quantityorder = quantityorder;
+    }
+
+    public String getSeri() {
+        return seri;
+    }
+
+    public void setSeri(String seri) {
+        this.seri = seri;
     }
 
     public Brands getBrand() {
@@ -181,28 +233,52 @@ public class PhoneCartDTO implements Serializable {
         this.brand = brand;
     }
 
-    public PhoneCartDTO() {
+    public Categories getCategory() {
+        return category;
     }
 
-    public PhoneCartDTO(Phones phone, Brands brand, Categories category, int quantityorder){
-        this.phoneId = phone.getPhoneId();
-        this.brandId = phone.getBrandId();
-        this.categoryId = phone.getCategoryId();
-        this.phoneName = phone.getPhoneName();
-        this.model = phone.getModel();
-        this.price = phone.getPrice();
-        this.seri = phone.getSeri();
-        this.releaseYear = phone.getReleaseYear();
-        this.screenSize = phone.getScreenSize();
-        this.storageCapacity = phone.getStorageCapacity();
-        this.ram = phone.getRam();
-        this.operatingSystem = phone.getOperatingSystem();
-        this.color = phone.getColor();
-        this.ImageName = phone.getImageName();
-        this.quantity = phone.getQuantity();
-        this.brand = brand;
+    public void setCategory(Categories category) {
         this.category = category;
-        this.quantityorder = quantityorder;
+    }
+
+    public Models getModel() {
+        return model;
+    }
+
+    public void setModel(Models model) {
+        this.model = model;
+    }
+
+    public OperatingSystem getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public void setOperatingSystem(OperatingSystem operatingSystem) {
+        this.operatingSystem = operatingSystem;
+    }
+
+    public RAM getRam() {
+        return ram;
+    }
+
+    public void setRam(RAM ram) {
+        this.ram = ram;
+    }
+
+    public StorageCapacity getStorageCapacity() {
+        return storageCapacity;
+    }
+
+    public void setStorageCapacity(StorageCapacity storageCapacity) {
+        this.storageCapacity = storageCapacity;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     @Override
@@ -212,20 +288,25 @@ public class PhoneCartDTO implements Serializable {
                 ", brandId=" + brandId +
                 ", categoryId=" + categoryId +
                 ", phoneName='" + phoneName + '\'' +
-                ", model='" + model + '\'' +
+                ", modelId=" + modelId +
                 ", releaseYear=" + releaseYear +
                 ", screenSize=" + screenSize +
-                ", storageCapacity=" + storageCapacity +
-                ", ram=" + ram +
-                ", operatingSystem='" + operatingSystem + '\'' +
-                ", color='" + color + '\'' +
-                ", ImageName='" + ImageName + '\'' +
+                ", storageCapacityId=" + storageCapacityId +
+                ", ramId=" + ramId +
+                ", operatingSystemId=" + operatingSystemId +
                 ", price='" + price + '\'' +
+                ", colorId=" + colorId +
+                ", ImageName='" + ImageName + '\'' +
                 ", quantity=" + quantity +
+                ", quantityorder=" + quantityorder +
                 ", seri='" + seri + '\'' +
                 ", brand=" + brand +
                 ", category=" + category +
-                ", quantityorder=" + quantityorder +
+                ", model=" + model +
+                ", operatingSystem=" + operatingSystem +
+                ", ram=" + ram +
+                ", storageCapacity=" + storageCapacity +
+                ", color=" + color +
                 '}';
     }
 }

@@ -6,9 +6,16 @@ import com.springbootmvcwithentity.demo.ClassSuport.CartCookie;
 import com.springbootmvcwithentity.demo.dao.CustomerRepository;
 import com.springbootmvcwithentity.demo.dao.WishRepository;
 import com.springbootmvcwithentity.demo.dto.PhoneCartDTO;
+import com.springbootmvcwithentity.demo.dto.PhoneDTO;
 import com.springbootmvcwithentity.demo.entity.*;
+import com.springbootmvcwithentity.demo.entity.extand.*;
+import com.springbootmvcwithentity.demo.service.Color.ColorService;
+import com.springbootmvcwithentity.demo.service.Model.ModelService;
+import com.springbootmvcwithentity.demo.service.OperatingSystem.OperatingSystemService;
 import com.springbootmvcwithentity.demo.service.PaymentMethod.PaymentMethodService;
 import com.springbootmvcwithentity.demo.service.Phone.PhoneService;
+import com.springbootmvcwithentity.demo.service.RAM.RAMService;
+import com.springbootmvcwithentity.demo.service.StorageCapacity.StorageCapacityService;
 import com.springbootmvcwithentity.demo.service.brand.BrandService;
 import com.springbootmvcwithentity.demo.service.cart.WishService;
 import com.springbootmvcwithentity.demo.service.categorie.CategoryService;
@@ -35,22 +42,62 @@ public class CartController {
     private PhoneService phonesService;
     private BrandService brandService;
     private CategoryService categoryService;
+    private ModelService modelService;
+    private OperatingSystemService operatingSystemService;
+    private StorageCapacityService storageCapacityService;
+    private RAMService ramService;
+    private ColorService colorService;
     private PaymentMethodService paymentMethodService;
     private WishService wishService;
     private WishRepository wishRepository;
     private CustomerRepository customerRepository;
 
     @Autowired
-    public CartController(PhoneService phonesService, BrandService brandService, CategoryService categoryService, PaymentMethodService paymentMethodService, WishService wishService, WishRepository wishRepository, CustomerRepository customerRepository) {
+    public CartController(PhoneService phonesService, BrandService brandService, CategoryService categoryService, ModelService modelService, OperatingSystemService operatingSystemService, StorageCapacityService storageCapacityService, RAMService ramService, ColorService colorService, PaymentMethodService paymentMethodService, WishService wishService, WishRepository wishRepository, CustomerRepository customerRepository) {
         this.phonesService = phonesService;
         this.brandService = brandService;
         this.categoryService = categoryService;
+        this.modelService = modelService;
+        this.operatingSystemService = operatingSystemService;
+        this.storageCapacityService = storageCapacityService;
+        this.ramService = ramService;
+        this.colorService = colorService;
         this.paymentMethodService = paymentMethodService;
         this.wishService = wishService;
         this.wishRepository = wishRepository;
         this.customerRepository = customerRepository;
     }
 
+    public List<PhoneDTO> Phones2PhoneDTOS(List<Phones> phones){
+        List<PhoneDTO> phoneDTOS = new ArrayList<>();
+        for (Phones phone : phones) {
+            phoneDTOS.add(Phone2PhoneDTO(phone));
+        }
+        return phoneDTOS;
+    }
+    public PhoneDTO Phone2PhoneDTO(Phones phone){
+        Brands brand = brandService.findById(phone.getBrandId());
+        Categories category = categoryService.findById(phone.getCategoryId());
+        Models model = modelService.findById(phone.getModelID());
+        OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
+        StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
+        RAM ram = ramService.findById(phone.getRamID());
+        Color color = colorService.findById(phone.getColorID());
+        PhoneDTO phoneDTO = new PhoneDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color);
+        return phoneDTO;
+    }
+
+        public PhoneCartDTO Phone2PhoneDTOCart(Phones phone, int quantityorder){
+            Brands brand = brandService.findById(phone.getBrandId());
+            Categories category = categoryService.findById(phone.getCategoryId());
+            Models model = modelService.findById(phone.getModelID());
+            OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
+            StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
+            RAM ram = ramService.findById(phone.getRamID());
+            Color color = colorService.findById(phone.getColorID());
+            PhoneCartDTO phoneCartDTO = new PhoneCartDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color, quantityorder);
+            return phoneCartDTO;
+    }
         @GetMapping("/Handshop/cart")
         public String addToCart(HttpServletResponse response,
                                 HttpServletRequest request,
@@ -59,6 +106,7 @@ public class CartController {
             List<Phones> phonesList = phonesService.findAll();
 
             Phones phone = phonesService.findById(id);
+            PhoneDTO phoneDTO = Phone2PhoneDTO(phone);
                 if(phone.getPhoneId()!=0) {
 
                     // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
@@ -70,7 +118,7 @@ public class CartController {
                     // Kiểm tra xem điện thoại đã có trong giỏ hàng chưa
                     boolean found = false;
                     for (PhoneCartDTO phoneCartDTO : cartCookie.getProducts()) {
-                        if (phoneCartDTO.getModel().equals(phone.getModel())) {
+                        if (phoneCartDTO.getModel().getModel().equals(phoneDTO.getModel().getModel())) {
                             // Nếu đã có, tăng số lượng lên 1
                             phoneCartDTO.setQuantityorder(phoneCartDTO.getQuantityorder() + 1);
                             found = true;
@@ -80,10 +128,7 @@ public class CartController {
                     }
 
                     if (!found) {
-                        Brands brand = brandService.findById(phone.getBrandId());
-                        Categories category = categoryService.findById(phone.getCategoryId());
-
-                        PhoneCartDTO phoneCartDTOAdd = new PhoneCartDTO(phone, brand, category, 1);
+                        PhoneCartDTO phoneCartDTOAdd = Phone2PhoneDTOCart(phone,1);
                         // Nếu chưa có, thêm điện thoại vào giỏ hàng với số lượng là 1
                         //PhoneCartDTO phoneCartDTO = new PhoneCartDTO(phone, 1); // Số lượng mặc định là 1
                         updatedCart.add(phoneCartDTOAdd);

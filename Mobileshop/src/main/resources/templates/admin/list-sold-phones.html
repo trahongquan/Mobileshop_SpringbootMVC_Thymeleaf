@@ -65,15 +65,15 @@
             <td th:text="${orderitemDTO.phoneDTO.brand.getBrandName}"></td>
             <td th:text="${orderitemDTO.phoneDTO.category.getCategoryName}"></td>
             <td th:text="${orderitemDTO.phoneDTO.phoneName}"></td>
-            <td th:text="${orderitemDTO.phoneDTO.model}"></td>
+            <td th:text="${orderitemDTO.phoneDTO.getModel.getModel}"></td>
             <td th:text="${orderitemDTO.seri}"></td>
             <td th:text="${orderitemDTO.phoneDTO.releaseYear}"></td>
             <td th:text="${orderitemDTO.phoneDTO.screenSize}+ 'inch'"></td>
-            <td th:text="${orderitemDTO.phoneDTO.storageCapacity}+'GB'"></td>
-            <td th:text="${orderitemDTO.phoneDTO.ram}+'GB'"></td>
-            <td th:text="${orderitemDTO.phoneDTO.operatingSystem}"></td>
+            <td th:text="${orderitemDTO.phoneDTO.getStorageCapacity.getCapacity}+'GB'"></td>
+            <td th:text="${orderitemDTO.phoneDTO.getRam.getCapacity}+'GB'"></td>
+            <td th:text="${orderitemDTO.phoneDTO.getOperatingSystem.getOsType}"></td>
             <td th:text="'$' + ${orderitemDTO.price}"></td>
-            <td th:text="${orderitemDTO.phoneDTO.color}"></td>
+            <td th:text="${orderitemDTO.phoneDTO.getColor.getColor}"></td>
             <td th:text="${orderitemDTO.quantity}"></td>
             <td th:text="${orderdate[iter.index]}"></td>
         </tr>

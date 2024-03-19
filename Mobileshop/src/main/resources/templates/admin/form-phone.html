@@ -16,7 +16,7 @@
     <!--<div th:replace="admin/headerAdmin :: header-admin"></div>-->
     <h1 style="margin-top: 50px; text-align: center;">Thêm điện thoại</h1><br>
     <div class="container">
-        <form th:action="@{'/Handshop/admin/add'}" method="post" enctype="multipart/form-data">
+        <form th:object="${phone}" th:action="@{'/Handshop/admin/add'}" method="post" enctype="multipart/form-data">
             <div>
                 <!-- Input for uploading an image -->
                 <div class="form-group">
@@ -26,13 +26,13 @@
                 <!-- Input for Phone Name -->
                 <div class="form-group">
                     <label for="phoneName">Phone Name:</label>
-                    <input type="text" class="form-control" id="phoneName" name="phoneName" required
+                    <input type="text" class="form-control" id="phoneName" name="phoneName" required th:field="*{phoneName}"
                            th:placeholder="'Iphone SE'">
                 </div>
                 <!-- Input for Brand -->
                 <div class="form-group">
                     <label th:for="@{'brand'}">Brand:</label>
-                    <select th:class="@{'form-control'}" th:id="@{'brand'}" th:name="@{'brandID'}" required>
+                    <select th:class="@{'form-control'}" th:id="@{'brand'}" th:name="@{'brandID'}" required th:field="*{brandId}">
                         <option th:each="brand : ${brands}" th:value="${brand.BrandID}"
                                 th:text="${brand.BrandName}"></option>
                     </select>
@@ -40,7 +40,7 @@
                 <!-- Input for Category (Dropdown) -->
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <select class="form-control" id="category" name="categoryID" required>
+                    <select class="form-control" id="category" name="categoryID" required th:field="*{categoryId}">
                         <!-- Populate options dynamically from your database -->
                         <option th:each="category : ${categories}" th:value="${category.CategoryID}"
                                 th:text="${category.CategoryName}"></option>
@@ -49,8 +49,13 @@
                 </div>
                 <!-- Input for Model -->
                 <div class="form-group">
-                    <label for="model">Model:</label>
-                    <input type="text" class="form-control" id="model" name="model" required th:placeholder="'SE 2022'">
+                    <label for="category">Model:</label>
+                    <select class="form-control" id="model" name="modelID" required>
+                        <!-- Populate options dynamically from your database -->
+                        <option th:each="model : ${models}" th:value="${model.getId}"
+                                th:text="${model.getModel}"></option>
+                        <!-- Add more options as needed -->
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="seri">Nhập đúng chuỗi seri như mẫu:</label>
@@ -72,38 +77,31 @@
                 <!-- Input for Storage Capacity (Dropdown) -->
                 <div class="form-group">
                     <label for="storageCapacity">Storage Capacity:</label>
-                    <select class="form-control" id="storageCapacity" name="storageCapacity" required>
-                        <option value="32">32GB</option>
-                        <option value="64">64GB</option>
-                        <option value="128">128GB</option>
-                        <option value="256">256GB</option>
-                        <option value="512">512GB</option>
-                        <option value="1024">1TB</option>
+                    <select class="form-control" id="storageCapacity" name="storageCapacityID" required th:field="*{storageCapacityID}">
+                        <!-- Populate options dynamically from your database -->
+                        <option th:each="storageCapacity : ${storageCapacities}" th:value="${storageCapacity.getId}"
+                                th:text="${storageCapacity.getCapacity}"></option>
+                        <!-- Add more options as needed -->
                     </select>
                 </div>
                 <!-- Input for RAM (Dropdown) -->
                 <div class="form-group">
                     <label for="ram">RAM:</label>
-                    <select class="form-control" id="ram" name="ram" required>
-                        <option value="2">2GB</option>
-                        <option value="3">3GB</option>
-                        <option value="4">4GB</option>
-                        <option value="6">6GB</option>
-                        <option value="8">8GB</option>
-                        <option value="12">12GB</option>
-                        <option value="16">16GB</option>
-                        <option value="24">24GB</option>
+                    <select class="form-control" id="ram" name="ramID" required th:field="*{ramID}">
+                        <!-- Populate options dynamically from your database -->
+                        <option th:each="ram : ${rams}" th:value="${ram.getId}"
+                                th:text="${ram.getCapacity}"></option>
+                        <!-- Add more options as needed -->
                     </select>
                 </div>
                 <!-- Input for Operating System (Dropdown) -->
                 <div class="form-group">
                     <label for="operatingSystem">Operating System:</label>
-                    <select class="form-control" id="operatingSystem" name="operatingSystem" required>
-                        <option value="IOS">IOS</option>
-                        <option value="MacOS">MacOS</option>
-                        <option value="Android">Android</option>
-                        <option value="TiZen">TiZen</option>
-                        <option value="HarmonyOS">TiZen</option>
+                    <select class="form-control" id="operatingSystem" name="operatingSystemID" required th:field="*{operatingSystemID}">
+                        <!-- Populate options dynamically from your database -->
+                        <option th:each="operatingSystem : ${operatingSystems}" th:value="${operatingSystem.getId}"
+                                th:text="${operatingSystem.getOsType}"></option>
+                        <!-- Add more options as needed -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -112,8 +110,13 @@
                 </div>
                 <!-- Input for Color (Hex Color Code) -->
                 <div class="form-group">
-                    <label for="color">Color: </label>
-                    <input type="text" class="form-control" id="color" name="color" required th:placeholder="'black'">
+                    <label for="color">Color:</label>
+                    <select class="form-control" id="color" name="colorID" required th:field="*{colorID}">
+                        <!-- Populate options dynamically from your database -->
+                        <option th:each="color : ${colors}" th:value="${color.getId}"
+                                th:text="${color.getColor}"></option>
+                        <!-- Add more options as needed -->
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="quantity">quantity: </label>
