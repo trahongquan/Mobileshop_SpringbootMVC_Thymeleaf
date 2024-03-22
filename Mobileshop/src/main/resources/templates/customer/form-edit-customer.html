@@ -37,7 +37,7 @@
 <form-edit-customer>
     <div class="container">
         <h2>Edit Customer</h2>
-        <form sec:authorize="hasRole('ROLE_ADMIN')" th:object="${customer}"
+        <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')" th:object="${customer}"
               th:action="@{'/Handshop/admin/UpdateCustomerInfo/' + ${customer.customerId}}" method="POST">
             <!-- ID (hidden) -->
             <input type="hidden" name="id" th:field="*{customerId}"/>

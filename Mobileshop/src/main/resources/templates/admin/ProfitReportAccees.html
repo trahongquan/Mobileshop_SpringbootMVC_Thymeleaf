@@ -68,8 +68,8 @@
                 <tr th:each="order : ${orderDTOs}">
                     <td th:text="${order.getOrderID}"></td>
                     <td>
-                        <div th:each="phone : ${order.getPhones}">
-                            <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                        <div th:each="phone : ${order.getPhoneDTOS}">
+                            <p th:text="${phone.PhoneName} +' | '+${phone.Ram.getCapacity}+'GB | '+${phone.StorageCapacity.getCapacity}+'GB'"></p>
                         </div>
                     </td>
                     <td>
@@ -101,6 +101,16 @@
         </div>
         <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
             <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }"></h2>
+        </div>
+    </div>
+
+
+    <div>
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Vertical Columns</h5>
+                <div id="chart-apex-column"></div>
+            </div>
         </div>
     </div>
 </profit-report>

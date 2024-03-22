@@ -36,11 +36,11 @@
         </tr>
         </thead>
         <tbody style="background-color: white">
-        <tr th:each="phoneCartDTO, iter : ${cartList}" th:data-phoneId="${phoneCartDTO.phoneId}" th:data-product-model="${phoneCartDTO.model}">
+        <tr th:each="phoneCartDTO, iter : ${cartList}" th:data-phoneId="${phoneCartDTO.phoneId}" th:data-product-model="${phoneCartDTO.getModelId}">
         <!--<tr th:each="phoneCartDTO, iter : ${cart}">-->
             <td th:text="${iter.index + 1}"></td>
             <td><img th:src="@{'/Images/' + ${phoneCartDTO.getImageName}}" alt="Product 1" width="100"></td>
-            <td th:text="@{${phoneCartDTO.getPhoneName} + ' | ' + ${phoneCartDTO.getStorageCapacity} + 'GB | ' + ${phoneCartDTO.getRam} + 'GB' }" ></td>
+            <td th:text="@{${phoneCartDTO.getPhoneName} + ' | ' + ${phoneCartDTO.getStorageCapacity.getCapacity} + 'GB | ' + ${phoneCartDTO.getRam.getCapacity} + 'GB' }" ></td>
             <td>
                 <!--<strong><del><p id="cost" th:data-getSellPrice="${phoneCartDTO.getPriceDTO.getSellPrice}" th:data-Discount="${phoneCartDTO.getPriceDTO.Discount}"> </p></del></strong>-->
                 <span class="price " th:value="${phoneCartDTO.getPrice}" th:text="@{'$' + ${phoneCartDTO.getPrice}}"> </span></td>
@@ -100,10 +100,10 @@
 /** /////////////////////////////////////// */
 /** Thông báo số lượng quá giới hạn (Chưa hoàn thiện) */
 /** /////////////////////////////////////// */
-
-    $(document).ready(function (){
-        var cartList = [[${phonesList}]];
-    })
+    //
+    // $(document).ready(function (){
+    //     var cartList = [[${phonesList}]];
+    // })
 
 </script>
 <div th:replace="footer :: footer"></div>

@@ -61,8 +61,8 @@
             <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
                 <p th:text="${order.getCustomer.getEmail}"></p></td>
             <td>
-                <div th:each="phone : ${order.getPhones}">
-                    <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                <div th:each="phone : ${order.getPhoneDTOS}">
+                    <p th:text="${phone.PhoneName} +' | '+${phone.Ram.getCapacity}+'GB | '+${phone.StorageCapacity.getCapacity}+'GB'"></p>
                 </div>
             </td>
             <td>
@@ -90,7 +90,7 @@
             <td class="wrap" th:text="${order.getDateProcessed}"></td>
             <td>
                 <div class="d-flex" style="display: flex; justify-content: center; align-items: center;" th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <form th:if="${orderitem.getMissing}==0" th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn">
+                    <form th:if="${orderitem.getMissing}==0" th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn" style=" margin-bottom: 10px">
                         <input type="hidden" name="OrderID" th:value="${order.OrderID}">
                         <input type="hidden" name="User" th:value="${#authentication.name}" >
                         <input type="hidden" name="dateProcessed"
@@ -99,16 +99,22 @@
                                 onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
                         </button>
                     </form>
-                    <form th:if="${orderitem.getMissing}!=0" th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn">
+                    <form th:if="${orderitem.getMissing}!=0" th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn" style=" margin-bottom: 10px">
                         <input type="hidden" name="OrderID" th:value="${order.OrderID}">
                         <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
                         <button type="submit" class="btn btn-primary btn-sm">
                             Cập nhật
                         </button>
                     </form>
-                    <a th:href="@{'/Handshop/admin/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
+                    <form th:action="@{/Handshop/admin/rejectOrder}" method="post" class="actionbtn" style="margin-left: 10px; margin-bottom: 10px">
+                        <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn bỏ không?')">Bỏ
+                        </button>
+                    </form>
+                    <!--<a th:href="@{'/Handshop/admin/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
                         <button type="button" class="btn btn-danger btn-sm">Bỏ</button>
-                    </a>
+                    </a>-->
                 </div>
             </td>
         </tr>

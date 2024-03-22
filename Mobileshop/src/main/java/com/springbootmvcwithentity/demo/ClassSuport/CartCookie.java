@@ -13,6 +13,7 @@ import java.util.List;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CartCookie {
     private List<PhoneCartDTO> phoneCartDTOSList = new ArrayList<>();
+    private List<Integer> phoneCartDTOSListID = new ArrayList<>();
 
     // Các phương thức để thêm sản phẩm, xóa sản phẩm, tính tổng giá trị, và các phương thức khác cho giỏ hàng
     // Ví dụ:
@@ -28,11 +29,16 @@ public class CartCookie {
         return phoneCartDTOSList;
     }
 
-    // Phương thức để thiết lập danh sách sản phẩm mới cho giỏ hàng
     public void setProducts(List<PhoneCartDTO> newProducts) {
         this.phoneCartDTOSList = newProducts;
     }
-    // Các phương thức khác liên quan đến giỏ hàng
+    public List<Integer> getProductsID() {
+        return phoneCartDTOSListID;
+    }
+
+    public void setProductsID(List<Integer> newProductsID) {
+        this.phoneCartDTOSListID = newProductsID;
+    }
 
     @Override
     public String toString() {

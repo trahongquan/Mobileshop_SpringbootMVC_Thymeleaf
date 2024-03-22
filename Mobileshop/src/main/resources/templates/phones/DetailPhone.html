@@ -56,9 +56,9 @@
                     <h3>Hình ảnh và Đánh giá</h3>
                     <div class="ImgshowDetail">
                         <!-- Hình ảnh điện thoại -->
-                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phones">
-                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phones">
-                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phones">
+                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phoneDTOS">
+                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phoneDTOS">
+                        <img class="ImgshowDetail-item" th:src="'/Images/' + ${phoneDTO.ImageName}" th:alt="phoneDTOS">
                     </div>
                     <br>
                     <!--<strong> <del th:text="${pricePreSale} + ' $'"></del> </strong>-->
@@ -124,7 +124,7 @@
                     <div class="phone-item" th:each="phone,iter:${phoneDTOS}"> <!--Dùng DTO để xử lsy tại backend-->
                         <div th:data-phoneid="${phone.phoneId}">
                             <a th:href="@{'/Handshop/ViewDetailPhone/' + ${phone.phoneId}}" th:data-phoneID="${phone.phoneId}" >
-                                <img class="img-phones" th:src="'/Images/' + ${phone.ImageName}" th:alt="iPhone"
+                                <img class="img-phoneDTOS" th:src="'/Images/' + ${phone.ImageName}" th:alt="iPhone"
                                      style="width: 100px; height: 100px;">
                                 <h2 th:text="${phone.phoneName}"></h2>
                                 <!--<p> <strong> <del th:text="${pricePreSale[iter.index]} + ' $'" th:data="${pricePreSale[iter.index]}"></del> </strong> </p>-->

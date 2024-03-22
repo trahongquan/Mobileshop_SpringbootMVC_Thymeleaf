@@ -846,10 +846,10 @@ public class PhoneController {
             Customer customer = customerService.findById(order.getCustomerId());
 
             List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
-            List<Phones> phonesOrder = new LinkedList<>();
+            List<PhoneDTO> phonesOrder = new LinkedList<>();
             orderitemDTOs.forEach(item -> {
                 if (item.getOrderID() == order.getOrderID()) {
-                    phonesOrder.add(phoneService.findById(item.getPhoneID()));
+                    phonesOrder.add(Phone2PhoneDTO(phoneService.findById(item.getPhoneID())));
                     orderitemDTOs2.add(item);
                 }
             });
@@ -894,7 +894,7 @@ public class PhoneController {
         }
         order.setDateProcessed(dateProcessed);
         orderservice.save(order);
-        return "redirect:/Handshop/admin/OrderRequest";
+        return "redirect:/Handshop/admin/OrderRequestWait";
     }
 
     @PostMapping("/admin/unapproveOrder")
@@ -905,7 +905,7 @@ public class PhoneController {
         order.setEmployeeID("9");
         order.setDateProcessed(dateProcessed);
         orderservice.save(order);
-        return "redirect:/Handshop/admin/OrderRequest";
+        return "redirect:/Handshop/admin/OrderRequestDone";
     }
 
     @PostMapping("/admin/updateOrder")
@@ -1037,10 +1037,10 @@ public class PhoneController {
             orderitemsservice.deleteById(orderItems.get(i).getOrderItemID());
         }
         orderservice.deleteById(orderID);
-        return "redirect:/Handshop/admin/OrderRequest";
+        return "redirect:/Handshop/admin/OrderRequestWait";
     }
 
-    @GetMapping("/admin/rejectOrder")
+/*    @GetMapping("/admin/rejectOrder")
     public String showRejectOrderForm(@RequestParam("OrderID") int orderID, Model model) {
 //        int orderID = Integer.parseInt(OrderID);
         Order order = orderservice.findById(orderID);
@@ -1050,7 +1050,7 @@ public class PhoneController {
         } else {
             throw new RuntimeException("Không tìm thấy order với ID=" + orderID);
         }
-    }
+    }*/
 
     public Map<Integer, List<String>> QueryallSeriPhone(List<Phones> phones) {
         Map<Integer, List<String>> resullt = new HashMap<>();
@@ -1118,10 +1118,10 @@ public class PhoneController {
             Customer customer = customerService.findById(order.getCustomerId());
 
             List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
-            List<Phones> phonesOrder = new LinkedList<>();
+            List<PhoneDTO> phonesOrder = new LinkedList<>();
             orderitemDTOs.forEach(item -> {
                 if (item.getOrderID() == order.getOrderID()) {
-                    phonesOrder.add(phoneService.findById(item.getPhoneID()));
+                    phonesOrder.add(Phone2PhoneDTO(phoneService.findById(item.getPhoneID())));
                     orderitemDTOs2.add(item);
                 }
             });

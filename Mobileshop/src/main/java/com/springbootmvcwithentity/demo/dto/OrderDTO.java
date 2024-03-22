@@ -27,7 +27,7 @@ public class OrderDTO {
 
     private List<OrderitemDTO> orderitemDTOS;
 
-    private List<Phones> phones;
+    private List<PhoneDTO> phoneDTOS;
 
     private Phones phone;
 
@@ -54,7 +54,7 @@ public class OrderDTO {
         this.customer = customer;
     }
 
-    public OrderDTO(Order order, List<OrderitemDTO> orderitemDTOS, List<String> seris, List<Phones> phones, Customer customer) {
+    public OrderDTO(Order order, List<OrderitemDTO> orderitemDTOS, List<String> seris, List<PhoneDTO> phoneDTOS, Customer customer) {
         this.orderID = order.getOrderID();
         this.customerId = order.getCustomerId();
         this.orderDate = order.getOrderDate() ;
@@ -67,7 +67,7 @@ public class OrderDTO {
         this.employeeID = order.getEmployeeID();
         this.orderitemDTOS = orderitemDTOS;
         this.seris = seris;
-        this.phones = phones;
+        this.phoneDTOS = phoneDTOS;
         this.customer = customer;
     }
 
@@ -198,12 +198,12 @@ public class OrderDTO {
         this.employee = employee;
     }
 
-    public List<Phones> getPhones() {
-        return phones;
+    public List<PhoneDTO> getPhoneDTOS() {
+        return phoneDTOS;
     }
 
-    public void setPhones(List<Phones> phones) {
-        this.phones = phones;
+    public void setPhoneDTOS(List<PhoneDTO> phoneDTOS) {
+        this.phoneDTOS = phoneDTOS;
     }
 
     public Phones getPhone() {

@@ -61,8 +61,8 @@
             <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
                 <p th:text="${order.getCustomer.getEmail}"></p></td>
             <td>
-                <div th:each="phone : ${order.getPhones}">
-                    <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                <div th:each="phone : ${order.getPhoneDTOS}">
+                    <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
                 </div>
             </td>
             <td>
@@ -97,8 +97,8 @@
                                 onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
                         </button>
                     </form>
-                    <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn">
-                        <button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>
+                    <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn" style="margin-left: 10px">
+                        <button type="button" class="btn btn-primary btn-sm">Xem hóa đơn</button>
                     </a>
                 </div>
             </td>

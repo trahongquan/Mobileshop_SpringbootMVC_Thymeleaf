@@ -61,7 +61,7 @@
         </thead>
         <tbody>
         <tr th:each="orderitemDTO, iter : ${orderitemDTOS}">
-            <td> <img class="img-phones" th:src="'/Images/' + ${orderitemDTO.phoneDTO.ImageName}" th:alt="phones" style="width: 70px; height: 70px;"> </td>
+            <td> <img class="img-phoneDTOS" th:src="'/Images/' + ${orderitemDTO.phoneDTO.ImageName}" th:alt="phoneDTOS" style="width: 70px; height: 70px;"> </td>
             <td th:text="${orderitemDTO.phoneDTO.brand.getBrandName}"></td>
             <td th:text="${orderitemDTO.phoneDTO.category.getCategoryName}"></td>
             <td th:text="${orderitemDTO.phoneDTO.phoneName}"></td>

@@ -87,16 +87,22 @@ public class CartController {
         return phoneDTO;
     }
 
-        public PhoneCartDTO Phone2PhoneDTOCart(Phones phone, int quantityorder){
-            Brands brand = brandService.findById(phone.getBrandId());
-            Categories category = categoryService.findById(phone.getCategoryId());
-            Models model = modelService.findById(phone.getModelID());
-            OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
-            StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
-            RAM ram = ramService.findById(phone.getRamID());
-            Color color = colorService.findById(phone.getColorID());
-            PhoneCartDTO phoneCartDTO = new PhoneCartDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color, quantityorder);
-            return phoneCartDTO;
+    public PhoneCartDTO Phone2PhoneDTOCart(Phones phone, int quantityorder){
+        Brands brand = brandService.findById(phone.getBrandId());
+        Categories category = categoryService.findById(phone.getCategoryId());
+        Models model = modelService.findById(phone.getModelID());
+        OperatingSystem operatingSystem = operatingSystemService.findById(phone.getOperatingSystemID());
+        StorageCapacity storageCapacity = storageCapacityService.findById(phone.getStorageCapacityID());
+        RAM ram = ramService.findById(phone.getRamID());
+        Color color = colorService.findById(phone.getColorID());
+        PhoneCartDTO phoneCartDTO = new PhoneCartDTO(phone, brand, category, model, operatingSystem, ram, storageCapacity, color, quantityorder);
+        return phoneCartDTO;
+    }
+
+    private List<PhoneCartDTO> Phones2PhoneDTOCarts(List<Phones> phones){
+        List<PhoneCartDTO> phoneCartDTOS = new ArrayList<>();
+        phones.forEach(item -> phoneCartDTOS.add(Phone2PhoneDTOCart(item, 0)));
+        return phoneCartDTOS;
     }
         @GetMapping("/Handshop/cart")
         public String addToCart(HttpServletResponse response,
@@ -104,21 +110,19 @@ public class CartController {
                                 Model model,
                                 @RequestParam(name = "Id", required = false, defaultValue = "0") int id){
             List<Phones> phonesList = phonesService.findAll();
-
-            Phones phone = phonesService.findById(id);
-            PhoneDTO phoneDTO = Phone2PhoneDTO(phone);
-                if(phone.getPhoneId()!=0) {
-
+            List<PhoneCartDTO> phoneCartDTOS = Phones2PhoneDTOCarts(phonesList);
+            model.addAttribute("phoneCartDTOS", phoneCartDTOS);
+            if(id!=0) {
+                Phones phone = phonesService.findById(id);
+                PhoneDTO phoneDTO = Phone2PhoneDTO(phone);
                     // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
                     CartCookie cartCookie = getCartFromCookie(request);
-
                     // Tạo một danh sách mới để lưu trữ sản phẩm sau khi xử lý
                     List<PhoneCartDTO> updatedCart = new ArrayList<>();
-
                     // Kiểm tra xem điện thoại đã có trong giỏ hàng chưa
                     boolean found = false;
                     for (PhoneCartDTO phoneCartDTO : cartCookie.getProducts()) {
-                        if (phoneCartDTO.getModel().getModel().equals(phoneDTO.getModel().getModel())) {
+                        if (phoneCartDTO.getModelId() == phoneDTO.getModelId()){
                             // Nếu đã có, tăng số lượng lên 1
                             phoneCartDTO.setQuantityorder(phoneCartDTO.getQuantityorder() + 1);
                             found = true;
@@ -154,7 +158,6 @@ public class CartController {
                     // Đưa giỏ hàng vào model để hiển thị trên trang Thymeleaf
                     model.addAttribute("cartList", cartCookie.getProducts());
                 }
-            model.addAttribute("phonesList", phonesList);
             return "phones/cart";
         }
 

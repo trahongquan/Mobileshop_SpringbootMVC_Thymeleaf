@@ -256,10 +256,10 @@ public class CustomerController {
             Customer customerOrderDTO = customerService.findById(order.getCustomerId());
 
             List<OrderitemDTO> orderitemDTOs2 = new LinkedList<>();
-            List<Phones> phonesOrder = new LinkedList<>();
+            List<PhoneDTO> phonesOrder = new LinkedList<>();
             orderitemDTOs.forEach(item -> {
                 if(item.getOrderID() == order.getOrderID()){
-                    phonesOrder.add(phoneService.findById(item.getPhoneID()));
+                    phonesOrder.add(Phone2PhoneDTO(phoneService.findById(item.getPhoneID())));
                     orderitemDTOs2.add(item);
                 }
             });
