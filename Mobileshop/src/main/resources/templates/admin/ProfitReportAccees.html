@@ -103,16 +103,124 @@
             <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }"></h2>
         </div>
     </div>
-
-
     <div>
-        <div class="main-card mb-3 card">
-            <div class="card-body">
-                <h5 class="card-title">Vertical Columns</h5>
-                <div id="chart-apex-column"></div>
-            </div>
-        </div>
+        <div id="chart"></div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+<!--
+    <script th:inline="javascript">
+        var orderDTOs = [[${orderDTOs}]];
+        var monthsInRange = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // Tính tổng doanh thu theo tháng
+        var monthSalesMap = new Map();
+        orderDTOs.forEach(function(orderDTO) {
+            var month = orderDTO.dateProcessed.substring(5, 7); // Lấy tháng từ ngày
+            var amount = orderDTO.amount;
+            if (monthSalesMap.has(month)) {
+                amount += monthSalesMap.get(month);
+            }
+            monthSalesMap.set(month, amount);
+        });
+
+        // Sắp xếp và lấy dữ liệu doanh thu theo tháng
+        var salesData = [];
+        for (var i = 1; i <= 12; i++) {
+            var month = i < 10 ? '0' + i : '' + i;
+            var amount = monthSalesMap.has(month) ? monthSalesMap.get(month) : 0;
+            salesData.push(amount);
+        }
+        console.log(salesData);
+        // var salesData = [0, 0, 0, 63, 0, 0, 555, 0, 0, 4394, 0, 0];
+
+        // Tìm vị trí đầu tiên có giá trị khác 0
+        var startIndex = 0;
+        while (salesData[startIndex] === 0) {
+            startIndex++;
+        }
+
+        // Tìm vị trí cuối cùng có giá trị khác 0
+        var endIndex = salesData.length - 1;
+        while (salesData[endIndex] === 0) {
+            endIndex&#45;&#45;;
+        }
+
+        // Cập nhật tùy chọn biểu đồ
+        var options = {
+            chart: {
+                type: 'bar',
+            },
+            series: [{
+                name: 'Sales',
+                data: salesData.slice(startIndex, endIndex + 1)
+            }],
+            xaxis: {
+                categories: monthsInRange.slice(startIndex, endIndex + 1),
+                chartRangeMin: startIndex,
+                chartRangeMax: endIndex
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+    </script>
+-->
+    <script th:inline="javascript">
+        var orderDTOs = [[${orderDTOs}]];
+        var monthsInRange = [];
+        var salesData = [];
+
+        // Tính tổng doanh thu theo tháng và xây dựng mảng monthsInRange và salesData
+        for (var i = 0; i < orderDTOs.length; i++) {
+            var orderDTO = orderDTOs[i];
+            var dateProcessed = new Date(orderDTO.dateProcessed);
+            var month = dateProcessed.toLocaleString('default', { month: 'short' });
+            var year = dateProcessed.getFullYear();
+
+            var monthYear = month + ' ' + year;
+            var amount = orderDTO.amount;
+
+            if (!monthsInRange.includes(monthYear)) {
+                monthsInRange.push(monthYear);
+                salesData.push(amount);
+            } else {
+                var index = monthsInRange.indexOf(monthYear);
+                salesData[index] += amount;
+            }
+        }
+
+        // Tìm vị trí đầu tiên có giá trị khác 0
+        var startIndex = 0;
+        while (salesData[startIndex] === 0) {
+            startIndex++;
+        }
+
+        // Tìm vị trí cuối cùng có giá trị khác 0
+        var endIndex = salesData.length - 1;
+        while (salesData[endIndex] === 0) {
+            endIndex--;
+        }
+
+        // Cập nhật tùy chọn biểu đồ
+        var options = {
+            chart: {
+                type: 'bar',
+            },
+            series: [{
+                name: 'Sales',
+                data: salesData.slice(startIndex, endIndex + 1)
+            }],
+            xaxis: {
+                categories: monthsInRange.slice(startIndex, endIndex + 1),
+                chartRangeMin: startIndex,
+                chartRangeMax: endIndex
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
 </profit-report>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>

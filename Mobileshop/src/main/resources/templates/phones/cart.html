@@ -36,7 +36,7 @@
         </tr>
         </thead>
         <tbody style="background-color: white">
-        <tr th:each="phoneCartDTO, iter : ${cartList}" th:data-phoneId="${phoneCartDTO.phoneId}" th:data-product-model="${phoneCartDTO.getModelId}">
+        <tr th:each="phoneCartDTO, iter : ${ListPhoneCartDTOFromListProductID}" th:data-phoneId="${phoneCartDTO.phoneId}" th:data-product-id="${phoneCartDTO.phoneId}">
         <!--<tr th:each="phoneCartDTO, iter : ${cart}">-->
             <td th:text="${iter.index + 1}"></td>
             <td><img th:src="@{'/Images/' + ${phoneCartDTO.getImageName}}" alt="Product 1" width="100"></td>
@@ -72,30 +72,30 @@
  * // Chuyển các phone muốn mua (đc chọn) đến trang thanh toán
  * *******************************************
  * */
+$('#buy').click(function () {
+    var listphone = [[${ListPhoneCartDTOFromListProductID}]];
+    var selectedProducts = [];
+    var checkedItems = $('.SelectItem:checked');
+    // Lặp qua các hàng sản phẩm trong bảng
+    $(".SelectItem:checked").each(function () {
+        var row = $(this).closest("tr"); // Lấy hàng chứa checkbox đã được chọn
+        var phoneId = row.attr("data-phoneId"); // Lấy giá trị của thuộc tính th:data-Product-model
+        var quantity = row.find(".quantity").val(); // Lấy giá trị số lượng từ input quantity
+        var product = listphone.find(item => item.phoneId == phoneId);
+        product.quantityorder = quantity;
+        // Thêm thông tin sản phẩm vào mảng selectedProducts
+        selectedProducts.push(product);
 
-    $('#buy').click(function () {
-        var cartList = [[${cartList}]];
-        var selectedProducts = [];
-
-        // Lặp qua các hàng sản phẩm trong bảng
-        $(".SelectItem:checked").each(function () {
-            var row = $(this).closest("tr"); // Lấy hàng chứa checkbox đã được chọn
-            var phoneId = row.attr("data-phoneId"); // Lấy giá trị của thuộc tính th:data-Product-model
-            var model = row.attr("data-product-model"); // Lấy giá trị của thuộc tính th:data-Product-model
-            var quantity = row.find(".quantity").val(); // Lấy giá trị số lượng từ input quantity
-            console.log(JSON.parse(phoneId));
-            // Thêm thông tin sản phẩm vào mảng selectedProducts
-            selectedProducts.push(cartList.find(item => item.phoneId == phoneId));
-        });
-        var serializedData = JSON.stringify(selectedProducts);
-        localStorage.setItem('selectedProducts', serializedData);
-
-        var user = [[${#authentication.name}]];
-        // Lấy đường dẫn muốn chuyển hướng
-        var redirectURL = "/Handshop/order-item-payment?user=" + user;
-        // Thực hiện chuyển hướng
-        window.location.href = redirectURL;
     });
+    var serializedData = JSON.stringify(selectedProducts);
+    localStorage.setItem('selectedProducts', serializedData);
+
+    var user = [[${#authentication.name}]];
+    // Lấy đường dẫn muốn chuyển hướng
+    var redirectURL = "/Handshop/order-item-payment?user=" + user;
+    // Thực hiện chuyển hướng
+    window.location.href = redirectURL;
+});
 
 /** /////////////////////////////////////// */
 /** Thông báo số lượng quá giới hạn (Chưa hoàn thiện) */

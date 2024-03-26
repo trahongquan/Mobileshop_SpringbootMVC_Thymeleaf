@@ -863,7 +863,7 @@ public class PhoneController {
     public String showOrderRequest(Model model) {
         LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
         LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
         model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
         model.addAttribute("orderDTOs", orderDTOs);
         return "/admin/templateAdmin";
@@ -873,7 +873,7 @@ public class PhoneController {
     public String showOrderRequestDone(Model model) {
         LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
         LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
         model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
         model.addAttribute("orderDTOs", orderDTOs);
         return "/admin/templateAdmin";
@@ -1040,18 +1040,6 @@ public class PhoneController {
         return "redirect:/Handshop/admin/OrderRequestWait";
     }
 
-/*    @GetMapping("/admin/rejectOrder")
-    public String showRejectOrderForm(@RequestParam("OrderID") int orderID, Model model) {
-//        int orderID = Integer.parseInt(OrderID);
-        Order order = orderservice.findById(orderID);
-        if (order != null) {
-            model.addAttribute("order", order);
-            return "admin/templateAdmin";
-        } else {
-            throw new RuntimeException("Không tìm thấy order với ID=" + orderID);
-        }
-    }*/
-
     public Map<Integer, List<String>> QueryallSeriPhone(List<Phones> phones) {
         Map<Integer, List<String>> resullt = new HashMap<>();
         phones.forEach(phone -> {
@@ -1180,7 +1168,7 @@ public class PhoneController {
                 phoneService.save(phone);
             }
 
-            // Đóng workbook
+            // Đóng workbookOrderRequestWait
             workbook.close();
 
             return "redirect:Handshop/admin";

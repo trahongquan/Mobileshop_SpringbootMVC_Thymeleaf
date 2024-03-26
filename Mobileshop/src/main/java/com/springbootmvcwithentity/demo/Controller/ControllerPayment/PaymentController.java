@@ -15,6 +15,7 @@ import com.springbootmvcwithentity.demo.service.authority.AuthorityService;
 import com.springbootmvcwithentity.demo.service.order.orderService;
 import com.springbootmvcwithentity.demo.service.orderitem.orderitemsService;
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,16 +59,13 @@ public class PaymentController {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    @PostMapping("/RequestOrder")
-//    @ResponseBody
-//    @RequestMapping(value = "/RequestOrder", produces = "application/json", consumes = "application/json", method = RequestMethod.POST)
     @PostMapping(value = "/RequestOrder", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String Payment(
-                          @RequestParam("inputmodel") List<String> inputmodel
-                        , @RequestParam("inputquantity") List<String> inputquantity
+                          @RequestParam("inputmodel") List<Integer> inputmodel
+                        , @RequestParam("inputquantity") List<Integer> inputquantity
                         , @RequestParam("customerId") int customerId
                         , @RequestParam("email") String email
-                        , @RequestParam("Orderdate") String Orderdate
+                        , @RequestParam("Orderdate") Timestamp Orderdate
                         , @RequestParam("paymentMethod") String paymentMethodname
                         , @RequestParam("totalAmount") String totalAmount
                         , @RequestParam("numberOrAdresspayment") String numberOrAdresspayment
@@ -76,48 +74,7 @@ public class PaymentController {
                         , @RequestParam(value = "expirationdate", required = false, defaultValue = "") String expirationdate){
 
         Customer customer = customerRepository.findByEmail(email);
-        PaymentMethod paymentMethod = paymentMethodRepository.findByMethodName(paymentMethodname);
-        double total = Double.parseDouble(totalAmount);
-        Order order = new Order(customer ,Orderdate,dateProcessed, paymentMethod ,total,numberOrAdresspayment,cvv,expirationdate);
-        ordeservice.save(order);
-        for (int i = 0; i < inputmodel.size(); i++) {
-            /** Lọc lấy các phone còn trong kho*/
-            Phones phone = phoneRepository.findByModelID(Integer.parseInt(inputmodel.get(i)));
-
-            int qtyInventory = phone.getQuantity();
-            int qtyOrder = Integer.parseInt(inputquantity.get(i));
-
-            if(qtyInventory <= qtyOrder){
-                int missing = (qtyOrder - qtyInventory);
-                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-                List<String> serisOrderItem = new LinkedList<>();
-                for (int j = 0; j < qtyInventory; j++) {
-                    serisOrderItem.add(seris.get(j));
-                }
-                OrderItem orderItem = new OrderItem(order.getOrderID(),phone.getPhoneId(),phone.getPrice(),qtyOrder,serisOrderItem.toString(),missing);
-                orderitemsservice.save(orderItem);
-                seris.clear();
-                phone.setSeri(seris.toString());
-                phone.setQuantity(0);
-                phoneRepository.save(phone);
-            }
-            if(qtyInventory > qtyOrder){
-                int missing = 0;
-                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-                List<String> serisOrderItem = new LinkedList<>();
-                for (int j = 0; j < qtyOrder; j++) {
-                    serisOrderItem.add(seris.get(j));
-                }
-                OrderItem orderItem = new OrderItem(order.getOrderID(),phone.getPhoneId(),phone.getPrice(),qtyOrder,serisOrderItem.toString(),missing);
-                orderitemsservice.save(orderItem);
-                if (qtyOrder <= seris.size()) {
-                    seris.subList(0, qtyOrder).clear();
-                }
-                phone.setSeri(seris.toString());
-                phone.setQuantity(qtyInventory - qtyOrder);
-                phoneRepository.save(phone);
-            }
-        }
+        OrderRequest(customer,inputmodel,inputquantity,paymentMethodname,totalAmount,numberOrAdresspayment,cvv,expirationdate,Orderdate,dateProcessed);
         return "/phones/RequestOrder-success";
     }
 
@@ -125,8 +82,8 @@ public class PaymentController {
     @PostMapping(value = "/anonymousUser/RequestOrder", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String anonymousUserPayment(
             Model model,
-            @RequestParam("inputmodel") List<String> inputmodel
-            , @RequestParam("inputquantity") List<String> inputquantity
+            @RequestParam("inputmodel") List<Integer> inputmodel
+            , @RequestParam("inputquantity") List<Integer> inputquantity
             , @RequestParam("emailunknow") String emailunknow
             , @RequestParam("nameunknow") String nameunknow
             , @RequestParam("phoneunknow") String phoneunknow
@@ -159,8 +116,27 @@ public class PaymentController {
             return "/phones/RequestOrder-success-emailduplicate";
         }
     }
+    public List<String> SaveOrderItemWithListSeriPhone(Phones phone, Order order, int qtyInventory, int qtyOrder, int missing) {
+        List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
+        List<String> serisOrderItem = new LinkedList<>();
+        if (missing > 0){
+            for (int j = 0; j < qtyInventory; j++) {
+                serisOrderItem.add(seris.get(j));
+            }
+            seris.clear();
+        } else {
+            for (int j = 0; j < qtyOrder; j++) {
+                serisOrderItem.add(seris.get(j));
+            }
 
-    public void OrderRequest(Customer customer,List<String> inputmodel, List<String> inputquantity,
+            List<String> remainingItems = new ArrayList<>(seris);
+            seris = remainingItems.subList(qtyOrder, remainingItems.size());
+        }
+        OrderItem orderItem = new OrderItem(order.getOrderID(), phone.getPhoneId(), phone.getPrice(), qtyOrder, serisOrderItem.toString(), missing);
+        orderitemsservice.save(orderItem);
+        return seris;
+    }
+    public void OrderRequest(Customer customer,List<Integer> inputmodel, List<Integer> inputquantity,
                             String paymentMethodname, String totalAmount,
                             String numberOrAdresspayment, String cvv, String expirationdate,
                             Timestamp Orderdate, String dateProcessed){
@@ -170,37 +146,19 @@ public class PaymentController {
         ordeservice.save(order);
         for (int i = 0; i < inputmodel.size(); i++) {
             /** Lọc lấy các phone còn trong kho*/
-            Phones phone = phoneRepository.findByModelID(Integer.parseInt(inputmodel.get(i)));
-
+            Phones phone = phoneRepository.findByModelID(inputmodel.get(i));
             int qtyInventory = phone.getQuantity();
-            int qtyOrder = Integer.parseInt(inputquantity.get(i));
-
-            if (qtyInventory <= qtyOrder) {
+            int qtyOrder = inputquantity.get(i);
+            if (0 <= qtyInventory && qtyInventory <= qtyOrder) {
                 int missing = (qtyOrder - qtyInventory);
-                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-                List<String> serisOrderItem = new LinkedList<>();
-                for (int j = 0; j < qtyInventory; j++) {
-                    serisOrderItem.add(seris.get(j));
-                }
-                OrderItem orderItem = new OrderItem(order.getOrderID(), phone.getPhoneId(), phone.getPrice(), qtyOrder, serisOrderItem.toString(), missing);
-                orderitemsservice.save(orderItem);
-                seris.clear();
+                List<String> seris = SaveOrderItemWithListSeriPhone(phone, order, qtyInventory, qtyOrder, missing);
                 phone.setSeri(seris.toString());
                 phone.setQuantity(0);
                 phoneRepository.save(phone);
             }
-            if (qtyInventory > qtyOrder) {
+            else if (qtyInventory > qtyOrder) {
                 int missing = 0;
-                List<String> seris = !phone.getSeri().equals("[]") ? new StringToList().StringToList(phone.getSeri()) : new ArrayList<>();
-                List<String> serisOrderItem = new LinkedList<>();
-                for (int j = 0; j < qtyOrder; j++) {
-                    serisOrderItem.add(seris.get(j));
-                }
-                OrderItem orderItem = new OrderItem(order.getOrderID(), phone.getPhoneId(), phone.getPrice(), qtyOrder, serisOrderItem.toString(), missing);
-                orderitemsservice.save(orderItem);
-                if (qtyOrder <= seris.size()) {
-                    seris.subList(0, qtyOrder).clear();
-                }
+                List<String> seris = SaveOrderItemWithListSeriPhone(phone, order, qtyInventory, qtyOrder, missing);
                 phone.setSeri(seris.toString());
                 phone.setQuantity(qtyInventory - qtyOrder);
                 phoneRepository.save(phone);

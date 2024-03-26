@@ -16,7 +16,7 @@
     <form th:action="@{/anonymousUser/RequestOrder}" method="post" th:unless="${#authorization.expression('isAuthenticated()')}">
         <table class="table table-bordered">
             <thead>
-            <tr id="trh">
+            <tr id="trh" style="background-color: rgba(255,255,255,0.7); text-align: center">
                 <th> STT</th>
                 <th>Image</th>
                 <th>Name</th>
@@ -90,8 +90,8 @@
     <form th:action="@{/RequestOrder}" method="post" sec:authorize="hasAnyRole('ROLE_CUSTOMER', 'ROLE_EMPLOYEE')">
         <table class="table table-bordered">
             <thead>
-            <tr>
-                <th> STT</th>
+            <tr style="background-color: rgba(255,255,255,0.7); text-align: center">
+                <th>STT</th>
                 <th>Image</th>
                 <th>Name</th>
                 <th>Price</th>
@@ -171,13 +171,71 @@
 </body>
 <script src="/js/order-item-payment.js"></script>
 <script src="/js/header.js"></script>
-<script>
-    $(document).ready(function () {
-        // var tr = document.getElementById('tr');
-        $('#tr').css({
-        background: "white"
-    })
-    })
+<script th:inline="javascript">
+    window.onload = function () {
+        // Lấy dữ liệu từ Local Storage
+        var selectedProducts = localStorage.getItem('selectedProducts');
+        // Kiểm tra xem dữ liệu có tồn tại trong Local Storage không
+        if (selectedProducts) {
+            var parsedData = JSON.parse(selectedProducts); // Deserialize the JSON
+            var tableBody = document.getElementById("productTableBody");
+            if(tableBody){
+                tableBody.style.backgroundColor = "rgba(255,255,255,0.7)";
+                tableBody.style.fontWeight = "Bold";
+                tableBody.style.textAlign = "center";
+                var total = 0;
+                // Lặp qua dữ liệu và cập nhật nội dung HTML
+                parsedData.forEach(function(product, index) {
+                    var newRow = tableBody.insertRow();
+                    var cellIndex = newRow.insertCell(0);
+                    var cellImage = newRow.insertCell(1);
+                    var cellName = newRow.insertCell(2);
+                    var cellPrice = newRow.insertCell(3);
+                    var cellQuantity = newRow.insertCell(4);
+                    var cellTotal = newRow.insertCell(5);
+
+                    newRow.setAttribute('data-model', product.modelId);
+
+                    //tạo một thẻ input hiden lưu model
+                    var inputmodel = document.createElement('input');
+                    inputmodel.type = "hidden"; // Loại input là "hidden"
+                    inputmodel.value = product.modelId;
+                    inputmodel.name = "inputmodel";
+                    newRow.append(inputmodel)
+                    //tạo một thẻ input hiden lưu quantity
+                    var inputquantity = document.createElement('input');
+                    inputquantity.type = "hidden"; // Loại input là "hidden"
+                    inputquantity.value = product.quantityorder;
+                    inputquantity.name = "inputquantity";
+                    newRow.append(inputquantity);
+
+                    // Tạo một thẻ img
+                    var img = document.createElement('img');
+                    img.src = '/Images/' + product.imageName;
+                    img.alt = 'Product Image';
+                    img.style.width = '100px';
+
+                    cellIndex.textContent = index + 1;
+                    cellImage.appendChild(img);
+                    cellName.textContent = product.phoneName;
+                    cellPrice.textContent = '$'+product.price;
+                    cellQuantity.textContent = product.quantityorder;
+                    cellTotal.textContent = '$'+ (parseFloat(product.price)*product.quantityorder).toFixed(2);
+                    total += parseFloat(product.price)*product.quantityorder;
+                });
+                $('#totalAmount').text('$'+total.toFixed(2));
+                // var x = total.toFixed(2)+'';
+                $('.totalAmount').attr('value',total.toFixed(2));
+            } else {
+                var alertDiv = document.getElementById('nocitceAdmin');
+                alertDiv.innerHTML = '<br><br><br><br><br><strong>Thông báo:</strong> Bạn cần đăng nhập bằng tài khoản Khách hàng';
+                alertDiv.style.display = 'block';
+                alertDiv.style.color = 'red';
+                alertDiv.style.fontSize = '3em';
+            }
+
+        }
+    };
 </script>
 
 </html>

@@ -3,6 +3,7 @@ package com.springbootmvcwithentity.demo.Controller.ControllerCart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbootmvcwithentity.demo.ClassSuport.CartCookie;
+import com.springbootmvcwithentity.demo.ClassSuport.ProductsIDandQuantity;
 import com.springbootmvcwithentity.demo.dao.CustomerRepository;
 import com.springbootmvcwithentity.demo.dao.WishRepository;
 import com.springbootmvcwithentity.demo.dto.PhoneCartDTO;
@@ -32,9 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class CartController {
@@ -104,61 +103,72 @@ public class CartController {
         phones.forEach(item -> phoneCartDTOS.add(Phone2PhoneDTOCart(item, 0)));
         return phoneCartDTOS;
     }
+    private List<PhoneCartDTO> ListPhoneCartDTOFromListID(CartCookie cartCookie){
+        List<Integer> updatedCartID = cartCookie.getProductsID();
+        List<Phones> phones = new ArrayList<>();
+        updatedCartID.forEach(itemID -> {
+            phones.add(phonesService.findById(itemID));
+        });
+        List<PhoneCartDTO> ListPhoneCartDTOFromListProductID = Phones2PhoneDTOCarts(phones);
+        return ListPhoneCartDTOFromListProductID;
+    }
         @GetMapping("/Handshop/cart")
         public String addToCart(HttpServletResponse response,
                                 HttpServletRequest request,
                                 Model model,
                                 @RequestParam(name = "Id", required = false, defaultValue = "0") int id){
-            List<Phones> phonesList = phonesService.findAll();
-            List<PhoneCartDTO> phoneCartDTOS = Phones2PhoneDTOCarts(phonesList);
-            model.addAttribute("phoneCartDTOS", phoneCartDTOS);
             if(id!=0) {
                 Phones phone = phonesService.findById(id);
-                PhoneDTO phoneDTO = Phone2PhoneDTO(phone);
-                    // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
-                    CartCookie cartCookie = getCartFromCookie(request);
-                    // Tạo một danh sách mới để lưu trữ sản phẩm sau khi xử lý
-                    List<PhoneCartDTO> updatedCart = new ArrayList<>();
-                    // Kiểm tra xem điện thoại đã có trong giỏ hàng chưa
-                    boolean found = false;
-                    for (PhoneCartDTO phoneCartDTO : cartCookie.getProducts()) {
-                        if (phoneCartDTO.getModelId() == phoneDTO.getModelId()){
-                            // Nếu đã có, tăng số lượng lên 1
-                            phoneCartDTO.setQuantityorder(phoneCartDTO.getQuantityorder() + 1);
-                            found = true;
-                        }
-                        // Thêm sản phẩm vào danh sách mới
-                        updatedCart.add(phoneCartDTO);
-                    }
-
-                    if (!found) {
-                        PhoneCartDTO phoneCartDTOAdd = Phone2PhoneDTOCart(phone,1);
-                        // Nếu chưa có, thêm điện thoại vào giỏ hàng với số lượng là 1
-                        //PhoneCartDTO phoneCartDTO = new PhoneCartDTO(phone, 1); // Số lượng mặc định là 1
-                        updatedCart.add(phoneCartDTOAdd);
-                    }
-
-                    // Cập nhật giỏ hàng với danh sách mới
-                    cartCookie.setProducts(updatedCart);
-
-                    // Lưu giỏ hàng vào cookie
-                    saveCartToCookie(cartCookie, response);
-
-                    // Đưa giỏ hàng vào model để hiển thị trên trang Thymeleaf
-                    model.addAttribute("cartList", cartCookie.getProducts());
-                    // Chuyển hướng đến trang cart
-                    response.setHeader("Location", "/Handshop/cart");
-
-                    // Thiết lập biến isRedirected thành true
-                    boolean isRedirected = true;
-                    model.addAttribute("isRedirected", isRedirected);
-                } else {
-                    // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
-                    CartCookie cartCookie = getCartFromCookie(request);
-                    // Đưa giỏ hàng vào model để hiển thị trên trang Thymeleaf
-                    model.addAttribute("cartList", cartCookie.getProducts());
+                // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
+                CartCookie cartCookie = getCartFromCookie(request);
+                List<PhoneCartDTO> ListPhoneCartDTOFromListProductID = ListPhoneCartDTOFromListID(cartCookie);
+                for (int i = 0; i < ListPhoneCartDTOFromListProductID.size(); i++) {
+                    ListPhoneCartDTOFromListProductID.get(i).setQuantityorder(
+                            cartCookie.getListProductsIDandQuantity().get(i).getQuantity()
+                    );
                 }
-            return "phones/cart";
+                // Kiểm tra xem điện thoại đã có trong giỏ hàng chưa
+                boolean found = false;
+                for (int i = 0; i < ListPhoneCartDTOFromListProductID.size(); i++) {
+                    if (ListPhoneCartDTOFromListProductID.get(i).getModelId() == phone.getModelID()){
+                        ListPhoneCartDTOFromListProductID.get(i).setQuantityorder(
+                                ListPhoneCartDTOFromListProductID.get(i).getQuantityorder() + 1
+                        );
+                        cartCookie.getListProductsIDandQuantity().get(i).setQuantity(ListPhoneCartDTOFromListProductID.get(i).getQuantityorder());
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    PhoneCartDTO phoneCartDTOAdd = Phone2PhoneDTOCart(phone,1);
+                    // Nếu chưa có, thêm điện thoại vào giỏ hàng với số lượng là 1
+                    ListPhoneCartDTOFromListProductID.add(phoneCartDTOAdd);
+                    cartCookie.getProductsID().add(id);
+                    cartCookie.getListProductsIDandQuantity().add(new ProductsIDandQuantity(id,1));
+                }
+                saveCartToCookie(cartCookie, response);
+                model.addAttribute("cartListID", cartCookie.getListProductsIDandQuantity());
+                model.addAttribute("ListPhoneCartDTOFromListProductID", ListPhoneCartDTOFromListProductID);
+                // Chuyển hướng đến trang cart
+                response.setHeader("Location", "/Handshop/cart");
+
+                // Thiết lập biến isRedirected thành true
+                boolean isRedirected = true;
+                model.addAttribute("isRedirected", isRedirected);
+            } else {
+                RedirectToCart(request,model);
+            }
+        return "phones/cart";
+        }
+    private void RedirectToCart( HttpServletRequest request, Model model){
+            // Lấy giỏ hàng từ cookie hoặc tạo mới nếu chưa tồn tại
+            CartCookie cartCookie = getCartFromCookie(request);
+            List<PhoneCartDTO> ListPhoneCartDTOFromListProductID = ListPhoneCartDTOFromListID(cartCookie);
+        for (int i = 0; i < ListPhoneCartDTOFromListProductID.size(); i++) {
+            ListPhoneCartDTOFromListProductID.get(i).setQuantityorder(cartCookie.getListProductsIDandQuantity().get(i).getQuantity());
+        }
+            // Đưa giỏ hàng vào model để hiển thị trên trang Thymeleaf
+            model.addAttribute("cartListID", cartCookie.getListProductsIDandQuantity());
+            model.addAttribute("ListPhoneCartDTOFromListProductID", ListPhoneCartDTOFromListProductID);
         }
 
     private CartCookie getCartFromCookie(HttpServletRequest request) {
@@ -212,14 +222,15 @@ public class CartController {
     }
 
     @GetMapping("/Handshop/order-item-payment")
-    public String order(Model model, @RequestParam(name = "user", required = false, defaultValue = "") String user){
+    public String order(Model model, HttpServletRequest request,
+                        @RequestParam(name = "user", required = false, defaultValue = "") String user){
         if(!user.equals("anonymousUser")){
            Customer customer = customerRepository.findByEmail(user);
            model.addAttribute("customer", customer);
         }
         List<PaymentMethod> paymentMethods = paymentMethodService.findAll();
         model.addAttribute("paymentMethods", paymentMethods);
-
+        RedirectToCart(request,model);
         return "phones/order-item-payment";
     }
 

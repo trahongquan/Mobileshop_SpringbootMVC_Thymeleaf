@@ -34,78 +34,97 @@
 <order-request-done>
 <h1 style="text-align: center">Đơn hàng đã xử lý</h1><br>
 <br>
-<div class="container table-container">
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-        <tr>
-            <th>Mã đơn hàng</th>
-            <th>Tên khách hàng</th>
-            <th>Địa chỉ giao hàng</th>
-            <th>Thông tin liên hệ</th>
-            <th>Sản phẩm</th>
-            <th>Số lượng đặt hàng</th>
-            <th>Số lượng đáp ứng</th>
-            <th>Số lượng bổ sung</th>
-            <th>Giá/SP</th>
-            <th>Tổng giá</th>
-            <th>Ngày đặt hàng</th>
-            <th>Xử lý lần cuối</th>
-            <th>Thao tác</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orderDTOsApprovefilter}">
-            <td th:text="${order.getOrderID}"></td>
-            <td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>
-            <td class="wrap" th:text="${order.getCustomer.getAddress}"></td>
-            <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
-                <p th:text="${order.getCustomer.getEmail}"></p></td>
-            <td>
-                <div th:each="phone : ${order.getPhoneDTOS}">
-                    <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
-                </div>
-            </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getQuantity}"></p>
-                </div>
-            </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
-                </div>
-            </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>
-                </div>
-            </td>
-            <td>
-                <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                    <p th:text="'$'+${orderitem.price}"></p>
-                </div>
-            </td>
-            <td th:text="'$'+${order.getAmount}"></td>
-            <td class="wrap" th:text="${order.getOrderDate}"></td>
-            <td class="wrap" th:text="${order.getDateProcessed}"></td>
-            <td>
-                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                    <form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
-                        <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                        <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
-                        <button type="submit" class="btn btn-success btn-sm"
-                                onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
-                        </button>
-                    </form>
-                    <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn" style="margin-left: 10px">
-                        <button type="button" class="btn btn-primary btn-sm">Xem hóa đơn</button>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="main-card mb-3 card">
+        <div class="card-body">
+            <table style="width: 100%;" id="example" class="table table-hover table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Tên khách hàng</th>
+                    <th>Địa chỉ giao hàng</th>
+                    <th>Thông tin liên hệ</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng đặt hàng</th>
+                    <th>Số lượng đáp ứng</th>
+                    <th>Số lượng bổ sung</th>
+                    <th>Giá/SP</th>
+                    <th>Tổng giá</th>
+                    <th>Ngày đặt hàng</th>
+                    <th>Xử lý lần cuối</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orderDTOsApprovefilter}">
+                    <td th:text="${order.getOrderID}"></td>
+                    <td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>
+                    <td class="wrap" th:text="${order.getCustomer.getAddress}"></td>
+                    <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
+                        <p th:text="${order.getCustomer.getEmail}"></p></td>
+                    <td>
+                        <div th:each="phone : ${order.getPhoneDTOS}">
+                            <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="${orderitem.getQuantity}"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <p th:text="'$'+${orderitem.price}"></p>
+                        </div>
+                    </td>
+                    <td th:text="'$'+${order.getAmount}"></td>
+                    <td class="wrap" th:text="${order.getOrderDate}"></td>
+                    <td class="wrap" th:text="${order.getDateProcessed}"></td>
+                    <td>
+                        <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                            <form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
+                                <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                                <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
+                                <button type="submit" class="btn btn-success btn-sm"
+                                        onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
+                                </button>
+                            </form>
+                            <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn" style="margin-left: 10px">
+                                <button type="button" class="btn btn-primary btn-sm">Xem hóa đơn</button>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Tên khách hàng</th>
+                    <th>Địa chỉ giao hàng</th>
+                    <th>Thông tin liên hệ</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng đặt hàng</th>
+                    <th>Số lượng đáp ứng</th>
+                    <th>Số lượng bổ sung</th>
+                    <th>Giá/SP</th>
+                    <th>Tổng giá</th>
+                    <th>Ngày đặt hàng</th>
+                    <th>Xử lý lần cuối</th>
+                    <th>Thao tác</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 </order-request-done>
 </body>
 <script th:inline="javascript">

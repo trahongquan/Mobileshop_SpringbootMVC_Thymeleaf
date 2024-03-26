@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.springbootmvcwithentity.demo.dto.PhoneCartDTO;
-import com.springbootmvcwithentity.demo.entity.Phones;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,10 @@ import java.util.List;
 @JsonPropertyOrder({"phonesList"}) // Xác định thứ tự của các thuộc tính trong JSON
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CartCookie {
+
     private List<PhoneCartDTO> phoneCartDTOSList = new ArrayList<>();
-    private List<Integer> phoneCartDTOSListID = new ArrayList<>();
+    private List<Integer> ProductsID = new ArrayList<>();
+    private List<ProductsIDandQuantity> listProductsIDandQuantity = new ArrayList<>();
 
     // Các phương thức để thêm sản phẩm, xóa sản phẩm, tính tổng giá trị, và các phương thức khác cho giỏ hàng
     // Ví dụ:
@@ -33,11 +34,19 @@ public class CartCookie {
         this.phoneCartDTOSList = newProducts;
     }
     public List<Integer> getProductsID() {
-        return phoneCartDTOSListID;
+        return ProductsID;
     }
 
     public void setProductsID(List<Integer> newProductsID) {
-        this.phoneCartDTOSListID = newProductsID;
+        this.ProductsID = newProductsID;
+    }
+
+    public List<ProductsIDandQuantity> getListProductsIDandQuantity() {
+        return listProductsIDandQuantity;
+    }
+
+    public void setListProductsIDandQuantity(List<ProductsIDandQuantity> listProductsIDandQuantity) {
+        this.listProductsIDandQuantity = listProductsIDandQuantity;
     }
 
     @Override

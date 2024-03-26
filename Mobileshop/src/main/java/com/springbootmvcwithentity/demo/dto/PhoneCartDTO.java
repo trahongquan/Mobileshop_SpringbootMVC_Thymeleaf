@@ -88,12 +88,19 @@ public class PhoneCartDTO implements Serializable {
         this.quantity = phone.getQuantity();
         this.seri = phone.getSeri();
         this.brand = brand;
+        this.brandId = brand.getBrandID();
         this.category = category;
+        this.categoryId = category.getCategoryID();
         this.model = model;
+        this.modelId = model.getId();
         this.operatingSystem = operatingSystem;
+        this.operatingSystemId = operatingSystem.getId();
         this.ram = ram;
+        this.ramId = ram.getId();
         this.storageCapacity = storageCapacity;
+        this.storageCapacityId = storageCapacity.getId();
         this.color = color;
+        this.colorId = color.getId();
         this.quantityorder = quantityorder;
     }
 

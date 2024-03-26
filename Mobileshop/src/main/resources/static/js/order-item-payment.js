@@ -261,10 +261,11 @@
  * Lấy dữ liệu từ local Session hiển thị lên row
  * *******************************************
  */
-window.onload = function () {
+/** ĐÃ ĐƯỢC CHUYỂN LÊN SCRIPT TRONG ORDER*/
+/*window.onload = function () {
 
     // Lấy dữ liệu từ Local Storage
-    var selectedProducts = localStorage.getItem('selectedProducts');
+    var selectedProducts = localStorage.getItem('selectedProductsID');
 
     // Kiểm tra xem dữ liệu có tồn tại trong Local Storage không
     if (selectedProducts) {
@@ -324,7 +325,7 @@ window.onload = function () {
         }
 
     }
-};
+};*/
 /**
  * *******************************************
  * gửi dữ liệu mua hàng cho trang chờ xử lý

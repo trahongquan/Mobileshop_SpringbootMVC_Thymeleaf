@@ -9,15 +9,12 @@
 {
     function calculateTotalAmount() {
         var total = 0;
-
-        // Lặp qua các hàng đã chọn
-        $('input[type=checkbox]:checked').each(function () {
+        var checkedItems = $('.SelectItem:checked');
+        checkedItems.each(function () {
             var row = $(this).closest('tr');
             var price = parseFloat(row.find('.total').text().replace("$", ""));
             total += price;
         });
-
-        // Hiển thị tổng giá trị
         $('#totalAmount').text('$' + total.toFixed(2));
     }
 }
@@ -35,63 +32,28 @@
         console.log(quantity);
         var total = (quantity * price).toFixed(2);
         $(this).closest("tr").find(".total").text("$" + total);
-        console.log(total);
-
-
-        // Cập nhật thông tin sản phẩm trong cookie
+        console.log("total: "+ total);
         updateProductInCookie($(this));
     });
 
 // Cập nhật thông tin sản phẩm trong cookie
     function updateProductInCookie(inputElement) {
-        // Lấy thông tin sản phẩm từ th:data-phone và th:data-product-model
-        var productModel = $(inputElement).closest("tr").data("product-model");
-
-        // Lấy cartCookie từ cookie (nếu có)
+        var productID = $(inputElement).closest("tr").data("product-id");
         var cartCookie = getCookie("cartCookie");
-        // Chuyển cartCookie thành Object updatedCart (nếu có)
-        /**
-         *  updatedCart là một Object chứa 2 Array
-         * có thông tin giống hệt nhau về dữ liệu là phoneCartDTOSList và products
-         *
-         * */
-
         var updatedCart = cartCookie ? JSON.parse(atob(cartCookie)) : [];
-        console.log(cartCookie);
-        console.log(updatedCart);
-
-        // Tìm và cập nhật số lượng cho đối tượng PhoneCartDTO trong cart
-        for (var i = 0; i < updatedCart.phoneCartDTOSList.length; i++) {
-            if (updatedCart.phoneCartDTOSList[i].model === productModel) {
+        for (var i = 0; i < updatedCart.listProductsIDandQuantity.length; i++) {
+            if (updatedCart.listProductsIDandQuantity[i].id === productID) {
                 /** Lấy giá trị quantity mới */
                 var quantity = parseInt($(inputElement).val());
-                /*console.log("quantity: "+ quantity);
-                console.log("updatedCart.phoneCartDTOSList[i].quantity: "+ updatedCart.phoneCartDTOSList[i].quantity);*/
                 /** Cập nhật quantity trong phoneCartDTO*/
-                updatedCart.phoneCartDTOSList[i].quantityorder = quantity;
-                /*console.log("Sau update:");
-                console.log("updatedCart.phoneCartDTOSList[i].quantity: "+ updatedCart.phoneCartDTOSList[i].quantity);*/
-                break;
-            }
-        }
-        // Tìm và cập nhật số lượng cho đối tượng products trong updatedCart
-        for (var i = 0; i < updatedCart.products.length; i++) {
-            if (updatedCart.products[i].model === productModel) {
-                /** Lấy giá trị quantity mới */
-                var quantity = parseInt($(inputElement).val());
-                /*console.log("quantity: "+ quantity);
-                console.log("updatedCart.products[i].quantity: "+ updatedCart.products[i].quantity);*/
-                /** Cập nhật quantity trong products*/
-                updatedCart.products[i].quantityorder = quantity;
-                /*console.log("Sau update:");
-                console.log("updatedCart.products[i].quantity: "+ updatedCart.products[i].quantity);*/
+                updatedCart.listProductsIDandQuantity[i].quantity = quantity;
+                console.log("quantity: " + quantity)
+                console.log("updatedCart quantity: " + updatedCart.listProductsIDandQuantity[i].quantity)
                 break;
             }
         }
         updateCartCookie(updatedCart);
     }
-
-// Hàm lấy giá trị cookie bằng tên
     function getCookie(name) {
         var cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
         return cookieValue ? cookieValue.pop() : null;
@@ -104,10 +66,6 @@
  * *******************************************
  */
 {
-// Bắt sự kiện khi checkbox sản phẩm thay đổi
-/*$('input[type=checkbox]').change(function () {
-    calculateTotalAmount();
-});*/
 $('.SelectItem').click(function () {
     calculateTotalAmount();
     })
@@ -121,54 +79,30 @@ $('.SelectItem').click(function () {
 // Bắt sự kiện khi nút Remove được click
     $(".remove").click(function () {
         var row = $(this).closest("tr");
-        var productModel = row.data("product-model");
-        console.log('productModel; '+productModel)
-
-        // Xóa hàng khỏi bảng
+        var productID = row.data("product-id");
+        console.log('productID; '+productID)
         row.remove();
-
-        // Cập nhật tổng giá trị
         calculateTotalAmount();
-
-        // Xóa sản phẩm khỏi cookie
-        removeProductFromCookie(productModel);
+        removeProductFromCookie(productID);
     });
 
-    function removeProductFromCookie(productModel) {
-
+    function removeProductFromCookie(productID) {
         var cartCookie = getCookie("cartCookie");
         var updatedCart = cartCookie ? JSON.parse(atob(cartCookie)) : [];
-        console.log('updatedCart: ');
-        console.log(updatedCart);
-        console.log('updatedCart.phoneCartDTOSList: ');
-        console.log(updatedCart.phoneCartDTOSList);
-        console.log('updatedCart.products: ');
-        console.log(updatedCart.products);
-        for (var i = 0; i < updatedCart.phoneCartDTOSList.length; i++) {
-            console.log('vòng ' + i + ' :' + 'updatedCart.phoneCartDTOSList[i].model: '+updatedCart.phoneCartDTOSList[i].model+ '; productModel: ' + productModel)
-            if (updatedCart.phoneCartDTOSList[i].model === productModel) {
-                console.log("Chuỗi giống nhau tại: " + i);
-                console.log('updatedCart.phoneCartDTOSList[i].model: ' + updatedCart.phoneCartDTOSList[i].model+' ; ' +productModel);
+        for (var i = 0; i < updatedCart.listProductsIDandQuantity.length; i++) {
+            if (updatedCart.listProductsIDandQuantity[i].id === productID) {
                 // dùng hàm splice Xóa phần tử i trong phoneCartDTOSList nằm trong đối tượng updatedCart
-                updatedCart.phoneCartDTOSList.splice(i, 1);
-                console.log("+++++++++++++++++++++++++++");
-                console.log(updatedCart.phoneCartDTOSList);
+                updatedCart.listProductsIDandQuantity.splice(i, 1);
                 break;
             }
         }
-        for (var i = 0; i < updatedCart.products.length; i++) {
-            if (updatedCart.products[i].model === productModel) {
-                //console.log("Chuỗi giống nhau tại : "  + i + ' /' + updatedCart.products[i].model +' ; ' +productModel);
-                //console.log(updatedCart.products);
-                // dùng hàm splice Xóa phần tử i trong phoneCartDTOSList nằm trong đối tượng updatedCart
-                updatedCart.products.splice(i, 1);
-
-                //console.log("+++++++++++++++++++++++++++");
-                //console.log(updatedCart.products);
+        for (var i = 0; i < updatedCart.ProductsID.length; i++) {
+            if (updatedCart.ProductsID[i] === productID) {
+                updatedCart.ProductsID.splice(i, 1);
+                updatedCart.productsID.splice(i, 1);
                 break;
             }
         }
-        // Cập nhật cookie với danh sách sản phẩm cập nhật
         updateCartCookie(updatedCart);
     }
 }
@@ -182,48 +116,14 @@ $('.SelectItem').click(function () {
     $('.quantity').on('input', function () {
         var row = $(this).closest('tr');
         var isChecked = row.find('input[type=checkbox]').prop('checked');
-
-        // Lấy giá trị số lượng và giá từ hàng
         var quantity = parseInt($(this).val());
         var price = parseFloat(row.find('td .price').text().replace('$', ''));
-
-        // Tính tổng giá trị cho hàng hiện tại
         var total = (quantity * price).toFixed(2);
-
-        // Cập nhật giá trị Total của hàng
         row.find('.total').text('$' + total);
-
-        // Nếu hàng đó được chọn, cập nhật tổng giá trị
-        if (isChecked) {
+        var SelectAll = $('#SelectAll');
+        if(SelectAll.prop('checked') || isChecked){
             calculateTotalAmount();
         }
-    });
-}
-
-/**
- * *******************************************
- * Load tất cả data-product-model vào data-product-model-js để lưu trữ
- * sau đó mới xử lý lấy từng model của từng hàng ra được
- * *******************************************
- * */
-{// Chờ cho trang web được tải xong
-    $(document).ready(function () {
-
-        var cartCookie = getCookie("cartCookie");
-        // Chuyển cartCookie thành Object updatedCart (nếu có)
-        var updatedCart = cartCookie ? JSON.parse(atob(cartCookie)) : [];
-        // console.log(updatedCart);
-        updateCartCookie(updatedCart);
-
-
-        // Tìm kiếm tất cả các thuộc tính `data-product-model`
-        var rows = document.querySelectorAll('tbody tr');
-        // Duyệt qua từng hàng dữ liệu
-        for (var i = 0; i < rows.length; i++) {
-            var productModel = rows[i].getAttribute('data-product-model');
-            rows[i].setAttribute('data-product-model-js', productModel);
-        }
-        // Tạo một hàm JavaScript để làm tròn giá trị
     });
 }
 
@@ -234,15 +134,9 @@ $('.SelectItem').click(function () {
  * */
 {// Cập nhật cookie với danh sách sản phẩm cập nhật
     function updateCartCookie(updatedCart) {
-        // Chuyển đổi cart thành chuỗi JSON string
         var cartJson = JSON.stringify(updatedCart);
-        // Mã hóa Object thành Base64
         var cartBase64 = btoa(cartJson);
-        // Lưu thông tin vào cookie
         document.cookie = "cartCookie=" + cartBase64 + "; expires=Thu, 31 Dec 2099 23:59:59 UTC; ";
-
-        /*// Tạo một cookie để lưu trữ thông tin giỏ hàng
-        document.cookie = "cartCookie=" + encodedCartJson + "; max-age=" + 7 * 24 * 60 * 60;*/
     }
 }
 /**
@@ -251,7 +145,6 @@ $('.SelectItem').click(function () {
  * *******************************************
  * */
 {
-// Lấy checkbox SelectAll
     var selectAllCheckbox = document.getElementById("SelectAll");
 
 // Lấy tất cả các checkbox bên dưới
