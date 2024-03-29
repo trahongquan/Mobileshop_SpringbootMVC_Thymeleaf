@@ -200,9 +200,9 @@ public class PhoneController {
         return "index";
     }
 
-    /********************************************************/
-    /************************* SEARCH ***********************/
-    /********************************************************/
+                                /********************************************************/
+                                /************************* SEARCH ***********************/
+                                /********************************************************/
 
     @PostMapping("/list/search")
     public String Search(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
@@ -210,6 +210,11 @@ public class PhoneController {
         List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
         model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
         return "index";
+    }
+
+    @GetMapping({"/Contact"})
+    public String Contact(Model model) {
+        return "footer";
     }
 
     /******************************************************************************************************/
@@ -1121,6 +1126,14 @@ public class PhoneController {
         model.addAttribute("profit", profit);
         model.addAttribute("startDate", startDateFormat);
         model.addAttribute("endDate", endDateFormat);
+        return "/admin/templateAdmin";
+    }
+
+    @GetMapping("/admin/ProfitReportQuicktime")
+    public String profitReportx(@RequestParam("start_date") String startDate,
+                               @RequestParam("end_date") String endDate,
+                               Model model) {
+        ProfitReport(startDate, endDate, model);
         return "/admin/templateAdmin";
     }
     /******************************************************************************************************/

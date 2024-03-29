@@ -30,16 +30,20 @@ public class Employees {
     @Column(name = "HireDate")
     private Timestamp hireDate;
 
+    @Column(name = "HireEndDate")
+    private Timestamp hireEndDate;
+
     public Employees() {
     }
 
-    public Employees(String firstName, String lastName, String email, String phone, String pass, Timestamp hireDate) {
+    public Employees(String firstName, String lastName, String email, String phone, String pass, Timestamp hireDate, Timestamp hireEndDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
         this.pass = pass;
         this.hireDate = hireDate;
+        this.hireEndDate = hireEndDate;
     }
 
     public int getEmployeeID() {
@@ -96,6 +100,14 @@ public class Employees {
 
     public void setHireDate(Timestamp hireDate) {
         this.hireDate = hireDate;
+    }
+
+    public Timestamp getHireEndDate() {
+        return hireEndDate;
+    }
+
+    public void setHireEndDate(Timestamp hireEndDate) {
+        this.hireEndDate = hireEndDate;
     }
 }
 

@@ -13,22 +13,12 @@
 
     <nav class="row">
         <div class="header">
-            <div>
                 <a href="/Handshop/list">
                     <img alt="" th:src="'/Images/logo-Handphone-transferent.png'" style="height: 80px">
                 </a>
-            </div>
-            <!--<div id="toggle">-->
-                <!--<i class="fas fa-bars"></i>-->
-            <!--</div>-->
             <div class="headerLeft">
                 <div class="header-menu">
                     <ul class="top-menu notmobile">
-                        <!--<li class="category-menu-items">-->
-                            <!--<a href="/Handshop/list">-->
-                                <!--<img alt="" th:src="'/Images/logo-Handphone-transferent.png'" style="width: 70%">-->
-                            <!--</a>-->
-                        <!--</li>-->
                         <li class="category-menu-items"><a href="/Handshop/iphone"> iPhone </a></li>
                         <li class="category-menu-items"><a href="/Handshop/Android"> Android </a></li>
                         <li class="category-menu-items"><a href="/Handshop/iphone"> iPad </a></li>
@@ -62,9 +52,6 @@
                 <ul class="top-menu mobile">
                     <div class="header-links">
                         <ul class="popup-header-links" th:if="${#authorization.expression('isAuthenticated()')}">
-                            <!--sec:authorize="hasAnyRole('CUSTOMER', 'CUSTOMER')"-->
-                            <!--sec:authorize="hasRole('CUSTOMER')"-->
-                            <!-- Hiển thị các mục khi đã đăng nhập -->
                             <li id="topcartlink"><a href="/Handshop/cart" class="ico-cart"> <span
                                     class="cart-label">Giỏ hàng</span> <span class="cart-qty">0</span> </a></li>
                             <li class="li_ico-wishlist"><a href="#" class="ico-wishlist"> <span
@@ -94,7 +81,6 @@
                     </div>
                 </ul>
             </div>
-        </div>
     </nav>
 </header>
 </body>

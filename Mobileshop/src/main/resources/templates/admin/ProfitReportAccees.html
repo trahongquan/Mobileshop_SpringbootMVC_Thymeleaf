@@ -28,6 +28,18 @@
 </head>
 <body>
 <profit-report>
+    <div id="qickchoosetime" class="d-flex justify-content-end">
+        <button id="btn-yesterday" class="btn btn-primary margin-h-center">Hôm qua</button>
+        <button id="btn-1-day" class="btn btn-primary margin-h-center">Hôm nay</button>
+        <button id="btn-1-week" class="btn btn-primary margin-h-center">1 Tuần</button>
+        <button id="btn-1-month" class="btn btn-primary margin-h-center">1 Tháng</button>
+        <button id="btn-3-months" class="btn btn-primary margin-h-center">3 Tháng</button>
+        <button id="btn-6-months" class="btn btn-primary margin-h-center">6 Tháng</button>
+        <button id="btn-1-year" class="btn btn-primary margin-h-center">1 Năm</button>
+    </div>
+    <br>
+    <br>
+    <br>
     <div>
         <form th:action="@{'/Handshop/admin/ProfitReport'}" method="post">
             <div class="col-lg-6;" style=" display:flex; flex-direction: row; justify-content: space-around">
@@ -106,67 +118,98 @@
     <div>
         <div id="chart"></div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
-<!--
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
-        var orderDTOs = [[${orderDTOs}]];
-        var monthsInRange = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        // Tính tổng doanh thu theo tháng
-        var monthSalesMap = new Map();
-        orderDTOs.forEach(function(orderDTO) {
-            var month = orderDTO.dateProcessed.substring(5, 7); // Lấy tháng từ ngày
-            var amount = orderDTO.amount;
-            if (monthSalesMap.has(month)) {
-                amount += monthSalesMap.get(month);
-            }
-            monthSalesMap.set(month, amount);
-        });
+        /** quick choose time */
+        {
+            $(document).ready(function () {
+                $('#btn-yesterday').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 2);
+                    endDate.setDate(startDate.getDate() + 1);
+                    redirectToProfitReport(startDate, endDate);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                });
 
-        // Sắp xếp và lấy dữ liệu doanh thu theo tháng
-        var salesData = [];
-        for (var i = 1; i <= 12; i++) {
-            var month = i < 10 ? '0' + i : '' + i;
-            var amount = monthSalesMap.has(month) ? monthSalesMap.get(month) : 0;
-            salesData.push(amount);
+                $('#btn-1-day').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 1);
+                    redirectToProfitReport(startDate, endDate);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                });
+
+                $('#btn-1-week').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setDate(startDate.getDate() - 7);
+                    redirectToProfitReport(startDate, endDate);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                    console.log(startDate)
+                    console.log(endDate)
+                });
+
+                $('#btn-1-month').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setMonth(startDate.getMonth() - 1);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                    redirectToProfitReport(startDate, endDate);
+                });
+
+                $('#btn-3-months').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setMonth(startDate.getMonth() - 3);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                    redirectToProfitReport(startDate, endDate);
+                });
+
+                $('#btn-6-months').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setMonth(startDate.getMonth() - 6);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                    redirectToProfitReport(startDate, endDate);
+                });
+
+                $('#btn-1-year').click(function () {
+                    var endDate = new Date();
+                    var startDate = new Date();
+                    startDate.setFullYear(startDate.getFullYear() - 1);
+                    $('#start_date').val(formatDateTime(startDate));
+                    $('#end_date').val(formatDateTime(endDate));
+                    redirectToProfitReport(startDate, endDate);
+                });
+
+                function redirectToProfitReport(startDate, endDate) {
+                    // var url = '/Handshop/admin/ProfitReportQuicktime';
+                    // var formattedStartDate = formatDateTime(startDate);
+                    // var formattedEndDate = formatDateTime(endDate);
+                    // url += '?startDate=' + formattedStartDate + '&endDate=' + formattedEndDate;
+                    // window.location.href = url;
+                }
+
+                function formatDateTime(date) {
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + date.getHours()).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+                    return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+                }
+            });
         }
-        console.log(salesData);
-        // var salesData = [0, 0, 0, 63, 0, 0, 555, 0, 0, 4394, 0, 0];
-
-        // Tìm vị trí đầu tiên có giá trị khác 0
-        var startIndex = 0;
-        while (salesData[startIndex] === 0) {
-            startIndex++;
-        }
-
-        // Tìm vị trí cuối cùng có giá trị khác 0
-        var endIndex = salesData.length - 1;
-        while (salesData[endIndex] === 0) {
-            endIndex&#45;&#45;;
-        }
-
-        // Cập nhật tùy chọn biểu đồ
-        var options = {
-            chart: {
-                type: 'bar',
-            },
-            series: [{
-                name: 'Sales',
-                data: salesData.slice(startIndex, endIndex + 1)
-            }],
-            xaxis: {
-                categories: monthsInRange.slice(startIndex, endIndex + 1),
-                chartRangeMin: startIndex,
-                chartRangeMax: endIndex
-            }
-        };
-
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-        chart.render();
-
-    </script>
--->
-    <script th:inline="javascript">
+        /** Chart */
+        {
         var orderDTOs = [[${orderDTOs}]];
         var monthsInRange = [];
         var salesData = [];
@@ -220,6 +263,7 @@
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+    }
     </script>
 </profit-report>
 </body>

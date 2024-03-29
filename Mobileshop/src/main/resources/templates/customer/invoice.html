@@ -46,7 +46,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="orderItem : ${orderDTO.getOrderitemDTOS}">
-                        <td th:text="${orderItem.getPhoneDTO.getPhoneName} + ' | ' + ${orderItem.getPhoneDTO.getRam} + 'GB | ' + ${orderItem.getPhoneDTO.getStorageCapacity}+ 'GB'">
+                        <td th:text="${orderItem.getPhoneDTO.getPhoneName} + ' | ' + ${orderItem.getPhoneDTO.getRam.getCapacity} + 'GB | ' + ${orderItem.getPhoneDTO.getStorageCapacity.getCapacity}+ 'GB'">
                             <span class="highlight"></span></td>
                         <td th:text="'$'+${orderItem.getPrice}"></td>
                         <td th:text="${orderItem.getQuantity}"></td>

@@ -114,6 +114,7 @@ public class EmployeeController {
         existingEmployee.setEmail(updatedEmployee.getEmail());
         existingEmployee.setPhone(updatedEmployee.getPhone());
         existingEmployee.setPass(updatedEmployee.getPass());
+        existingEmployee.setHireEndDate(updatedEmployee.getHireEndDate());
 
         // Lưu lại thông tin cập nhật vào cơ sở dữ liệu
         employeeService.save(existingEmployee);

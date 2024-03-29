@@ -12,10 +12,12 @@
         }
 
     </style>
+
 </head>
 <body>
+<div th:replace="headernew::header"></div>
 <footer th:fragment="footer">
-    <div class="footerfull">
+    <div class="footerfull" style="background: whitesmoke; color: black">
         <div class="footer">
             <div class="container" style="max-width: 100%;">
                 <div class="row d-flex justify-content-between">
@@ -59,6 +61,6 @@
 
 <!-- CSS -->
 <!-- Bootstrap CSS and JS (Make sure to include these in your project) -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">-->
 </body>
 </html>

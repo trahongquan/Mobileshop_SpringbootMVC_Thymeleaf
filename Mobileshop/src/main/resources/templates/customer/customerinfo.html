@@ -205,8 +205,8 @@
                 <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
                     <p th:text="${order.getCustomer.getEmail}"></p></td>
                 <td>
-                    <div th:each="phone : ${order.getPhones}">
-                        <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                    <div th:each="phone : ${order.phoneDTOS}">
+                        <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
                     </div>
                 </td>
                 <td>
@@ -277,8 +277,8 @@
                 <td><p th:text="${order.getCustomer.getPhone} + ' hoặc '"></p>
                     <p th:text="${order.getCustomer.getEmail}"></p></td>
                 <td>
-                    <div th:each="phone : ${order.getPhones}">
-                        <p th:text="${phone.PhoneName} +' | '+${phone.Ram}+'GB | '+${phone.StorageCapacity}+'GB'"></p>
+                    <div th:each="phone : ${order.phoneDTOS}">
+                        <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
                     </div>
                 </td>
                 <td>
@@ -304,13 +304,6 @@
                         <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn">
                             <button type="button" class="btn btn-success btn-sm">Xem hóa đơn</button>
                         </a>
-                        <!--<form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
-                            <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                            <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
-                            <button type="submit" class="btn btn-success btn-sm"
-                                    onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
-                            </button>
-                        </form>-->
                     </div>
                 </td>
             </tr>

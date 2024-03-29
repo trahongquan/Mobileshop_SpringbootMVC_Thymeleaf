@@ -11,7 +11,8 @@ body {
     -o-background-size: cover;
     color: #FFF;
     font-family: 'Quicksand', sans-serif;
-    /*text-align: center;*/
+    backdrop-filter: blur(5px); /* Áp dụng hiệu ứng mờ */
+    -webkit-backdrop-filter: blur(5px); /* Áp dụng hiệu ứng mờ (Safari) */
 }
 
 /* //////////////////////////////// */
@@ -394,7 +395,7 @@ section>.mySwiper{
 }
 
 .big-banner {
-    background-image: url("/images/banner5.jpg");
+    background-image: url("../images/banner5.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
