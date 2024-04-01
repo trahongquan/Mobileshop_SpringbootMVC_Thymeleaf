@@ -1,5 +1,6 @@
 package com.springbootmvcwithentity.demo.service.order;
 
+import com.springbootmvcwithentity.demo.ClassSuport.StatusOrder;
 import com.springbootmvcwithentity.demo.dao.OrderRepository;
 import com.springbootmvcwithentity.demo.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,14 @@ public class orderServiceImpl implements orderService {
     }
 
     @Override
-    public void save(Order orderItem) {
-        orderRepository.save(orderItem);
+    public void save(Order order) {
+        orderRepository.save(order);
     }
 
     @Override
     public void deleteById(int id) {
-        orderRepository.deleteById(id);
+        Order order = findById(id);
+        order.setStatus(StatusOrder.REJECT);
+        orderRepository.save(order);
     }
 }

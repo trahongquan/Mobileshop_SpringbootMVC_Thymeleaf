@@ -1,6 +1,7 @@
 package com.springbootmvcwithentity.demo.Controller.ControllerPayment;
 
 import com.springbootmvcwithentity.demo.ClassSuport.Product;
+import com.springbootmvcwithentity.demo.ClassSuport.StatusOrder;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
 import com.springbootmvcwithentity.demo.dao.CustomerRepository;
 import com.springbootmvcwithentity.demo.dao.OrderItemRepository;
@@ -132,7 +133,7 @@ public class PaymentController {
             List<String> remainingItems = new ArrayList<>(seris);
             seris = remainingItems.subList(qtyOrder, remainingItems.size());
         }
-        OrderItem orderItem = new OrderItem(order.getOrderID(), phone.getPhoneId(), phone.getPrice(), qtyOrder, serisOrderItem.toString(), missing);
+        OrderItem orderItem = new OrderItem(order.getOrderID(), phone.getPhoneId(), phone.getPrice(), qtyOrder, serisOrderItem.toString(), missing, StatusOrder.PENDING_APPROVAL);
         orderitemsservice.save(orderItem);
         return seris;
     }
@@ -142,7 +143,7 @@ public class PaymentController {
                             Timestamp Orderdate, String dateProcessed){
         PaymentMethod paymentMethod = paymentMethodRepository.findByMethodName(paymentMethodname);
         double total = Double.parseDouble(totalAmount);
-        Order order = new Order(customer, Orderdate.toString(), dateProcessed, paymentMethod, total, numberOrAdresspayment, cvv, expirationdate);
+        Order order = new Order(customer, Orderdate.toString(), dateProcessed, paymentMethod, total, numberOrAdresspayment, cvv, expirationdate, StatusOrder.PENDING_APPROVAL);
         ordeservice.save(order);
         for (int i = 0; i < inputmodel.size(); i++) {
             /** Lọc lấy các phone còn trong kho*/

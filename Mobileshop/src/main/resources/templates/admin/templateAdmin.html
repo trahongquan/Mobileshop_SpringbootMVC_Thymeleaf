@@ -1470,6 +1470,12 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="/Handshop/admin/OrderRequestReject">
+                                    <i class="metismenu-icon pe-7s-less">
+                                    </i>Đơn hàng đã hủy
+                                </a>
+                            </li>
+                            <li>
                                 <a href="/Handshop/admin/ProfitReport">
                                     <i class="metismenu-icon pe-7s-graph1">
                                     </i>Báo cáo lợi nhuận
@@ -1618,6 +1624,9 @@
                 <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/OrderRequestDone')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="admin/order-request-done.html :: order-request-done"></div>
                 </div>
+                <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/OrderRequestReject')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="admin/order-request-reject.html :: order-request-reject"></div>
+                </div>
                 <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/rejectOrder')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="admin/rejectOrderForm.html :: reject-Order-Form"></div>
                 </div>
@@ -1659,6 +1668,9 @@
                 </div>
                 <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/myAccount')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
                     <div th:replace="employees/employeinfo.html::employeinfo"></div>
+                </div>
+                <div th:if="${#strings.contains(#request.requestURI, '/Handshop/admin/UpdateEmp/')}" class="app-main__inner" style="display: flex; justify-content: center; align-content: center; flex-direction: column;">
+                    <div th:replace="employees/form-edit-employee.html::form-edit-employee"></div>
                 </div>
 
             </div>

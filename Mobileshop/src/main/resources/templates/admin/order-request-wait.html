@@ -55,7 +55,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="order : ${orderDTOsNotApprovefilter}">
+                <tr th:each="order : ${orderDTOsfilterWithstatus}">
                     <td th:text="${order.getOrderID}"></td>
                     <td th:text="${order.getCustomer.getFirstName} + ' ' + ${order.getCustomer.getLastName}"></td>
                     <td class="wrap" th:text="${order.getCustomer.getAddress}"></td>

@@ -32,13 +32,16 @@ public class OrderItem {
     @Column(name = "missing")
     private int missing;
 
+    @Column(name = "status")
+    private String status;
+
     // Getters and setters
 
 
     public OrderItem() {
     }
 
-    public OrderItem(int orderID, int phoneID, String price, int quantity, String seri, int missing) {
+    public OrderItem(int orderID, int phoneID, String price, int quantity, String seri, int missing, String status) {
         this.orderID = orderID;
         this.phoneID = phoneID;
         this.price = price;
@@ -103,6 +106,14 @@ public class OrderItem {
         this.seri = seri;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "OrderItem{" +
@@ -111,7 +122,9 @@ public class OrderItem {
                 ", phoneID=" + phoneID +
                 ", price='" + price + '\'' +
                 ", quantity=" + quantity +
-                ", seri=" + seri +
+                ", seri='" + seri + '\'' +
+                ", missing=" + missing +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -40,6 +40,9 @@ public class Order {
     @Column(name = "EmployeeID")
     private String employeeID;
 
+    @Column(name = "status")
+    private String status;
+
     // Getters and setters
 
 
@@ -47,7 +50,7 @@ public class Order {
     }
 
     public Order(Customer customer, String orderDate, String dateProcessed, PaymentMethod paymentMethod,
-                 double amount, String numberOrAddressPayment, String cvv, String expirationDate) {
+                 double amount, String numberOrAddressPayment, String cvv, String expirationDate, String status) {
         this.customerId = customer.getCustomerId();
         this.orderDate = orderDate;
         this.dateProcessed = dateProcessed;
@@ -56,10 +59,11 @@ public class Order {
         this.numberOrAddressPayment = numberOrAddressPayment;
         this.cvv = cvv;
         this.expirationDate = expirationDate;
+        this.status = status;
     }
 
     public Order(Customer customer, String orderDate, String dateProcessed, PaymentMethod paymentMethod,
-                 double amount, String numberOrAddressPayment, String cvv, String expirationDate, String employeeID) {
+                 double amount, String numberOrAddressPayment, String cvv, String expirationDate, String employeeID, String status) {
         this.customerId = customer.getCustomerId();
         this.orderDate = orderDate;
         this.dateProcessed = dateProcessed;
@@ -69,6 +73,7 @@ public class Order {
         this.cvv = cvv;
         this.expirationDate = expirationDate;
         this.employeeID = employeeID;
+        this.status = status;
     }
 
 
@@ -152,6 +157,14 @@ public class Order {
         this.employeeID = employeeID;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -165,6 +178,7 @@ public class Order {
                 ", cvv='" + cvv + '\'' +
                 ", expirationDate='" + expirationDate + '\'' +
                 ", employeeID='" + employeeID + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -177,13 +177,13 @@
 
                 <div class="info-box me-2 align-items-center" th:if="${#authorization.expression('isAuthenticated()')}">
                     <div class="icon-wrapper position-relative">
-                <span class="wishlist-count icon-badge yith-wcwl-items-count">
+                <span class="wishlist-count icon-badge yith-wcwl-items-count" style="z-index: 1000;">
                   0
                 </span>
                         <a href="#" class="fs-sm fw-light text-uppercase">
                             <!--<i>♡</i>-->
-                            <i>❤</i>
-                            <!--<i class="ele-icon electio-heart"></i>-->
+                            <!--<i>❤</i>-->
+                            <i class="ele-icon electio-heart"></i>
                         </a>
                     </div>
                     <div class="d-none d-lg-flex flex-column">
@@ -195,12 +195,13 @@
                     <div class="icon-wrapper position-relative open-cart-drawer">
                         <span class="icon-badge" id="mini-cart-count"> 0 </span>
                         <a href="/Handshop/cart">
-                            <!--<i class="ele-icon electio-shopping-bag"></i>-->
-                            <i>👜</i>
+                            <i class="ele-icon electio-shopping-bag"></i>
+                            <!--<i>👜</i>-->
                         </a>
                     </div>
                     <div class="d-none d-lg-flex flex-column">
-                        <span class="subtitle"> 0&nbsp;&#8363; </span>
+                        <!--<span class="subtitle"> 0&nbsp;&#8363; </span>-->
+                        <span class="subtitle" id="mini-total-amount"></span>
                         <span class="title">Tổng</span>
                     </div>
                 </div>
@@ -1040,7 +1041,7 @@
                                             title="Sản phẩm"
                                             class="xpc-nav-link nav-link animate-in dropdown-toggle"
                                             target="_self"
-                                            href="shop.html"
+                                            href="#"
                                             data-toggle="dropdown"
                                             aria-expanded="false"
                                             aria-haspopup="true"
@@ -1049,8 +1050,7 @@
                                     ><span
                                             class="xpc-dropdown-title text-sm xpc-header-text"
                                     >Sản phẩm
-                        </span></a
-                                    >
+                        </span></a>
                                     <div
                                             class="dropdown-menu start-0"
                                             aria-labelledby="menu-item-dropdown-4738"
@@ -1746,6 +1746,7 @@
         </div>
     </div>
     </div>
+    <script src="/js/headernew/headernew.js"></script>
 </header>
 </body>
 </html>

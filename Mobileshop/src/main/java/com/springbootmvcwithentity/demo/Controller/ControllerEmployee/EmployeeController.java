@@ -26,7 +26,7 @@ import com.springbootmvcwithentity.demo.service.emp.EmployeeService;
 
 
 @Controller
-@RequestMapping("Handshop/admin/AccEmployeesManager")
+@RequestMapping("Handshop/admin")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -48,20 +48,20 @@ public class EmployeeController {
         this.phoneService = phoneService;
     }
 
-    @GetMapping({"/", ""})
+    @GetMapping({"/AccEmployeesManager/", "/AccEmployeesManager"})
     public String listEmployees(Model model) {
         List<Employees> employees = employeeService.findAll();
         model.addAttribute("employees", employees);
         return "admin/templateAdmin";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/AccEmployeesManager/add")
     public String showEmployeeForm(Model model) {
         Employees employee = new Employees();
         model.addAttribute("employee", employee);
         return "admin/templateAdmin";
     }
-    @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/AccEmployeesManager/add", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String addEmployee(@ModelAttribute("employee") Employees employee, Authority authority, Users user) {
         saveUser(employee, user);
         authority = new Authority("ROLE_EMPLOYEE",user);
@@ -69,7 +69,7 @@ public class EmployeeController {
         return "redirect:/Handshop/admin/AccEmployeesManager";
     }
 
-    @GetMapping("/showFormForUpdate/{id}")
+    @GetMapping("/AccEmployeesManager/showFormForUpdate/{id}")
     public String showEditEmployeeForm(@PathVariable int id, Model model) {
         return checkEmployee(model, id);
     }
@@ -90,7 +90,7 @@ public class EmployeeController {
      *  và sẽ được commit sau khi phương thức kết thúc.
      *  Điều này sẽ giúp tránh lỗi không có EntityManager trong luồng hiện tại.*/
     @Transactional
-    @PostMapping("/showFormForUpdate/{id}")
+    @PostMapping("/AccEmployeesManager/showFormForUpdate/{id}")
     public String editEmployee(@PathVariable int id, @ModelAttribute("employee") Employees updatedEmployee) {
         // Tìm đối tượng Employee hiện có trong cơ sở dữ liệu
         Employees existingEmployee = employeeService.findById(id);
@@ -122,13 +122,13 @@ public class EmployeeController {
         return "redirect:/Handshop/admin/AccEmployeesManager";
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/AccEmployeesManager/delete/{id}")
     public String showDeleteEmployeeForm(@PathVariable String id, Model model) {
         int idt = Integer.parseInt(id);
         return checkEmployee(model,idt);
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/AccEmployeesManager/delete/{id}")
     public String deleteEmployee(@PathVariable int id) {
         Employees employee = employeeService.findById(id);
         authorityService.deleteAuthority(employee.getEmail());
@@ -142,6 +142,49 @@ public class EmployeeController {
         user = userService.findByUsername(employee.getEmail());
         user.setPassword(passwordEncoder.encode(employee.getPass()));
         userService.save(user);
+    }
+
+    @GetMapping("/UpdateEmp/{id}")
+    public String showFormForUpdateEmp(@PathVariable int id, Model model) {
+        return checkEmployee(model, id);
+    }
+
+    /** Thêm annotation @Transactional trước phương thức editEmployee sẽ giúp Spring quản lý giao dịch cho bạn.
+     *  Điều này sẽ đảm bảo rằng một giao dịch được kích hoạt
+     *  trước khi có bất kỳ hoạt động truy cập cơ sở dữ liệu nào được thực hiện
+     *  và sẽ được commit sau khi phương thức kết thúc.
+     *  Điều này sẽ giúp tránh lỗi không có EntityManager trong luồng hiện tại.*/
+    @Transactional
+    @PostMapping("/UpdateEmp/{id}")
+    public String showFormForUpdateEmp(@PathVariable int id, @ModelAttribute("employee") Employees updatedEmployee) {
+        // Tìm đối tượng Employee hiện có trong cơ sở dữ liệu
+        Employees existingEmployee = employeeService.findById(id);
+
+        if(updatedEmployee.getEmail().equals(existingEmployee.getEmail())){
+            Users user = userService.findByUsername(existingEmployee.getEmail());
+            user.setPassword(passwordEncoder.encode(existingEmployee.getPass()));
+            userService.save(user);
+        }else {
+            authorityService.deleteAuthority(existingEmployee.getEmail()); /** xóa authority trước vì có email là khóa ngoại từ bảng user*/
+            userService.deleteUser(existingEmployee.getEmail());
+            Users user = new Users(updatedEmployee.getEmail(),passwordEncoder.encode(updatedEmployee.getPass()),(long) existingEmployee.getEmployeeID(),1);
+            userService.save(user);
+            Authority authority = new Authority("ROLE_EMPLOYEE",user);
+            authorityService.createAuthority(authority);
+        }
+
+        // Cập nhật thông tin từ updatedEmployee vào existingEmployee
+        existingEmployee.setFirstName(updatedEmployee.getFirstName());
+        existingEmployee.setLastName(updatedEmployee.getLastName());
+        existingEmployee.setEmail(updatedEmployee.getEmail());
+        existingEmployee.setPhone(updatedEmployee.getPhone());
+        existingEmployee.setPass(updatedEmployee.getPass());
+        existingEmployee.setHireEndDate(updatedEmployee.getHireEndDate());
+
+        // Lưu lại thông tin cập nhật vào cơ sở dữ liệu
+        employeeService.save(existingEmployee);
+
+        return "redirect:/Handshop/admin/AccEmployeesManager";
     }
 }
 

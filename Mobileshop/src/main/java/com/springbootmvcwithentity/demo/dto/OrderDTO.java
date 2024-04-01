@@ -25,6 +25,8 @@ public class OrderDTO {
 
     private String employeeID;
 
+    private String status;
+
     private List<OrderitemDTO> orderitemDTOS;
 
     private List<PhoneDTO> phoneDTOS;
@@ -40,7 +42,7 @@ public class OrderDTO {
     public OrderDTO() {
     }
 
-    public OrderDTO(int customerId, String orderDate, String dateProcessed, long paymentMethodId, double amount, String numberOrAddressPayment, String cvv, String expirationDate, List<OrderitemDTO> orderitemDTOS, Customer customer) {
+    public OrderDTO(int customerId, String orderDate, String dateProcessed, long paymentMethodId, double amount, String numberOrAddressPayment, String cvv, String expirationDate, List<OrderitemDTO> orderitemDTOS, Customer customer, String status) {
         this.orderID = orderID;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -52,6 +54,7 @@ public class OrderDTO {
         this.expirationDate = expirationDate;
         this.orderitemDTOS = orderitemDTOS;
         this.customer = customer;
+        this.status = status;
     }
 
     public OrderDTO(Order order, List<OrderitemDTO> orderitemDTOS, List<String> seris, List<PhoneDTO> phoneDTOS, Customer customer) {
@@ -69,6 +72,7 @@ public class OrderDTO {
         this.seris = seris;
         this.phoneDTOS = phoneDTOS;
         this.customer = customer;
+        this.status = order.getStatus();
     }
 
     public OrderDTO(Order order, List<OrderitemDTO> orderitemDTOS, Customer customer) {
@@ -84,6 +88,7 @@ public class OrderDTO {
         this.employeeID = order.getEmployeeID();
         this.orderitemDTOS = orderitemDTOS;
         this.customer = customer;
+        this.status = order.getStatus();
     }
 
     public int getOrderID() {
@@ -212,5 +217,13 @@ public class OrderDTO {
 
     public void setPhone(Phones phone) {
         this.phone = phone;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -13,7 +13,7 @@
             justify-content: center;
         }
         .table {
-            width: 90%; /* hoặc bạn có thể chỉ định kích thước cụ thể khác phù hợp với nội dung của bạn */
+            width: 1vw; /* hoặc bạn có thể chỉ định kích thước cụ thể khác phù hợp với nội dung của bạn */
         }
         td, th {
             white-space: nowrap;
@@ -31,8 +31,8 @@
 </head>
 <body>
 <!--<div th:replace="admin/templateAdmin.html :: header-admin"></div>-->
-<order-request-done>
-<h1 style="text-align: center">Đơn hàng đã xử lý</h1><br>
+<order-request-reject>
+<h1 style="text-align: center;">Đơn đã hủy</h1><br>
 <br>
     <div class="main-card mb-3 card">
         <div class="card-body">
@@ -45,13 +45,13 @@
                     <th>Thông tin liên hệ</th>
                     <th>Sản phẩm</th>
                     <th>Số lượng đặt hàng</th>
-                    <th>Số lượng đáp ứng</th>
-                    <th>Số lượng bổ sung</th>
+                    <!--<th>Số lượng đáp ứng</th>
+                    <th>Số lượng bổ sung</th>-->
                     <th>Giá/SP</th>
                     <th>Tổng giá</th>
                     <th>Ngày đặt hàng</th>
-                    <th>Xử lý lần cuối</th>
-                    <th>Thao tác</th>
+                    <th>Ngày hủy</th>
+                    <!--<th>Thao tác</th>-->
                 </tr>
                 </thead>
                 <tbody>
@@ -63,7 +63,7 @@
                         <p th:text="${order.getCustomer.getEmail}"></p></td>
                     <td>
                         <div th:each="phone : ${order.getPhoneDTOS}">
-                            <p th:text="${phone.PhoneName} +' | '+${phone.getRam.getCapacity}+'GB | '+${phone.getStorageCapacity.getCapacity}+'GB'"></p>
+                            <p th:text="${phone.PhoneName} +' | '+${phone.Ram.getCapacity}+'GB | '+${phone.StorageCapacity.getCapacity}+'GB'"></p>
                         </div>
                     </td>
                     <td>
@@ -71,16 +71,16 @@
                             <p th:text="${orderitem.getQuantity}"></p>
                         </div>
                     </td>
-                    <td>
+<!--                    <td>
                         <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                            <p th:text="${orderitem.getQuantity - orderitem.getMissing}"></p>
+                            <p th:text="${orderitem.getQuantity() - orderitem.getMissing()}"></p>
                         </div>
                     </td>
                     <td>
                         <div th:each="orderitem : ${order.getOrderitemDTOS}">
                             <p th:text="${orderitem.getMissing}" th:data-missing="${orderitem.getMissing}"></p>
                         </div>
-                    </td>
+                    </td>-->
                     <td>
                         <div th:each="orderitem : ${order.getOrderitemDTOS}">
                             <p th:text="'$'+${orderitem.price}"></p>
@@ -88,21 +88,36 @@
                     </td>
                     <td th:text="'$'+${order.getAmount}"></td>
                     <td class="wrap" th:text="${order.getOrderDate}"></td>
-                    <td class="wrap" th:text="${order.getDateProcessed}"></td>
-                    <td>
-                        <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                            <form th:action="@{/Handshop/admin/unapproveOrder}" method="post" class="actionbtn">
+                    <td class="wrap" th:text="${order.getDateProcessed}" style="color: #f70005; font-weight: bold"></td>
+                    <!--<td>
+                        <div class="d-flex" style="display: flex; justify-content: center; align-items: center;" th:each="orderitem : ${order.getOrderitemDTOS}">
+                            <form th:if="${orderitem.getMissing}==0" th:action="@{/Handshop/admin/approveOrder}" method="post" class="actionbtn" style=" margin-bottom: 10px">
                                 <input type="hidden" name="OrderID" th:value="${order.OrderID}">
-                                <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
+                                <input type="hidden" name="User" th:value="${#authentication.name}" >
+                                <input type="hidden" name="dateProcessed"
+                                       th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
                                 <button type="submit" class="btn btn-success btn-sm"
-                                        onclick="return confirm('Bạn có chắc chắn muốn hoàn tác không?')">Hoàn tác
+                                        onclick="return confirm('Bạn có chắc chắn muốn duyệt không?')">Duyệt
                                 </button>
                             </form>
-                            <a th:href="@{'/Handshop/invoiceCustomer?OrderID=' + ${order.OrderID}}" class="actionbtn" style="margin-left: 10px">
-                                <button type="button" class="btn btn-primary btn-sm">Xem hóa đơn</button>
-                            </a>
+                            <form th:if="${orderitem.getMissing}!=0" th:action="@{/Handshop/admin/updateOrder}" method="post" class="actionbtn" style=" margin-bottom: 10px">
+                                <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                                <input type="hidden" name="dateProcessed" value="0000-00-00 00:00:00">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Cập nhật
+                                </button>
+                            </form>
+                            <form th:action="@{/Handshop/admin/rejectOrder}" method="post" class="actionbtn" style="margin-left: 10px; margin-bottom: 10px">
+                                <input type="hidden" name="OrderID" th:value="${order.OrderID}">
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Bạn có chắc chắn muốn bỏ không?')">Bỏ
+                                </button>
+                            </form>
+                            &lt;!&ndash;<a th:href="@{'/Handshop/admin/rejectOrder?OrderID=' + ${order.OrderID}}" class="actionbtn">
+                                <button type="button" class="btn btn-danger btn-sm">Bỏ</button>
+                            </a>&ndash;&gt;
                         </div>
-                    </td>
+                    </td>-->
                 </tr>
                 </tbody>
                 <tfoot>
@@ -113,19 +128,19 @@
                     <th>Thông tin liên hệ</th>
                     <th>Sản phẩm</th>
                     <th>Số lượng đặt hàng</th>
-                    <th>Số lượng đáp ứng</th>
-                    <th>Số lượng bổ sung</th>
+                    <!--<th>Số lượng đáp ứng</th>
+                    <th>Số lượng bổ sung</th>-->
                     <th>Giá/SP</th>
                     <th>Tổng giá</th>
                     <th>Ngày đặt hàng</th>
-                    <th>Xử lý lần cuối</th>
-                    <th>Thao tác</th>
+                    <th>Ngày hủy</th>
+                    <!--<th>Thao tác</th>-->
                 </tr>
                 </tfoot>
             </table>
         </div>
     </div>
-</order-request-done>
+</order-request-reject>
 </body>
 <script th:inline="javascript">
 </script>

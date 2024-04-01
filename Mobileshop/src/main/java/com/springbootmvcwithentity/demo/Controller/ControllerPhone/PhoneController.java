@@ -1,5 +1,6 @@
 package com.springbootmvcwithentity.demo.Controller.ControllerPhone;
 
+import com.springbootmvcwithentity.demo.ClassSuport.StatusOrder;
 import com.springbootmvcwithentity.demo.entity.extand.*;
 import com.springbootmvcwithentity.demo.entity.extand.Color;
 import org.apache.poi.ss.formula.functions.T;
@@ -239,10 +240,10 @@ public class PhoneController {
         List<OrderitemDTO> orderitemDTOSFirst = orderItems2orderitemDTOS(orderItems);
         List<OrderitemDTO> orderitemDTOSFilter = new LinkedList<>();
         if(soldphones == true) {
-            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,"0000-00-00 00:00:00", "", false);
+            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,StatusOrder.REJECT,false);
         }
         if(soldPhonesWait == true) {
-            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,"0000-00-00 00:00:00", "", true);
+            orderitemDTOSFilter = filterDateProcess(orderitemDTOSFirst,StatusOrder.REJECT,true);
         }
                                     /**********************************/
                                     /** Chưa tìm kiếm bằng seri được  */
@@ -307,16 +308,16 @@ public class PhoneController {
         });
         return orderdate;
     }
-    private List<OrderitemDTO> filterDateProcess(List<OrderitemDTO> orderitemDTOS, String stringFilter1, String stringFilter2, boolean invertCondition) {
+    private List<OrderitemDTO> filterDateProcess(List<OrderitemDTO> orderitemDTOS, String stringFilter, boolean invertCondition) {
         return orderitemDTOS.stream()
                 .filter(orderitemDTO -> {
-                    String dateProcessed = orderservice.findById(orderitemDTO.getOrderID()).getDateProcessed();
+                    String StatusOrder = orderservice.findById(orderitemDTO.getOrderID()).getStatus();
                     if (invertCondition) {
                         // Nếu invertCondition là true, đảo ngược điều kiện
-                        return (stringFilter1.equals(dateProcessed) || stringFilter2.equals(dateProcessed));
+                        return (stringFilter.equals(StatusOrder));
                     } else {
                         // Ngược lại, sử dụng điều kiện như trước
-                        return !(stringFilter1.equals(dateProcessed) || stringFilter2.equals(dateProcessed));
+                        return !(stringFilter.equals(StatusOrder));
                     }
                 })
                 .collect(Collectors.toList());
@@ -327,7 +328,7 @@ public class PhoneController {
     public String redirectToAdminHandshopListSoldPhones(Model model) {
         List<OrderItem> orderItems = orderitemsservice.findAll();
         List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
-        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", false);
+        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,StatusOrder.REJECT, false);
         List<String> orderdate = GetDateProcess(orderitemDTOFilter);
         model.addAttribute("orderitemDTOS", orderitemDTOFilter); /** cách xử lý ở backEnd*/
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
@@ -340,7 +341,7 @@ public class PhoneController {
     public String redirectToAdminHandshopListSoldPhonesWait(Model model) {
         List<OrderItem> orderItems = orderitemsservice.findAll();
         List<OrderitemDTO> orderitemDTOS = orderItems2orderitemDTOS(orderItems);
-        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", true);
+        List<OrderitemDTO> orderitemDTOFilter = filterDateProcess(orderitemDTOS,StatusOrder.REJECT, true);
         List<String> orderdate = GetDateProcess(orderitemDTOFilter);
         model.addAttribute("orderitemDTOS", orderitemDTOFilter); /** cách xử lý ở backEnd*/
         model.addAttribute("orderdate", orderdate); /** cách xử lý ở backEnd*/
@@ -864,23 +865,30 @@ public class PhoneController {
         return orderDTOs;
     }
 
+    public void AddOrderDTOs2Model(Model model, String status){
+        LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
+        LinkedList<OrderDTO> orderDTOsFilter = new LinkedList<>(orderDTOs);
+//        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> item.getStatus().equals(status)).collect(Collectors.toList());
+        List<OrderDTO> orderDTOsfilterWithstatus = orderDTOsFilter.stream().filter(item -> item.getStatus().equals(status)).collect(Collectors.toList());
+        model.addAttribute("orderDTOsfilterWithstatus", orderDTOsfilterWithstatus);
+        model.addAttribute("orderDTOs", orderDTOs);
+    }
+
     @GetMapping("/admin/OrderRequestWait")
     public String showOrderRequest(Model model) {
-        LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
-        LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-        model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
-        model.addAttribute("orderDTOs", orderDTOs);
+        AddOrderDTOs2Model(model, StatusOrder.PENDING_APPROVAL);
         return "/admin/templateAdmin";
     }
 
     @GetMapping("/admin/OrderRequestDone")
     public String showOrderRequestDone(Model model) {
-        LinkedList<OrderDTO> orderDTOs = new LinkedList<>(ReturnOrderDTOs());
-        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
-        model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
-        model.addAttribute("orderDTOs", orderDTOs);
+        AddOrderDTOs2Model(model, StatusOrder.COMPLETED);
+        return "/admin/templateAdmin";
+    }
+
+    @GetMapping("/admin/OrderRequestReject")
+    public String showOrderRequestReject(Model model) {
+        AddOrderDTOs2Model(model, StatusOrder.REJECT);
         return "/admin/templateAdmin";
     }
 
@@ -898,6 +906,7 @@ public class PhoneController {
             order.setEmployeeID(employee.getEmployeeID() + "");
         }
         order.setDateProcessed(dateProcessed);
+        order.setStatus(StatusOrder.COMPLETED);
         orderservice.save(order);
         return "redirect:/Handshop/admin/OrderRequestWait";
     }
@@ -909,6 +918,7 @@ public class PhoneController {
         Order order = orderservice.findById(orderID);
         order.setEmployeeID("9");
         order.setDateProcessed(dateProcessed);
+        order.setStatus(StatusOrder.PENDING_APPROVAL);
         orderservice.save(order);
         return "redirect:/Handshop/admin/OrderRequestDone";
     }
@@ -1022,8 +1032,17 @@ public class PhoneController {
         return "redirect:/Handshop/admin/OrderRequest";
     }
 
+    public String GetDatetime(){
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+        return  formattedDateTime;
+    }
+
     @PostMapping("/admin/rejectOrder")
     public String rejectOrder(@RequestParam("OrderID") int orderID) {
+        Order order = orderservice.findById(orderID);
+        order.setDateProcessed(GetDatetime());
         List<OrderItem> orderItems = orderItemRepository.findAllByOrderID(orderID);
         orderItems.forEach(orderItem -> {
             List<String> serisOrderItem = !orderItem.getSeri().equals("[]") ? new StringToList().StringToList(orderItem.getSeri()) : new ArrayList<>();
@@ -1077,7 +1096,7 @@ public class PhoneController {
         String startDateFormat = startDate.replace("T", " ");
         String endDateFormat = endDate.replace("T", " ");
 
-        List<Order> orders = orderservice.findAll().stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        List<Order> orders = orderservice.findAll().stream().filter(item -> !(item.getStatus().equals(StatusOrder.PENDING_APPROVAL) || item.getStatus().equals(StatusOrder.REJECT))).collect(Collectors.toList());
 
         List<Order> ordersFilterDate = orders.stream().filter(item -> {
             LocalDateTime dateTime = LocalDateTime.parse(item.getDateProcessed(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -1418,7 +1437,7 @@ public class PhoneController {
             Row headerRow1 = sheet1.createRow(0);
             String[] headers1 = {"OrderItemID", "OrderID", "PhoneID", "Price", "Quantity", "Missing", "Seri", "Thông tin điện thoại"};
             fillDataToSheet(sheet1, headers1,
-                    filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", false),
+                    filterDateProcess(orderitemDTOS,StatusOrder.REJECT, false),
                     0);
             // Trả về dữ liệu Excel dưới dạng InputStreamResource
             return ResponseExel(workbook, "Danh sách điện thoại đã bán");
@@ -1454,7 +1473,7 @@ public class PhoneController {
             Row headerRow1 = sheet1.createRow(0);
             String[] headers1 = {"OrderItemID", "OrderID", "PhoneID", "Price", "Quantity", "Missing", "Seri", "Thông tin điện thoại"};
             fillDataToSheet(sheet1, headers1,
-                    filterDateProcess(orderitemDTOS,"0000-00-00 00:00:00", "", true),
+                    filterDateProcess(orderitemDTOS,StatusOrder.REJECT, true),
                     0);
             // Trả về dữ liệu Excel dưới dạng InputStreamResource
             return ResponseExel(workbook, "Danh sách điện thoại đang trong hàng chờ");

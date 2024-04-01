@@ -143,7 +143,7 @@ public class CartController {
                     // Nếu chưa có, thêm điện thoại vào giỏ hàng với số lượng là 1
                     ListPhoneCartDTOFromListProductID.add(phoneCartDTOAdd);
                     cartCookie.getProductsID().add(id);
-                    cartCookie.getListProductsIDandQuantity().add(new ProductsIDandQuantity(id,1));
+                    cartCookie.getListProductsIDandQuantity().add(new ProductsIDandQuantity(id,1, Double.parseDouble(phone.getPrice())));
                 }
                 saveCartToCookie(cartCookie, response);
                 model.addAttribute("cartListID", cartCookie.getListProductsIDandQuantity());

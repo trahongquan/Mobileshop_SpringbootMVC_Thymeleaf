@@ -10,6 +10,7 @@
     <link sec:authorize="hasRole('ROLE_CUSTOMER')" rel="stylesheet" th:href="@{/css/styles.css}">
     <link sec:authorize="hasRole('ROLE_CUSTOMER')" rel="stylesheet" href="/css/Header.css">
     <script src="/js/header.js"></script>
+    <script src="/js/headernew/headernew.js"></script>
     <style>
         .container {
             margin-top: 50px;
@@ -33,7 +34,7 @@
 </head>
 <body>
     <div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="admin/headerAdmin :: header-admin"></div>
-    <div sec:authorize="hasRole('ROLE_CUSTOMER')" th:replace="header :: header"></div>
+    <div sec:authorize="hasRole('ROLE_CUSTOMER')" th:replace="headernew :: header"></div>
 <form-edit-customer>
     <div class="container">
         <h2>Edit Customer</h2>

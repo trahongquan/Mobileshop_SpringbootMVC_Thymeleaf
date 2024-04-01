@@ -21,6 +21,8 @@ public class OrderitemDTO {
 
     private int missing;
 
+    private String status;
+
     private String seri;
 
     private List<String> seris;
@@ -30,7 +32,7 @@ public class OrderitemDTO {
     public OrderitemDTO() {
     }
 
-    public OrderitemDTO(int orderItemID, int orderID, int phoneID, String price, int quantity, int missing, String seri, List<String> seris) {
+    public OrderitemDTO(int orderItemID, int orderID, int phoneID, String price, int quantity, int missing, String seri, List<String> seris, String status) {
         this.orderItemID = orderItemID;
         this.orderID = orderID;
         this.phoneID = phoneID;
@@ -39,6 +41,7 @@ public class OrderitemDTO {
         this.missing = missing;
         this.seri = seri;
         this.seris = seris;
+        this.status = status;
     }
 
     public OrderitemDTO(OrderItem orderItem, List<String> seris) {
@@ -50,6 +53,7 @@ public class OrderitemDTO {
         this.missing = orderItem.getMissing();
         this.seri = orderItem.getSeri();
         this.seris = seris;
+        this.status = orderItem.getStatus();
     }
 
     public OrderitemDTO(OrderItem orderItem, PhoneDTO phoneDTO) {
@@ -61,6 +65,7 @@ public class OrderitemDTO {
         this.missing = orderItem.getMissing();
         this.seri = orderItem.getSeri();
         this.phoneDTO = phoneDTO;
+        this.status = orderItem.getStatus();
     }
 
     public PhoneDTO getPhoneDTO() {
@@ -133,5 +138,13 @@ public class OrderitemDTO {
 
     public void setSeris(List<String> seris) {
         this.seris = seris;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

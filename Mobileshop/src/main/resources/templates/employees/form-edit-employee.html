@@ -19,7 +19,7 @@
 <div th:replace="admin/headerAdmin :: header-admin"></div>
 <form-edit-employee>
     <div class="container">
-        <h2>Edit Employee</h2>
+        <h2>Sửa thông tin nhân viên</h2>
         <form th:object="${employee}"
               th:action="@{'/Handshop/admin/AccEmployeesManager/showFormForUpdate/' + ${employee.employeeID}}"
               method="POST">
@@ -27,12 +27,12 @@
             <input type="hidden" name="id" th:field="*{employeeID}"/>
             <!-- First Name -->
             <div class="form-group">
-                <label for="firstName">First Name:</label>
+                <label for="firstName">Họ:</label>
                 <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
             </div>
             <!-- Last Name -->
             <div class="form-group">
-                <label for="lastName">Last Name:</label>
+                <label for="lastName">Tên:</label>
                 <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
             </div>
             <!-- Email -->
@@ -41,20 +41,21 @@
                 <input type="email" class="form-control" id="email" th:field="*{email}" required>
             </div>
             <div class="form-group">
-                <label for="phone">Phone:</label>
+                <label for="phone">SĐT:</label>
                 <input type="text" class="form-control" id="phone" name="phone" th:field="*{phone}" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Mật khẩu:</label>
                 <input class="form-control password" id="password" name="pass" th:field="*{pass}" required>
             </div>
             <div class="form-group">
                 <input type="hidden" id="hireDate" name="hireDate" th:field="*{hireDate}"/>
             </div>
-            <div class="form-group">
-                <input type="checkbox" id="hireEndDate" name="hireEndDate" class="form-check-inline"
-                       th:checked="${employee.hireEndDate != null}" th:text="'Đã dừng thuê vào ngày: ' + ${employee.hireEndDate}"
+            <div class="form-group" th:unless="${#strings.contains(#request.requestURI, '/Handshop/admin/UpdateEmp/')}">
+                <input type="checkbox" name="hireEndDate" class="form-check-inline"
+                       th:checked="${employee.hireEndDate != null}"
                        th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}"/>
+                <label for="hireEndDate" id="hireEndDate"></label>
             </div>
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Save</button>
@@ -66,15 +67,19 @@
         function checkHireEnddate(){
             var hireEndDate = $('#hireEndDate')
             var emp = [[${employee}]];
-            if(!emp.hireEndDate){
-                if (hireEndDate.prop('checked')){
-                    hireEndDate.text('Dừng thuê vào ngày hôm nay: ' + today())
-                } else {
-                    hireEndDate.text('Đang thuê')
-                }
+            if(emp.hireEndDate != null){
+                hireEndDate.text('Đang thuê')
+                hireEndDate.prop('checked',true)
+            } else {
+                hireEndDate.text('Dừng thuê vào ngày hôm nay: ' + today() + " ???")
+                hireEndDate.prop('checked',false)
             }
+            console.log("helo bạn trẻ")
+            console.log(today())
         }
-
+        $('#hireEndDate').change(function () {
+            checkHireEnddate()
+        })
         function today() {
             // Tạo đối tượng Date để lấy ngày hiện tại
             var currentDate = new Date();
@@ -89,13 +94,16 @@
 
             // Định dạng ngày theo chuỗi "yyyy-MM-dd HH:mm:ss"
             var formattedDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-
-            console.log(formattedDate);
+            return formattedDate;
         }
       $(document).ready(function () {
-          $('#hireEndDate').click(function () {
-              checkHireEnddate()
-          })
+          var hireEndDate = $('#hireEndDate')
+          var emp = [[${employee}]];
+          if(emp.hireEndDate != null) {
+              hireEndDate.text("Đã dừng thuê vào ngày: " + emp.hireEndDate);
+          } else {
+              hireEndDate.text("Bạn muốn dừng thuê vào ngày hôm nay: " + today())
+          }
       })
     </script>
 </form-edit-employee>

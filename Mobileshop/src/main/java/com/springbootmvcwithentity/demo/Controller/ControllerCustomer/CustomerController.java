@@ -1,5 +1,6 @@
 package com.springbootmvcwithentity.demo.Controller.ControllerCustomer;
 
+import com.springbootmvcwithentity.demo.ClassSuport.StatusOrder;
 import com.springbootmvcwithentity.demo.ClassSuport.StringToList;
 import com.springbootmvcwithentity.demo.dao.*;
 //import com.springbootmvcwithentity.demo.dto.OrderDTO;
@@ -223,12 +224,15 @@ public class CustomerController {
 
     private void filterOrderDTOs(Model model, Customer customer){
         List<OrderDTO> orderDTOs = InputCustomerOutputListOrderDTO(customer);
-        LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        /*LinkedList<OrderDTO> orderDTOsApprove = new LinkedList<>(orderDTOs);
+        List<OrderDTO> orderDTOsApprovefilter = orderDTOsApprove.stream().filter(item -> item.getStatus().equals(StatusOrder.PENDING_APPROVAL)).collect(Collectors.toList());
         LinkedList<OrderDTO> orderDTOsNotApprove = new LinkedList<>(orderDTOs);
-        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> !item.getDateProcessed().equals("0000-00-00 00:00:00")).collect(Collectors.toList());
+        List<OrderDTO> orderDTOsNotApprovefilter = orderDTOsNotApprove.stream().filter(item -> item.getStatus().equals(StatusOrder.APPROVED)).collect(Collectors.toList());
+        LinkedList<OrderDTO> orderDTOsReject = new LinkedList<>(orderDTOs);
+        List<OrderDTO> orderDTOsRejectfilter = orderDTOsReject.stream().filter(item -> item.getStatus().equals(StatusOrder.REJECT)).collect(Collectors.toList());
         model.addAttribute("orderDTOsApprovefilter", orderDTOsApprovefilter);
         model.addAttribute("orderDTOsNotApprovefilter", orderDTOsNotApprovefilter);
+        model.addAttribute("orderDTOsRejectfilter", orderDTOsRejectfilter);*/
         model.addAttribute("orderDTOs", orderDTOs);
         model.addAttribute("customer",customer);
     }
