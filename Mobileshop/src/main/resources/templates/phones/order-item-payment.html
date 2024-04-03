@@ -241,14 +241,14 @@
                     cellImage.appendChild(img_link);
                     cellName.appendChild(name_span);
                     // cellName.textContent = product.phoneName + ' | ' + product.ram.capacity + 'GB | ' + product.storageCapacity.capacity +'GB';
-                    cellPrice.textContent = '$'+product.price;
+                    cellPrice.textContent = formatCurrency(parseFloat(product.price));
                     cellQuantity.textContent = product.quantityorder;
-                    cellTotal.textContent = '$'+ (parseFloat(product.price)*product.quantityorder).toFixed(2);
+                    cellTotal.textContent = formatCurrency((parseFloat(product.price)*product.quantityorder));
                     total += parseFloat(product.price)*product.quantityorder;
                 });
-                $('#totalAmount').text('Total Amount: $'+total.toFixed(2));
+                $('#totalAmount').text('Tổng tiền: '+formatCurrency(total));
                 // var x = total.toFixed(2)+'';
-                $('.totalAmount').attr('value',total.toFixed(2));
+                $('.totalAmount').attr('value',formatCurrency(total));
                 $('#divtotalAmount').css({
                     'font-family' : 'Arial, sans-serif',
                     'font-size': '24px',

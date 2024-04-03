@@ -57,11 +57,12 @@
                     </td>
                     <td>
                         <!--<strong><del><p id="cost" th:data-getSellPrice="${phoneCartDTO.getPriceDTO.getSellPrice}" th:data-Discount="${phoneCartDTO.getPriceDTO.Discount}"> </p></del></strong>-->
-                        <span class="price " th:value="${phoneCartDTO.getPrice}" th:text="@{'$' + ${phoneCartDTO.getPrice}}"> </span></td>
+                        <span class="price " th:value="${phoneCartDTO.getPrice}" th:text="${#numbers.formatCurrency(phoneCartDTO.getPrice)}"> </span></td>
                     <td>
                         <input type="number" class="form-control quantity" th:value="${phoneCartDTO.getQuantityorder}" >
                     </td>
-                    <td class="price"><span class="total" th:text="@{'$'+${phoneCartDTO.getQuantityorder}*${phoneCartDTO.getPrice}}"></span></td>
+                    <td class="price"><span class="total"></span></td>
+                    <!--<td class="price"><span class="total" th:text="@{'$'+${phoneCartDTO.getQuantityorder}*${phoneCartDTO.getPrice}}"></span></td>-->
                     <td>
                         <!--<input type="checkbox" class="SelectItem"> Chọn-->
                         <input type="checkbox" class="SelectItem" data-toggle="toggle" data-on="Có" data-off="Không" data-onstyle="success" data-offstyle="danger">

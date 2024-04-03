@@ -439,3 +439,43 @@ section>.mySwiper{
     border-radius: 15px;
     border: 2px groove #cc8ad0;
 }
+/*
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+}*/
+
+.quick-link {
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+}
+
+.quick-link a {
+    color: #000;
+    margin-left: 230px;
+    text-decoration: none;
+}
+
+/* Điều chỉnh CSS dựa trên kích thước màn hình */
+@media screen and (max-width: 768px) {
+    .quick-link {
+        padding: 5px;
+    }
+
+    .quick-link a {
+        margin-left: 150px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .quick-link {
+        padding: 2px;
+    }
+
+    .quick-link a {
+        margin-left: 50px;
+    }
+}

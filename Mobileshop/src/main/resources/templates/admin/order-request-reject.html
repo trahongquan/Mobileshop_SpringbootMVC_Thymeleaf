@@ -83,10 +83,10 @@
                     </td>-->
                     <td>
                         <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                            <p th:text="'$'+${orderitem.price}"></p>
+                            <p th:text="${#numbers.formatCurrency(orderitem.price)}"></p>
                         </div>
                     </td>
-                    <td th:text="'$'+${order.getAmount}"></td>
+                    <td th:text="${#numbers.formatCurrency(order.getAmount)}"></td>
                     <td class="wrap" th:text="${order.getOrderDate}"></td>
                     <td class="wrap" th:text="${order.getDateProcessed}" style="color: #f70005; font-weight: bold"></td>
                     <!--<td>

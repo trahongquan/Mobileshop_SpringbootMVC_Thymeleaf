@@ -113,7 +113,7 @@
             <label for="price">price:</label>
             <input type="text" class="form-control" id="price" name="price" required
                    onchange="updatePhoneModel()"
-                   th:field="*{Price}" th:placeholder="'black'">
+                   th:field="*{#numbers.formatCurrency(Price)}" th:placeholder="'black'">
         </div>
         <!-- Input for Color (Hex Color Code) -->
         <div class="form-group">

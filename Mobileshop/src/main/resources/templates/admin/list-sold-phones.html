@@ -73,7 +73,7 @@
                     <td th:text="${orderitemDTO.phoneDTO.getStorageCapacity.getCapacity}+'GB'"></td>
                     <td th:text="${orderitemDTO.phoneDTO.getRam.getCapacity}+'GB'"></td>
                     <td th:text="${orderitemDTO.phoneDTO.getOperatingSystem.getOsType}"></td>
-                    <td th:text="'$' + ${orderitemDTO.price}"></td>
+                    <td th:text="${#numbers.formatCurrency(orderitemDTO.price)}"></td>
                     <td th:text="${orderitemDTO.phoneDTO.getColor.getColor}"></td>
                     <td th:text="${orderitemDTO.quantity}"></td>
                     <td th:text="${orderdate[iter.index]}"></td>

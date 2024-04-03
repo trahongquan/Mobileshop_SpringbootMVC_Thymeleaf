@@ -183,23 +183,51 @@ public class PhoneController {
     return "redirect:/Handshop/ViewDetailPhone/" + phoneid;
     }
 
+    public String ProductByFilter(Model model, int OperatingSystemID, int brandID){
+        if(brandID == 0){
+            List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystemID()==OperatingSystemID).collect(Collectors.toList());
+            List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
+            model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        } else {
+            List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0
+                                                                            && item.getOperatingSystemID()==OperatingSystemID
+                                                                            && item.getBrandId() == brandID).collect(Collectors.toList());
+            List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
+            model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        }
+        return "index";
+    }
 
     @GetMapping({"/iphone"})
     public String getListiPhones(Model model) {
-
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystemID()==2).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
-        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
-        return "index";
+        return ProductByFilter(model, 2, 0);
     }
 
     @GetMapping({"/Android"})
     public String getListAndroids(Model model) {
-        List<Phones> phones = phoneService.findAll().stream().filter(item -> item.getQuantity()!=0 && item.getOperatingSystemID()==1).collect(Collectors.toList());
-        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
-        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
-        return "index";
+        return ProductByFilter(model, 1,0);
     }
+
+    @GetMapping({"/Samsung"})
+    public String getListSamsung(Model model) {
+        return ProductByFilter(model, 1,1);
+    }
+    @GetMapping({"/Huawei"})
+    public String getListHuawei(Model model) {
+        return ProductByFilter(model, 1,3);
+    }
+    @GetMapping({"/OnePlus"})
+    public String getListOnePlus(Model model) {
+        return ProductByFilter(model, 1,5);
+    }
+    @GetMapping({"/Oppo"})
+    public String getListOppo(Model model) {
+        return ProductByFilter(model, 1,14);
+    }
+//    @GetMapping({"/Samsung"})
+//    public String getListSamsung(Model model) {
+//        return ProductByFilter(model, 1,1);
+//    }
 
                                 /********************************************************/
                                 /************************* SEARCH ***********************/
@@ -213,6 +241,13 @@ public class PhoneController {
         return "index";
     }
 
+    @GetMapping("/search")
+    public String SearchGetMethod(@RequestParam("inputdatasearch") String inputdatasearch, Model model) {
+        List<Phones> phones = phoneRepository.findAllByPhoneNameContainingOrSeriContaining(inputdatasearch,inputdatasearch);
+        List<PhoneDTO> phoneDTOS = Phones2PhoneDTOS(phones);
+        model.addAttribute("phoneDTOS", phoneDTOS); /** cách xử lý ở backEnd*/
+        return "index";
+    }
     @GetMapping({"/Contact"})
     public String Contact(Model model) {
         return "footer";
@@ -273,6 +308,10 @@ public class PhoneController {
         return "admin/templateAdmin";
     }
 
+    @GetMapping("/admin/Dashboard")
+    public String Dashboard(Model model) {
+        return "admin/templateAdmin";
+    }
     @GetMapping({"/admin", "/admin/"})
     public String redirectToAdminHandshopListAdmin(Model model,@RequestParam(value = "addphone", defaultValue = "false") boolean addphone) {
         List<Phones> phones = phoneService.findAll();
@@ -322,7 +361,6 @@ public class PhoneController {
                 })
                 .collect(Collectors.toList());
     }
-
 
     @GetMapping({"/admin/soldphones"})
     public String redirectToAdminHandshopListSoldPhones(Model model) {

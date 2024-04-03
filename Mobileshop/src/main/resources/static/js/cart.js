@@ -12,11 +12,11 @@ function calculateTotalAmount() {
         var checkbox = $(this);
         if(checkbox.prop('checked')){
             var row = $(this).closest('tr');
-            var price = parseFloat(row.find('.total').text().replace("$", ""));
-            total += price;
+            var price = row.find('.total').text().replace(/[^0-9]/g, '');
+            total += parseInt(price);
         }
     });
-    $('#totalAmount').text('$' + total.toFixed(2));
+    $('#totalAmount').text(formatCurrency(total));
 }
 
 /**
@@ -24,9 +24,15 @@ function calculateTotalAmount() {
  */
 $('.quantity').on("input", function() {
     var quantity = parseInt($(this).val());
-    var price = parseFloat($(this).closest("tr").find("td .price").text().replace("$", ""));
-    var total = (quantity * price).toFixed(2);
-    $(this).closest("tr").find(".total").text("$" + total);
+    var price = parseInt($(this).closest("tr").find("td .price").text().replace(/[^0-9]/g, ''));
+    console.log(price)
+    var total = (quantity * price);
+    console.log(total)
+    console.log(formatCurrency(total))
+    // $(this).closest("tr").find(".total").textContent = formatCurrency(total);
+    $(this).closest("tr").find('.total').textContent = formatCurrency(total);
+    // row.querySelector('.total').textContent = formatCurrency(totalPrice);
+
     updateProductInCookie($(this));
 });
 
@@ -84,9 +90,9 @@ $('.quantity').on('input', function() {
     var row = $(this).closest('tr');
     var isChecked = row.find('input[type=checkbox]').prop('checked');
     var quantity = parseInt($(this).val());
-    var price = parseFloat(row.find('td .price').text().replace('$', ''));
-    var total = (quantity * price).toFixed(2);
-    row.find('.total').text('$' + total);
+    var price = parseInt(row.find('td .price').text().replace(/[^0-9]/g, ''));
+    var total = (quantity * price);
+    row.find('.total').text(formatCurrency(total));
     var selectAllCheckbox = $('#SelectAll');
     if (selectAllCheckbox.prop('checked') || isChecked) {
         calculateTotalAmount();
@@ -115,7 +121,7 @@ $('.SelectAll').change(function() {
             checkbox.prop('checked',true);
             checkbox.click();
             var row = checkbox.closest('tr');
-            var price = parseFloat(row.find('td .price').text().replace('$', ''));
+            var price = parseFloat(row.find('td .price').text().replace(/[^0-9]/g, ''));
             var quantity = parseInt(row.find('.quantity').val());
             var totalRow = (quantity * price);
             total = total + parseFloat(totalRow);
@@ -128,22 +134,28 @@ $('.SelectAll').change(function() {
             checkbox.click();
         })
     }
-    document.getElementById('totalAmount').textContent = '$' + total.toFixed(2).toString();
+    document.getElementById('totalAmount').textContent = formatCurrency(total);
 });
 
 function getCookie(name) {
     var cookieValue = document.cookie.match('(^|;)\\r*\\s*' + name + '\\s*=\\s*([^;]+)');
     return cookieValue ? cookieValue.pop() : '';
 }
-
-/*
-$(document).ready(function () {
-    if($('.SelectAll').prop('checked')){
-        console.log($('.SelectAll').prop('checked'))
-        $('.SelectAll').prop('checked', false)
+function formatCurrency(number) {
+    return number.toLocaleString('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+    });
+}
+window.onload = function() {
+    const rows = document.querySelectorAll('#example tbody tr');
+    for (const row of rows) {
+        const priceElement = row.querySelector('.price');
+        const quantityInput = row.querySelector('.quantity');
+        const price = parseFloat(priceElement.textContent.replace(/[^0-9]/g, ''));
+        console.log(price)
+        const quantity = parseInt(quantityInput.value, 10);
+        const totalPrice = price * quantity;
+        row.querySelector('.total').textContent = formatCurrency(totalPrice);
     }
-    if($('.SelectItem').prop('checked')){
-        console.log($('.SelectItem').prop('checked'))
-        $('.SelectItem').prop('checked', false)
-    }
-})*/
+};

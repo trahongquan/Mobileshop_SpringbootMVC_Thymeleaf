@@ -91,10 +91,10 @@
                     </td>
                     <td>
                         <div th:each="orderitem : ${order.getOrderitemDTOS}">
-                            <p th:text="'$'+${orderitem.price}"></p>
+                            <p th:text="${#numbers.formatCurrency(orderitem.price)}"></p>
                         </div>
                     </td>
-                    <td th:text="'$'+${order.getAmount}"></td>
+                    <td th:text="${#numbers.formatCurrency(order.getAmount)}"></td>
                     <td class="wrap" th:text="${order.getDateProcessed}"></td>
                     <td>
                         <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
@@ -112,7 +112,7 @@
             </table>
         </div>
         <div style="display: flex; flex-direction: column; justify-items: center; align-items: center">
-            <h2 th:text="@{'Tổng Doanh thu: ' + '$' + ${profit} }"></h2>
+            <h2 th:text="@{'Tổng Doanh thu: ' + ${#numbers.formatCurrency(profit)} }"></h2>
         </div>
     </div>
     <div>
@@ -258,12 +258,31 @@
                 categories: monthsInRange.slice(startIndex, endIndex + 1),
                 chartRangeMin: startIndex,
                 chartRangeMax: endIndex
+            },
+            yaxis: {
+                label: {
+                    text: 'Doanh thu (đ)',
+                    align: 'left'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return formatCurrency(val);
+                }
             }
         };
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
     }
+    function formatCurrency(number) {
+        return number.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
+
     </script>
 </profit-report>
 </body>

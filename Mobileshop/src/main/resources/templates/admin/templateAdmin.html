@@ -1336,6 +1336,9 @@
                 <div class="scrollbar-sidebar">
                     <div class="app-sidebar__inner">
                         <ul class="vertical-nav-menu">
+                            <li class="app-sidebar__heading"><a href="/Handshop/admin/Dashboard" style="padding: unset">
+                                Dashboard
+                            </a></li>
                             <li class="app-sidebar__heading">Quản lý Danh mục</li>
                             <li>
                             <!--<li class="mm-active">-->
@@ -1545,6 +1548,11 @@
             </div>
             <div class="app-main__outer">
 
+
+                <div th:if="${#request.requestURI == '/Handshop/admin/Dashboard'}" class="app-main__inner">
+                    <div th:replace="admin/Dashboard.html :: dashboard"></div>
+                </div>
+
                                                 <!--/////////////////////////////////-->
                                                         <!-- Inventory -->
                                                 <!--/////////////////////////////////-->
@@ -1676,14 +1684,6 @@
             </div>
         </div>
     </div>
-    <div>
-        <div class="main-card mb-3 card">
-            <div class="card-body">
-                <h5 class="card-title">Vertical Columns</h5>
-                <div id="chart-apex-column"></div>
-            </div>
-        </div>
-    </div>
 
 <!--SCRIPTS INCLUDES-->
 
@@ -1699,9 +1699,9 @@
     <script th:src="@{/js/demo.js}"></script>
 
                     <!--Chart-->
-    <script th:src="@{/js/chart/init/apex-charts.js}" > </script>
-    <script th:src="@{/js/chart/init/apex-series.js}" > </script>
-    <script th:src="@{/js/chart/init/vendors-apex-charts.js}" > </script>
+    <!--<script th:src="@{/js/chart/init/apex-charts.js}" > </script>-->
+    <!--<script th:src="@{/js/chart/init/apex-series.js}" > </script>-->
+    <!--<script th:src="@{/js/chart/init/vendors-apex-charts.js}" > </script>-->
 
                         <!--TABLES -->
                         <!--DataTables-->
@@ -1733,6 +1733,12 @@
                 nightskyBeachElement.click();
             }
         });
+        function formatCurrency(number) {
+            return number.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+            });
+        }
     </script>
 </body>
 </html>

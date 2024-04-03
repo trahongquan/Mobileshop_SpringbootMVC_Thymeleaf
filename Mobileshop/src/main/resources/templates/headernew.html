@@ -63,6 +63,7 @@
             line-height: 20px;
             letter-spacing: 0px;
         }
+
     </style>
     <div style="background-color: rgba(255,255,255,0.6)">
     <!--  header middle -->
@@ -241,7 +242,7 @@
                                 />
                             </svg>
                         </a>
-                        <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')" th:href="'/Handshop/admin'">
+                        <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')" th:href="'/Handshop/admin/Dashboard'">
                             <svg width="20" height="20"  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                         d="M10.1004 11.2755C10.0837 11.2755 10.0587 11.2755 10.0421 11.2755C10.0171 11.2755 9.98372 11.2755 9.95872 11.2755C8.06706 11.2171 6.65039 9.74214 6.65039 7.92547C6.65039 6.07547 8.15872 4.56714 10.0087 4.56714C11.8587 4.56714 13.3671 6.07547 13.3671 7.92547C13.3587 9.75047 11.9337 11.2171 10.1254 11.2755C10.1087 11.2755 10.1087 11.2755 10.1004 11.2755ZM10.0004 5.80881C8.83372 5.80881 7.89206 6.75881 7.89206 7.91714C7.89206 9.0588 8.78372 9.98381 9.91706 10.0255C9.94206 10.0171 10.0254 10.0171 10.1087 10.0255C11.2254 9.96714 12.1004 9.05047 12.1087 7.91714C12.1087 6.75881 11.1671 5.80881 10.0004 5.80881Z"
@@ -275,7 +276,7 @@
                                 <span class="title" sec:authentication="name"
                                       style="font-size: 1em; display: inline-block; max-width: 10ch; overflow: hidden; text-overflow: ellipsis;"
                                       th:data-nameUser="${#authentication.name}"></span></a></li>
-                            <li class=""><a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')" th:href="'/Handshop/admin'" class="ico-cart">
+                            <li class=""><a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')" th:href="'/Handshop/admin/Dashboard'" class="ico-cart">
                                 <!--<span style="align-self: center">Xin trào: </span><br>-->
                                 <span class="title" sec:authentication="name"
                                       style="font-size: 1em; display: inline-block; max-width: 10ch; overflow: hidden; text-overflow: ellipsis;"
@@ -1050,7 +1051,7 @@
                                     ><span
                                             class="xpc-dropdown-title text-sm xpc-header-text"
                                     >Sản phẩm
-                        </span></a>
+                        </span></a> <!-- Sản phẩm ở đây-->
                                     <div
                                             class="dropdown-menu start-0"
                                             aria-labelledby="menu-item-dropdown-4738"
@@ -1064,569 +1065,322 @@
                                                     >
                                                         <div
                                                                 class="item-inner xpc-menu-box-inner d-flex align-items-end w-100 h-100 xpc-hover-item position-relative overflow-hidden"
-                                                                style="
-                                    -webkit-transform: translateZ(0);
-                                    transform: translateZ(0);
-                                  "
-                                                        >
-                                  <span
-                                          class="menu-item-no-link xpc-img-overlay xpc-box-container d-md-flex align-items-center w-100 justify-content-center2 xpc-p-20"
-                                  ><div class="xpc-nav-block-shortcode">
-                                      <div
-                                              data-elementor-type="wp-post"
-                                              data-elementor-id="4531"
-                                              class="elementor elementor-4531"
-                                      >
-                                        <div
-                                                class="elementor-element elementor-element-1984f627 e-flex e-con-boxed e-con e-parent"
-                                                data-id="1984f627"
-                                                data-element_type="container"
-                                                data-settings='{"content_width":"boxed"}'
-                                                data-core-v316-plus="true"
+                                                                style="-webkit-transform: translateZ(0);transform: translateZ(0);">
+                <span
+                        class="menu-item-no-link xpc-img-overlay xpc-box-container d-md-flex align-items-center w-100 justify-content-center2 xpc-p-20"
+                ><div class="xpc-nav-block-shortcode">
+                    <div
+                            data-elementor-type="wp-post"
+                            data-elementor-id="4531"
+                            class="elementor elementor-4531"
+                    >
+                      <div
+                              class="elementor-element elementor-element-1984f627 e-flex e-con-boxed e-con e-parent"
+                              data-id="1984f627"
+                              data-element_type="container"
+                              data-settings='{"content_width":"boxed"}'
+                              data-core-v316-plus="true"
+                      >
+                        <div class="e-con-inner">
+                          <div
+                                  class="elementor-element elementor-element-6a466c10 e-con-full e-flex e-con e-child"
+                                  data-id="6a466c10"
+                                  data-element_type="container"
+                                  data-settings='{"content_width":"full"}'
+                          >
+                          <!-- Điện thoại -->
+                            <div
+                                    class="elementor-element elementor-element-2a4b35e8 elementor-widget elementor-widget-heading"
+                                    data-id="2a4b35e8"
+                                    data-element_type="widget"
+                                    data-widget_type="heading.default"
+                            >
+                              <div class="elementor-widget-container">
+                                <style>
+                                  /*! elementor - v3.19.0 - 28-02-2024 */
+                                  .elementor-heading-title {
+                                      padding: 0;
+                                      margin: 0;
+                                      line-height: 1;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title[class*="elementor-size-"]
+                                  > a {
+                                      color: inherit;
+                                      font-size: inherit;
+                                      line-height: inherit;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title.elementor-size-small {
+                                      font-size: 15px;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title.elementor-size-medium {
+                                      font-size: 19px;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title.elementor-size-large {
+                                      font-size: 29px;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title.elementor-size-xl {
+                                      font-size: 39px;
+                                  }
+                                  .elementor-widget-heading
+                                  .elementor-heading-title.elementor-size-xxl {
+                                      font-size: 59px;
+                                  }
+                                </style>
+                                <h2
+                                        class="elementor-heading-title elementor-size-default"
+                                >
+                                  Điện thoại
+                                </h2>
+                              </div>
+                            </div>
+                            <div
+                                    class="elementor-element elementor-element-1992612 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
+                                    data-id="1992612"
+                                    data-element_type="widget"
+                                    data-widget_type="electio_icon_list.default"
+                            >
+                            <!-- Máy tính -->
+                              <div class="elementor-widget-container">
+                                <ul class="electio-menu-icon-list-items">
+                                    <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-781c04e"
+                                    >
+                                      <a href="/Handshop/HightRate">
+                                        <span class="elementor-icon-list-text"
+                                        >Hight Rate</span
                                         >
-                                          <div class="e-con-inner">
-                                            <div
-                                                    class="elementor-element elementor-element-6a466c10 e-con-full e-flex e-con e-child"
-                                                    data-id="6a466c10"
-                                                    data-element_type="container"
-                                                    data-settings='{"content_width":"full"}'
-                                            >
-                                              <div
-                                                      class="elementor-element elementor-element-2a4b35e8 elementor-widget elementor-widget-heading"
-                                                      data-id="2a4b35e8"
-                                                      data-element_type="widget"
-                                                      data-widget_type="heading.default"
-                                              >
-                                                <div
-                                                        class="elementor-widget-container"
-                                                >
-                                                  <style>
-                                                    /*! elementor - v3.19.0 - 28-02-2024 */
-                                                    .elementor-heading-title {
-                                                        padding: 0;
-                                                        margin: 0;
-                                                        line-height: 1;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title[class*="elementor-size-"]
-                                                    > a {
-                                                        color: inherit;
-                                                        font-size: inherit;
-                                                        line-height: inherit;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title.elementor-size-small {
-                                                        font-size: 15px;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title.elementor-size-medium {
-                                                        font-size: 19px;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title.elementor-size-large {
-                                                        font-size: 29px;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title.elementor-size-xl {
-                                                        font-size: 39px;
-                                                    }
-                                                    .elementor-widget-heading
-                                                    .elementor-heading-title.elementor-size-xxl {
-                                                        font-size: 59px;
-                                                    }
-                                                  </style>
-                                                  <h2
-                                                          class="elementor-heading-title elementor-size-default"
-                                                  >
-                                                    Máy tính
-                                                  </h2>
-                                                </div>
-                                              </div>
-                                              <div
-                                                      class="elementor-element elementor-element-1992612 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
-                                                      data-id="1992612"
-                                                      data-element_type="widget"
-                                                      data-widget_type="electio_icon_list.default"
-                                              >
-                                                <div
-                                                        class="elementor-widget-container"
-                                                >
-                                                  <ul
-                                                          class="electio-menu-icon-list-items"
-                                                  >
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-781c04e"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Laptop</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-e51aab8"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Monitor</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-a367ba2"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Hardware</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-c0bdb90"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Keyboard</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-efbcf11"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Mouse</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                  </ul>
-                                                </div>
-                                              </div>
-                                              <div
-                                                      class="elementor-element elementor-element-4f6d8e40 e-con-full e-flex e-con e-child"
-                                                      data-id="4f6d8e40"
-                                                      data-element_type="container"
-                                                      data-settings='{"content_width":"full"}'
-                                              >
-                                                <div
-                                                        class="elementor-element elementor-element-361cf2f6 elementor-widget elementor-widget-heading"
-                                                        data-id="361cf2f6"
-                                                        data-element_type="widget"
-                                                        data-widget_type="heading.default"
-                                                >
-                                                  <div
-                                                          class="elementor-widget-container"
-                                                  >
-                                                    <h2
-                                                            class="elementor-heading-title elementor-size-default"
-                                                    >
-                                                      Điện thoại
-                                                    </h2>
-                                                  </div>
-                                                </div>
-                                                <div
-                                                        class="elementor-element elementor-element-67d275f0 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
-                                                        data-id="67d275f0"
-                                                        data-element_type="widget"
-                                                        data-widget_type="electio_icon_list.default"
-                                                >
-                                                  <div
-                                                          class="elementor-widget-container"
-                                                  >
-                                                    <ul
-                                                            class="electio-menu-icon-list-items"
-                                                    >
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-781c04e"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Apple</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-219c3dd"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Samsung</span
-                                                            >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-781c04e"
+                                    >
+                                      <a href="/Handshop/iphone">
+                                        <span class="elementor-icon-list-text"
+                                        >Apple</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                    <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-781c04e"
+                                    >
+                                      <a href="/Handshop/Android">
+                                        <span class="elementor-icon-list-text"
+                                        >Android</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-e51aab8"
+                                    >
+                                      <a href="/Handshop/Samsung">
+                                        <span class="elementor-icon-list-text"
+                                        >Samsung</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-a367ba2"
+                                    >
+                                      <a href="/Handshop/OnePlus">
+                                        <span class="elementor-icon-list-text"
+                                        >OnePlus</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-c0bdb90"
+                                    >
+                                      <a href="/Handshop/Oppo">
+                                        <span class="elementor-icon-list-text"
+                                        >Oppo</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-efbcf11"
+                                    >
+                                      <a href="/Handshop/Huawei">
+                                        <span class="elementor-icon-list-text"
+                                        >Huawei</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            <div
+                                    class="elementor-element elementor-element-4f6d8e40 e-con-full e-flex e-con e-child"
+                                    data-id="4f6d8e40"
+                                    data-element_type="container"
+                                    data-settings='{"content_width":"full"}'
+                            >
+                              <!-- Điện thoại ở đây -->
+                            </div>
+                          </div>
+                          <div
+                                  class="elementor-element elementor-element-2c08f683 e-con-full e-flex e-con e-child"
+                                  data-id="2c08f683"
+                                  data-element_type="container"
+                                  data-settings='{"content_width":"full"}'
+                          >
+                          <!-- Apple Smartphone -->
+                            <div
+                                    class="elementor-element elementor-element-4bf4219b elementor-widget elementor-widget-heading"
+                                    data-id="4bf4219b"
+                                    data-element_type="widget"
+                                    data-widget_type="heading.default"
+                            >
+                              <div class="elementor-widget-container">
+                                <h2
+                                        class="elementor-heading-title elementor-size-default"
+                                >
+                                  Apple iphone
+                                </h2>
+                              </div>
+                            </div>
+                              <!-- Apple Smartphone -->
+                            <div
+                                    class="elementor-element elementor-element-521ffa04 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
+                                    data-id="521ffa04"
+                                    data-element_type="widget"
+                                    data-widget_type="electio_icon_list.default"
+                            >
+                              <div class="elementor-widget-container">
+                                <ul class="electio-menu-icon-list-items">
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-781c04e"
+                                    >
+                                      <a href="/Handshop/search?inputdatasearch=iphone 15">
+                                        <span class="elementor-icon-list-text"
+                                        >iphone 15 seri</span
+                                        >
+                                          <span class="item_label"> NEW </span>
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-219c3dd"
+                                    >
+                                      <a href="/Handshop/search?inputdatasearch=iphone 14">
+                                        <span class="elementor-icon-list-text"
+                                        >iphone 14 seri</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-1c86344"
+                                    >
+                                      <a href="/Handshop/search?inputdatasearch=iphone 13">
+                                        <span class="elementor-icon-list-text"
+                                        >iphone 13 seri</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-062dea7"
+                                    >
+                                      <a href="/Handshop/search?inputdatasearch=iphone 12">
+                                        <span class="elementor-icon-list-text"
+                                        >iphone 12 seri</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                  <li class="electio-menu-icon-list-item">
+                                    <span
+                                            class="elementor-repeater-item-16afbc1"
+                                    >
+                                      <a href="/Handshop/search?inputdatasearch=iphone 11">
+                                        <span class="elementor-icon-list-text"
+                                        >iphone 11 seri</span
+                                        >
+                                      </a>
+                                    </span>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            <div
+                                    class="elementor-element elementor-element-a51d0aa e-con-full e-flex e-con e-child"
+                                    data-id="a51d0aa"
+                                    data-element_type="container"
+                                    data-settings='{"content_width":"full"}'
+                            >
 
-                                                            <span
-                                                                    class="item_label"
-                                                            >
-                                                              hot
-                                                            </span>
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-1c86344"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >One Plus</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-062dea7"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Oppo</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-16afbc1"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Nokia</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                    </ul>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                            <div
-                                                    class="elementor-element elementor-element-2c08f683 e-con-full e-flex e-con e-child"
-                                                    data-id="2c08f683"
-                                                    data-element_type="container"
-                                                    data-settings='{"content_width":"full"}'
-                                            >
-                                              <div
-                                                      class="elementor-element elementor-element-4bf4219b elementor-widget elementor-widget-heading"
-                                                      data-id="4bf4219b"
-                                                      data-element_type="widget"
-                                                      data-widget_type="heading.default"
-                                              >
-                                                <div
-                                                        class="elementor-widget-container"
-                                                >
-                                                  <h2
-                                                          class="elementor-heading-title elementor-size-default"
-                                                  >
-                                                    Games & Video
-                                                  </h2>
-                                                </div>
-                                              </div>
-                                              <div
-                                                      class="elementor-element elementor-element-521ffa04 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
-                                                      data-id="521ffa04"
-                                                      data-element_type="widget"
-                                                      data-widget_type="electio_icon_list.default"
-                                              >
-                                                <div
-                                                        class="elementor-widget-container"
-                                                >
-                                                  <ul
-                                                          class="electio-menu-icon-list-items"
-                                                  >
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-781c04e"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Controller</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-219c3dd"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Remote</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-1c86344"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >VR</span
-                                                          >
-
-                                                          <span
-                                                                  class="item_label"
-                                                          >
-                                                            NEW
-                                                          </span>
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-062dea7"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Keyboard</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                    <li
-                                                            class="electio-menu-icon-list-item"
-                                                    >
-                                                      <span
-                                                              class="elementor-repeater-item-16afbc1"
-                                                      >
-                                                        <a href="#">
-                                                          <span
-                                                                  class="elementor-icon-list-text"
-                                                          >Mouse</span
-                                                          >
-                                                        </a>
-                                                      </span>
-                                                    </li>
-                                                  </ul>
-                                                </div>
-                                              </div>
-                                              <div
-                                                      class="elementor-element elementor-element-a51d0aa e-con-full e-flex e-con e-child"
-                                                      data-id="a51d0aa"
-                                                      data-element_type="container"
-                                                      data-settings='{"content_width":"full"}'
-                                              >
-                                                <div
-                                                        class="elementor-element elementor-element-d41362b elementor-widget elementor-widget-heading"
-                                                        data-id="d41362b"
-                                                        data-element_type="widget"
-                                                        data-widget_type="heading.default"
-                                                >
-                                                  <div
-                                                          class="elementor-widget-container"
-                                                  >
-                                                    <h2
-                                                            class="elementor-heading-title elementor-size-default"
-                                                    >
-                                                      Smart Home
-                                                    </h2>
-                                                  </div>
-                                                </div>
-                                                <div
-                                                        class="elementor-element elementor-element-b413b38 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-electio_icon_list"
-                                                        data-id="b413b38"
-                                                        data-element_type="widget"
-                                                        data-widget_type="electio_icon_list.default"
-                                                >
-                                                  <div
-                                                          class="elementor-widget-container"
-                                                  >
-                                                    <ul
-                                                            class="electio-menu-icon-list-items"
-                                                    >
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-781c04e"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Smart Watch</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-219c3dd"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >Speaker</span
-                                                            >
-
-                                                            <span
-                                                                    class="item_label"
-                                                            >
-                                                              hot
-                                                            </span>
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-1c86344"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >TWS</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-062dea7"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >TV Remote</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                      <li
-                                                              class="electio-menu-icon-list-item"
-                                                      >
-                                                        <span
-                                                                class="elementor-repeater-item-16afbc1"
-                                                        >
-                                                          <a href="#">
-                                                            <span
-                                                                    class="elementor-icon-list-text"
-                                                            >FM Radio</span
-                                                            >
-                                                          </a>
-                                                        </span>
-                                                      </li>
-                                                    </ul>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                            <div
-                                                    class="elementor-element elementor-element-7c318ca7 e-con-full e-flex e-con e-child"
-                                                    data-id="7c318ca7"
-                                                    data-element_type="container"
-                                                    data-settings='{"content_width":"full"}'
-                                            >
-                                              <div
-                                                      class="elementor-element elementor-element-5fcba6af elementor-widget elementor-widget-electio_banner"
-                                                      data-id="5fcba6af"
-                                                      data-element_type="widget"
-                                                      data-widget_type="electio_banner.default"
-                                              >
-                                                <div
-                                                        class="elementor-widget-container"
-                                                >
-                                                  <!-- banner widget -->
-                                                  <div
-                                                          class="sidebar-banner-widget-3 wow fadeInUp"
-                                                  >
-                                                    <a
-                                                            href="#"
-                                                            class="banner-1"
-                                                    >
-                                                      <span
-                                                              class="banner-img"
-                                                              data-background="https://electio.ecom.themepreview.xyz/home-one/wp-content/uploads/sites/2/2024/01/megamenu-banner-2.png"
-                                                      ></span>
-                                                      <div class="inner-box">
-                                                        <span
-                                                                class="badge-title text-uppercase"
-                                                        >Tiết kiệm tới 500,000
-                                                          ₫</span
-                                                        >
-                                                        <h3 class="et__title">
-                                                          <p>
-                                                            Giảm giá tới 30%
-                                                          </p>
-                                                        </h3>
-                                                        <span
-                                                                class="tag-line mb-20 d-block"
-                                                        >Bắt đầu với
-                                                          <span
-                                                                  class="text-light-red"
-                                                          >1,390,000 ₫</span
-                                                          ></span
-                                                        >
-                                                      </div>
-                                                    </a>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                            </div>
+                          </div>
+                            <!-- banner widget -->
+                          <div
+                                  class="elementor-element elementor-element-7c318ca7 e-con-full e-flex e-con e-child"
+                                  data-id="7c318ca7"
+                                  data-element_type="container"
+                                  data-settings='{"content_width":"full"}'
+                          >
+                            <div
+                                    class="elementor-element elementor-element-5fcba6af elementor-widget elementor-widget-electio_banner"
+                                    data-id="5fcba6af"
+                                    data-element_type="widget"
+                                    data-widget_type="electio_banner.default"
+                            >
+                              <div class="elementor-widget-container">
+                                <!-- banner widget -->
+                                <div
+                                        class="sidebar-banner-widget-3 wow fadeInUp"
+                                >
+                                  <a href="#" class="banner-1">
+                                    <span
+                                            class="banner-img"
+                                            data-background="https://electio.ecom.themepreview.xyz/home-one/wp-content/uploads/sites/2/2024/01/megamenu-banner-2.png"
+                                    ></span>
+                                    <div class="inner-box">
+                                      <span class="badge-title text-uppercase"
+                                      >Tiết kiệm tới 500,000 ₫</span
+                                      >
+                                      <h3 class="et__title">
+                                        <p>Giảm giá tới 30%</p>
+                                      </h3>
+                                      <span class="tag-line mb-20 d-block"
+                                      >Bắt đầu với
+                                        <span class="text-light-red"
+                                        >1,390,000 ₫</span
+                                        ></span
+                                      >
                                     </div>
-                                  </span>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </span>
                                                         </div>
                                                     </div>
                                                 </div>
