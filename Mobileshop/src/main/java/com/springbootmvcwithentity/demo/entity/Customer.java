@@ -1,14 +1,13 @@
 package com.springbootmvcwithentity.demo.entity;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "customers")
@@ -45,7 +44,8 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String firstName, String email, String phone, String pass, String address, Timestamp registrationDate) {
+    public Customer(String firstName, String email, String phone, String pass, String address,
+            Timestamp registrationDate) {
         this.firstName = firstName;
         this.email = email;
         this.phone = phone;
@@ -54,7 +54,8 @@ public class Customer {
         this.registrationDate = registrationDate;
     }
 
-    public Customer(String firstName, String lastName, String email, String phone, String pass, String address, Timestamp registrationDate) {
+    public Customer(String firstName, String lastName, String email, String phone, String pass, String address,
+            Timestamp registrationDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -63,7 +64,7 @@ public class Customer {
         this.address = address;
         this.registrationDate = registrationDate;
     }
-// Getters and setters
+    // Getters and setters
 
     public int getCustomerId() {
         return customerId;

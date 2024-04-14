@@ -1,11 +1,14 @@
 package com.springbootmvcwithentity.demo.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
-import javax.persistence.*;
-
-@Data
 @Entity
 @Table(name = "phones")
 public class Phones {
@@ -57,14 +60,15 @@ public class Phones {
     @Column(name = "seri")
     private String seri;
 
-// Constructors, getters, and setters
+    // Constructors, getters, and setters
     // ...
-
 
     public Phones() {
     }
 
-    public Phones(int brandId, int categoryId, String phoneName, int modelID, int releaseYear, double screenSize, int storageCapacityID, int ramID, int operatingSystemID, String price, int colorID, String imageName, int quantity, String seri) {
+    public Phones(int brandId, int categoryId, String phoneName, int modelID, int releaseYear, double screenSize,
+            int storageCapacityID, int ramID, int operatingSystemID, String price, int colorID, String imageName,
+            int quantity, String seri) {
         this.brandId = brandId;
         this.categoryId = categoryId;
         this.phoneName = phoneName;
@@ -222,4 +226,3 @@ public class Phones {
                 '}';
     }
 }
-

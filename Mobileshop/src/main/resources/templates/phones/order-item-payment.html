@@ -54,7 +54,7 @@
                                                                                              id="cvv" name="cvv"
                                                                                              placeholder="Nhập số CVV ">
                     <p style="display: none" id="textQR"></p>
-                    <img id="imgQR" src="/Images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
+                    <img id="imgQR" src="/images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
                 </div>
             </div>
             <div class="col-md-6" th:unless="${#authorization.expression('isAuthenticated()')}">
@@ -135,7 +135,7 @@
                                                                                              id="cvv" name="cvv"
                                                                                              placeholder="Nhập số CVV ">
                     <p style="display: none" id="textQR"></p>
-                    <img id="imgQR" src="/Images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
+                    <img id="imgQR" src="/images/QRPay.PNG" style="display: none; width: 400px; margin-top: 50px ">
                 </div>
             </div>
             <div class="col-md-6" th:if="${#authorization.expression('hasRole(''ROLE_CUSTOMER'')')}">
@@ -222,7 +222,7 @@
 
                     // Tạo một thẻ img
                     var img = document.createElement('img');
-                    img.src = '/Images/' + product.imageName;
+                    img.src = '/images/' + product.imageName;
                     img.alt = 'Product Image';
                     img.style.width = '100px';
 
@@ -248,7 +248,7 @@
                 });
                 $('#totalAmount').text('Tổng tiền: '+formatCurrency(total));
                 // var x = total.toFixed(2)+'';
-                $('.totalAmount').attr('value',formatCurrency(total));
+                $('.totalAmount').attr('value',total);
                 $('#divtotalAmount').css({
                     'font-family' : 'Arial, sans-serif',
                     'font-size': '24px',

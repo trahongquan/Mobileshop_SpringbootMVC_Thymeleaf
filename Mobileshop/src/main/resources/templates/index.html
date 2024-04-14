@@ -22,7 +22,7 @@
 <br>
 <br>
 <br>
-<div th:replace="/test/banner::banner"></div>
+<!--<div th:replace="/test/banner::banner"></div>-->
 <div >
     <section class="phone-list">
         <div class="phone-item" th:each="phone,iter:${phoneDTOS}"> <!--Dùng DTO để xử lsy tại backend-->
@@ -30,7 +30,7 @@
                 <span class="Cart-icon" th:if="${#authorization.expression('isAuthenticated()')}" > <a th:href="@{'/Handshop/addWhis/' + ${phone.phoneId}+'/'+${#authentication.name}}" class="iconcart"> <img th:src="@{'/Images/heart.png'}"  style="width: 40px"> </a> </span>
                 <!--<span class="Cart-icon" th:if="${#authorization.expression('isAuthenticated()')}" > <a th:href="@{'/addToCart/'+ ${phone.phoneId}}"> <img th:src="@{'/Images/icon-shopping-cart.png'}" > </a> </span>-->
                 <a th:href="@{'/Handshop/ViewDetailPhone/' + ${phone.phoneId}}" th:data-phoneID="${phone.phoneId}" >
-                <img class="img-phoneDTOS" th:src="'/Images/' + ${phone.ImageName}" th:alt="iPhone"
+                <img class="img-phoneDTOS" th:src="'/images/' + ${phone.ImageName}" th:alt="iPhone"
                      style="width: 150px; height: 150px;">
                 <h2 th:text="${phone.phoneName}"></h2>
                 <!--<p> <strong> <del th:text="${pricePreSale[iter.index]} + ' $'" th:data="${pricePreSale[iter.index]}"></del> </strong> </p>-->

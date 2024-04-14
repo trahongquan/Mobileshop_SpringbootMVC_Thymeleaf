@@ -1,11 +1,12 @@
 package com.springbootmvcwithentity.demo.entity;
 
-import lombok.Data;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
-import java.util.List;
-
-@Data
 @Entity
 @Table(name = "orderitems")
 public class OrderItem {
@@ -36,7 +37,6 @@ public class OrderItem {
     private String status;
 
     // Getters and setters
-
 
     public OrderItem() {
     }
@@ -128,4 +128,3 @@ public class OrderItem {
                 '}';
     }
 }
-
